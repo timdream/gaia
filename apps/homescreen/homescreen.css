@@ -278,9 +278,16 @@ iframe.appWindow {
   border-radius: 5px;
   background: -moz-linear-gradient(top, rgb(94,97,102) 10%, rgb(64,64,72) 90%);
 }
+.keyboard-key.fn {
+  background: -moz-linear-gradient(top, rgb(74,77,82) 10%, rgb(44,44,52) 90%);
+}
 
 .keyboard-key[data-active] {
   color: #ccc;
   background: -moz-linear-gradient(bottom, rgb(94,97,102) 10%, rgb(64,64,72) 90%);
+}
+.keyboard-key.fn[data-active] {
+  color: #ccc;
+  background: -moz-linear-gradient(bottom, rgb(74,77,82) 10%, rgb(44,44,52) 90%);
 }
 

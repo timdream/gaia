@@ -110,7 +110,8 @@ const IMEManager = {
       row.forEach(function (key) {
         var code = key.keyCode || key.value.charCodeAt(0);
         var size = ((width - (row.length * 2)) / 10) * (key.ratio || 1) - 2;
-        content += '<span class="keyboard-key"' +
+        content += '<span ' +
+                          'class="keyboard-key ' + (key.keyCode?'fn':'') + '"' +
                           'data-keycode="' + code + '"' +
                           'style="width:' + size + 'px"' +
                    '>' +
