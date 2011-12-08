@@ -4,7 +4,7 @@ const IMEManager = {
   ALTERNATE_LAYOUT: -2,
   SWITCH_KEYBOARD: -3,
   // TBD: allow user to select desired keyboards in settings
-  keyboards: ['qwertyLayout', 'azertyLayout', 'dvorakLayout'],
+  keyboards: ['qwertyLayout', 'azertyLayout', 'dvorakLayout','zhuyingGeneralLayout'],
 
   get ime() {
     delete this.ime;
@@ -69,6 +69,7 @@ const IMEManager = {
           case IMEManager.ALTERNATE_LAYOUT:
             this.layout = KeyboardAndroid.alternateLayout;
             this.ime.innerHTML = this.getLayout(window.innerWidth);
+            this.updateKeyboardHeight();
           break;
           case IMEManager.SWITCH_KEYBOARD:
             this.currentKeyboard++;
@@ -76,6 +77,7 @@ const IMEManager = {
               this.currentKeyboard = 0;
             this.layout = KeyboardAndroid[IMEManager.keyboards[this.currentKeyboard]];
             this.ime.innerHTML = this.getLayout(window.innerWidth);
+            this.updateKeyboardHeight();
           break;
           case KeyEvent.DOM_VK_CAPS_LOCK:
             if (this.isUpperCase) {
@@ -85,6 +87,7 @@ const IMEManager = {
             }
             this.isUpperCase = !this.isUpperCase;
             this.ime.innerHTML = this.getLayout(window.innerWidth);
+            //this.updateKeyboardHeight();
           break;
           default:
             window.navigator.mozKeyboard.sendKey(keyCode);
@@ -92,6 +95,7 @@ const IMEManager = {
               this.isUpperCase = !this.isUpperCase;
               this.layout = KeyboardAndroid[IMEManager.keyboards[this.currentKeyboard]];
               this.ime.innerHTML = this.getLayout(window.innerWidth);
+              //this.updateKeyboardHeight();
             }
           break;
         }
@@ -121,19 +125,12 @@ const IMEManager = {
 
     return content;
   },
-  showIME: function km_showIME(targetWindow, type) {
-    var oldHeight = targetWindow.style.height;
-    targetWindow.dataset.height = oldHeight;
-
-    var ime = this.ime;
-    ime.innerHTML = this.getLayout(window.innerWidth);
-
-    delete ime.dataset.hidden;
-    var newHeight = targetWindow.getBoundingClientRect().height -
-                    ime.getBoundingClientRect().height;
-
+  updateKeyboardHeight: function km_updateKeyboardHeight() {
+    var newHeight = this.targetWindow.dataset.rectHeight -
+                    this.ime.getBoundingClientRect().height;
+    var ime = this.ime, targetWindow = this.targetWindow;
     if (ime.getBoundingClientRect().top < window.innerHeight) {
-      targetWindow.style.height = newHeight + 'px';
+      this.targetWindow.style.height = newHeight + 'px';
       return;
     }
 
@@ -142,9 +139,23 @@ const IMEManager = {
       targetWindow.style.height = newHeight + 'px';
     });
   },
+  showIME: function km_showIME(targetWindow, type) {
+    var oldHeight = targetWindow.style.height;
+    targetWindow.dataset.cssHeight = oldHeight;
+    targetWindow.dataset.rectHeight = targetWindow.getBoundingClientRect().height;
+
+    var ime = this.ime;
+    ime.innerHTML = this.getLayout(window.innerWidth);
+    this.targetWindow = targetWindow;
+    this.updateKeyboardHeight();
+
+    delete ime.dataset.hidden;
+  },
   hideIME: function km_hideIME(targetWindow) {
-    targetWindow.style.height = targetWindow.dataset.height;
-    delete targetWindow.dataset.height;
+    targetWindow.style.height = targetWindow.dataset.cssHeight;
+    delete targetWindow.dataset.cssHeight;
+    delete targetWindow.dataset.rectHeight;
+    delete this.targetWindow;
 
     var ime = this.ime;
     ime.dataset.hidden = 'true';
