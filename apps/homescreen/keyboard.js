@@ -23,7 +23,7 @@ const IMEManager = {
     this.layout = KeyboardAndroid[IMEManager.keyboards[0]];
     this.currentKeyboard = 0;
     this.isUpperCase = false;
-  }, 
+  },
   uninit: function km_uninit() {
     this.events.forEach((function attachEvents(type) {
       window.removeEventListener(type, this);
@@ -32,7 +32,7 @@ const IMEManager = {
     this.ime.removeEventListener('touchstart', this);
     this.ime.removeEventListener('touchend', this);
     this.ime.removeEventListener('click', this);
-  }, 
+  },
   handleEvent: function km_handleEvent(evt) {
     var activeWindow = Gaia.AppManager.foregroundWindow;
 
@@ -103,8 +103,7 @@ const IMEManager = {
   },
   getLayout: function km_getLayout(width) {
     var content = '';
-
-    this.layout.forEach(function (row) {
+    this.layout.keys.forEach(function (row) {
       content += '<div class="keyboard-row">';
 
       row.forEach(function (key) {
