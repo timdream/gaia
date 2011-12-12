@@ -84,16 +84,7 @@ const IMEManager = {
         if (evt.target.dataset.selection) {
           this.layout.select(
             evt.target.textContent,
-            evt.target.dataset.data,
-            function () {
-              that.showSelections.apply(that, arguments);
-            },
-            window.navigator.mozKeyboard.sendKey,
-            function sendString(str) {
-              for (var i = 0; i < str.length; i++) {
-                window.navigator.mozKeyboard.sendKey(str.charCodeAt(i));
-              }
-            }
+            evt.target.dataset.data
           );
           this.updateKeyboardHeight();
           return;
@@ -135,16 +126,7 @@ const IMEManager = {
           default:
             if (this.layout.type === 'ime') {
               this.layout.click(
-                keyCode,
-                function () {
-                  that.showSelections.apply(that, arguments);
-                },
-                window.navigator.mozKeyboard.sendKey,
-                function sendString(str) {
-                  for (var i = 0; i < str.length; i++) {
-                    window.navigator.mozKeyboard.sendKey(str.charCodeAt(i));
-                  }
-                }
+                keyCode
               );
               this.updateKeyboardHeight();
               break;
