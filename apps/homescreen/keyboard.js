@@ -5,6 +5,7 @@ const IMEManager = {
   SWITCH_KEYBOARD: -3,
   // TBD: allow user to select desired keyboards in settings
   keyboards: ['qwertyLayout', 'azertyLayout', 'dvorakLayout','zhuyingGeneralLayout'],
+  IMEngines: {},
 
   get ime() {
     delete this.ime;
@@ -31,19 +32,30 @@ const IMEManager = {
 
     IMEManager.keyboards.forEach(
       function (keyboard) {
-        if (typeof KeyboardAndroid[keyboard].init === 'function') {
-          KeyboardAndroid[keyboard].init(
-            function () {
-              that.showSelections.apply(that, arguments);
-            },
-            window.navigator.mozKeyboard.sendKey,
-            function sendString(str) {
-              for (var i = 0; i < str.length; i++) {
-                window.navigator.mozKeyboard.sendKey(str.charCodeAt(i));
+        if (KeyboardAndroid[keyboard].type !== 'ime')
+          return;
+        var script = document.createElement('script'),
+        imEngine = KeyboardAndroid[keyboard].imEngine;
+
+        script.addEventListener(
+          'load',
+          function () {
+            IMEManager.IMEngines[imEngine].init(
+              './imes/' + imEngine,
+              function sendChoices() {
+                that.showSelections.apply(that, arguments);
+              },
+              window.navigator.mozKeyboard.sendKey,
+              function sendString(str) {
+                for (var i = 0; i < str.length; i++) {
+                  window.navigator.mozKeyboard.sendKey(str.charCodeAt(i));
+                }
               }
-            }
-          );
-        }
+            );
+          }
+        );
+        script.src = './imes/' + imEngine + '/loader.js';
+        document.body.appendChild(script);
       }
     );
   },
@@ -82,7 +94,7 @@ const IMEManager = {
         break;
       case 'click':
         if (evt.target.dataset.selection) {
-          this.layout.select(
+          this.IMEngines[this.layout.imEngine].select(
             evt.target.textContent,
             evt.target.dataset.data
           );
@@ -125,9 +137,7 @@ const IMEManager = {
           break;
           default:
             if (this.layout.type === 'ime') {
-              this.layout.click(
-                keyCode
-              );
+              this.IMEngines[this.layout.imEngine].click(keyCode);
               this.updateKeyboardHeight();
               break;
             }
@@ -175,17 +185,7 @@ const IMEManager = {
         this.selectionEl.removeChild(this.selectionEl.firstChild);
       }
       this.selectionEl.style.display = 'none';
-      this.layout.empty(
-        function () {
-          that.showSelections.apply(that, arguments);
-        },
-        window.navigator.mozKeyboard.sendKey,
-        function sendString(str) {
-          for (var i = 0; i < str.length; i++) {
-            window.navigator.mozKeyboard.sendKey(str.charCodeAt(i));
-          }
-        }
-      );
+      this.IMEngines[this.layout.imEngine].empty();
     }
   },
   updateKeyboardHeight: function km_updateKeyboardHeight() {
