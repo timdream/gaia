@@ -411,7 +411,6 @@ const IMEManager = {
       case 'mouseover':
         if (!this.isPressing)
           return;
-
         if (this.currentKey == target)
           return;
 
@@ -634,6 +633,7 @@ const IMEManager = {
 
   updateLayout: function km_updateLayout(keyboard) {
     var layout = Keyboards[keyboard];
+    var ime = this.ime;
 
     var content = '';
     var width = window.innerWidth;
@@ -697,18 +697,84 @@ const IMEManager = {
 
     content += '<span id="keyboard-key-highlight"></span>';
 
-    this.ime.innerHTML = content;
+    ime.innerHTML = content;
     this.menu = document.getElementById('keyboard-accent-char-menu');
     this.keyHighlight = document.getElementById('keyboard-key-highlight');
+
+    var self = this;
+
+    var mouseOverKey = function (target, keyCode) {
+
+      target.mouseOver = function (ev) {
+        ev.stopPropagation();
+        if (!self.isPressing)
+          return;
+        console.log('709\n');
+        if (self.currentKey)
+          delete self.currentKey.dataset.active;
+
+        if (keyCode == KeyEvent.DOM_VK_BACK_SPACE) {
+          delete self.currentKey;
+          self.updateKeyHighlight();
+          return;
+        }
+
+        target.dataset.active = 'true';
+
+        self.currentKey = target;
+
+        self.updateKeyHighlight();
+
+        clearTimeout(self._deleteTimeout);
+        clearInterval(self._deleteInterval);
+        clearTimeout(self._menuTimeout);
+
+        if (target.parentNode === self.menu) {
+          clearTimeout(self._hideMenuTimeout);
+        } else {
+          if (self.menu.className) {
+            self._hideMenuTimeout = setTimeout(
+              function hideMenuTimeout() {
+                self.hideAccentCharMenu();
+              },
+              self.kHideAccentCharMenuTimeout
+            );
+          }
+
+          if (
+            target.dataset.alt ||
+            keyCode === self.SWITCH_KEYBOARD
+          ) {
+            self._menuTimeout = setTimeout(
+              function menuTimeout() {
+                self.showAccentCharMenu();
+              },
+              self.kAccentCharMenuTimeout
+            );
+          }
+        }
+      };
+
+      target.addEventListener('mouseover', target.mouseOver);
+
+    };
+
+    var keys = ime.getElementsByClassName('keyboard-key');
+    for (var i = 0; i < keys.length; ++i) {
+      if (!keys[i].dataset.keycode)
+        continue;
+      console.log(i, keys[i].textContent, keys[i].dataset.keycode);
+      mouseOverKey(keys[i], keys[i].dataset.keycode);
+    }
 
     if (layout.needsCandidatePanel) {
       var toggleButton = document.createElement('span');
       toggleButton.innerHTML = '⇪';
       toggleButton.id = 'keyboard-candidate-panel-toggle-button';
       toggleButton.dataset.keycode = this.TOGGLE_CANDIDATE_PANEL;
-      this.ime.insertBefore(toggleButton, this.ime.firstChild);
+      ime.insertBefore(toggleButton, ime.firstChild);
 
-      this.ime.insertBefore(this.candidatePanel, this.ime.firstChild);
+      ime.insertBefore(this.candidatePanel, ime.firstChild);
       this.showCandidates([]);
       this.currentEngine.empty();
     }
