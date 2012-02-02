@@ -39,7 +39,7 @@ Settings.prototype = {
     var data = event.data;
     if (typeof data !== 'string')
       return;
-    
+
     data = event.data.split(':');
     if (data.length < 4 || data[0] != 'settings')
       return;
@@ -160,6 +160,24 @@ Settings.prototype = {
         }, {
           id: 'keyboard.vibration',
           value: true
+        }, {
+          id: 'keyboard.layouts.english',
+          value: true
+        }, {
+          id: 'keyboard.layouts.dvorak',
+          value: false
+        }, {
+          id: 'keyboard.layouts.alllatin',
+          value: false
+        }, {
+          id: 'keyboard.layouts.cyrillic',
+          value: false
+        }, {
+          id: 'keyboard.layouts.hebrew',
+          value: false
+        }, {
+          id: 'keyboard.layouts.zhuying',
+          value: false
         }, {
           id: 'airplanemode.enabled',
           value: false
