@@ -16,15 +16,49 @@ const IMEManager = {
     return this.IMEngines[Keyboards[this.currentKeyboard].imEngine];
   },
 
-  // TODO: allow user to select desired keyboards in settings
-  // see bug 712778
-  currentKeyboard: 'en',
+  currentKeyboard: '',
   currentKeyboardMode: '',
-  keyboards: [
-    'en', 'fr', 'de', 'he', 'nb',
-    'ru', 'sr-Cyrl', 'sk', 'en-Dvorak',
-    'tr', 'zh-Hant-Zhuying'
-  ],
+  keyboards: [],
+
+  keyboardsSettingGroups: {
+    'english': ['en'],
+    'dvorak': ['en-Dvorak'],
+    'alllatin': ['fr', 'de', 'nb', 'sk', 'tr'],
+    'cyrillic': ['ru', 'sr-Cyrl'],
+    'hebrew': ['he'],
+    'zhuying': ['zh-Hant-Zhuying']
+  },
+
+  // TODO: allow attachment of a read-only event listener
+  // to add/remove keyboard as setting changes
+  // see bug 712778
+  loadKeyboardsSettings: function loadKeyboardsSettings() {
+    var completeSettingRequests = function completeSettingRequests() {
+      this.currentKeyboard = this.keyboards[0];
+
+      this.keyboards.forEach((function loadIMEngines(name) {
+        this.loadKeyboard(name);
+      }).bind(this));
+    };
+
+    var count = 0;
+    for (key in this.keyboardsSettingGroups) {
+      (function keyboardSettingRequest(key) {
+        count++;
+        var request = navigator.mozSettings.get('keyboard.layouts.' + key);
+        request.addEventListener('success', (function onsuccess(evt) {
+          if (request.result.value === 'true') {
+            this.keyboards = this.keyboards.concat(
+              this.keyboardsSettingGroups[key]
+            );
+          }
+          count--;
+          if (count == 0)
+            completeSettingRequests();
+        }).bind(this));
+      }).call(this, key);
+    }
+  },
 
   currentType: 'text',
 
@@ -284,10 +318,7 @@ const IMEManager = {
       this.ime.addEventListener(type, this);
     }).bind(this));
 
-    // XXX: only load user-desired keyboards from settings
-    this.keyboards.forEach((function loadIMEngines(name) {
-      this.loadKeyboard(name);
-    }).bind(this));
+    this.loadKeyboardsSettings();
   },
 
   uninit: function km_uninit() {
@@ -302,14 +333,18 @@ const IMEManager = {
 
   loadKeyboard: function km_loadKeyboard(name) {
     var keyboard = Keyboards[name];
-    if (keyboard.type !== 'ime' || keyboard.imeLoaded)
+    if (keyboard.type !== 'ime')
       return;
-
-    // Only try to load the IME engine once.
-    keyboard.imeLoaded = true;
 
     var sourceDir = './imes/';
     var imEngine = keyboard.imEngine;
+
+    // Same IME Engine could be load by multiple keyboard
+    // keep track of it by adding a placeholder to the registration point
+    if (this.IMEngines[imEngine])
+      return;
+
+    this.IMEngines[imEngine] = {};
 
     var script = document.createElement('script');
     script.src = sourceDir + imEngine + '/loader.js';
