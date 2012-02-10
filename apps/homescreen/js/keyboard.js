@@ -34,6 +34,16 @@ const IMEManager = {
 
   loadKeyboardSettings: function loadKeyboardSettings(callback) {
     var completeSettingRequests = (function completeSettingRequests() {
+
+dump('complete');
+
+      if (!this.keyboards.length) {
+        dump('Keyboard setting is empty, add English layout.');
+        this.keyboards = this.keyboards.concat(
+          this.keyboardSettingGroups['english']
+        );
+      }
+
       if (this.keyboards.indexOf(this.currentKeyboard) === -1)
         this.currentKeyboard = this.keyboards[0];
 
@@ -53,18 +63,16 @@ const IMEManager = {
     var i = 0;
 
     var keyboardSettingRequest = function keyboardSettingRequest(key) {
-      var request = navigator.mozSettings.get('keyboard.layouts.' + key);
-      request.onsuccess = (function onsuccess(evt) {
-        // XXX: workaround with gaia issue 342
-        if (keyboardSettingGroupKeys.indexOf(key) !== i)
-          return;
 
-        if (request.result.value === 'true') {
-          this.keyboards = this.keyboards.concat(
-            this.keyboardSettingGroups[key]
-          );
-        }
+dump(key);
 
+      // XXX: workaround with gaia issue 371
+      var requestTimer = setTimeout(function requestTimeout() {
+        dump('Keyboard: Attempt to get keyboard setting "' + key + '" had timed out.');
+        nextRequest();
+      }, 300);
+
+      var nextRequest = (function () {
         if (++i === keyboardSettingGroupKeys.length) {
           completeSettingRequests();
         } else {
@@ -72,18 +80,38 @@ const IMEManager = {
         }
       }).bind(this);
 
+      var request = navigator.mozSettings.get('keyboard.layouts.' + key);
+      request.onsuccess = (function onsuccess(evt) {
+        // XXX: workaround with gaia issue 342
+        if (keyboardSettingGroupKeys.indexOf(key) !== i)
+          return;
+
+dump('success:' + key);
+
+        clearTimeout(requestTimer);
+
+        if (request.result.value === 'true') {
+          this.keyboards = this.keyboards.concat(
+            this.keyboardSettingGroups[key]
+          );
+        }
+
+        nextRequest();
+
+      }).bind(this);
+
       request.onerror = (function onerror(evt) {
         // XXX: workaround with gaia issue 342
         if (keyboardSettingGroupKeys.indexOf(key) !== i)
           return;
 
+dump('error:' + key);
+
+        clearTimeout(requestTimer);
+
         dump('Having trouble getting setting for keyboard setting group: ' + key);
 
-        if (++i === keyboardSettingGroupKeys.length) {
-          completeSettingRequests();
-        } else {
-          keyboardSettingRequest.call(this, keyboardSettingGroupKeys[i]);
-        }
+        nextRequest();
 
       }).bind(this);
     };
@@ -462,6 +490,8 @@ const IMEManager = {
         // see bug 712778
         this.loadKeyboardSettings(
           (function showIMEAfterSettingLoaded() {
+
+          dump('showIME');
             this.showIME(activeWindow, evt.detail.type);
           }).bind(this)
         );
@@ -944,10 +974,13 @@ const IMEManager = {
   },
 
   updateKeyboardHeight: function km_updateKeyboardHeight() {
+
+dump('height');
     var ime = this.ime;
     var targetWindow = this.targetWindow;
 
     if (ime.dataset.hidden) {
+dump('ishidden');
       targetWindow.classList.add('keyboardTransition');
       var showIMEafterTransition = function showIMEtransitionend(evt) {
         targetWindow.classList.remove('keyboardTransition');
@@ -962,16 +995,26 @@ const IMEManager = {
     var scrollHeight = ime.scrollHeight;
     ime.style.overflowY = null;
 
+dump(targetWindow.dataset.rectHeight);
+dump((targetWindow.dataset.rectHeight - scrollHeight) + 'px');
+
     targetWindow.style.height =
       (targetWindow.dataset.rectHeight - scrollHeight) + 'px';
     ime.style.height = scrollHeight + 'px';
   },
 
   showIME: function km_showIME(targetWindow, type) {
+dump('hi');
+dump(targetWindow);
+dump(targetWindow.classList);
+dump(targetWindow.classList.contains('keyboardTransition'));
 
     if (targetWindow.classList.contains('keyboardTransition')) {
       // keyboard is transitioning, run showIME after transition
       var deferShowIMEafterTransition = (function deferShowIME(evt) {
+
+dump('defer');
+
         targetWindow.removeEventListener('transitionend', deferShowIMEafterTransition);
         this.showIME(targetWindow, type);
       }).bind(this);
@@ -1001,8 +1044,11 @@ const IMEManager = {
       break;
     }
 
+dump('hidden:' + this.ime.dataset.hidden);
+
     if (this.ime.dataset.hidden) {
       // keyboard is in the quiet hidden state
+
       this.targetWindow = targetWindow;
       var oldHeight = targetWindow.style.height;
       targetWindow.dataset.cssHeight = oldHeight;
@@ -1012,7 +1058,7 @@ const IMEManager = {
 
     this.updateLayout();
     delete this.ime.dataset.hidden;
-
+dump('showIME done');
   },
 
   hideIME: function km_hideIME(targetWindow) {
@@ -1031,6 +1077,8 @@ const IMEManager = {
       delete targetWindow.dataset.rectHeight;
       ime.dataset.hidden = 'true';
       delete ime.style.height;
+
+dump('ime.dataset.hidden');
 
       ime.innerHTML = '';
 
