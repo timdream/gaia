@@ -67,10 +67,10 @@ html, body {
 
 #lockscreen {
   position: absolute;
-  z-index: 10000;
-  top: 0px;
+  z-index: 9999;
+  top: 33px;  /* height of #statusbar */
   width: -moz-calc(100%);
-  height: -moz-calc(100%);
+  height: -moz-calc(100% - 33px);
   color: white;
   overflow: hidden;
   background-color: #222;
@@ -242,7 +242,7 @@ div.windowSprite.active {
   display: -moz-box;
   overflow: hidden;
   position: relative;
-  z-index: 9999;
+  z-index: 10000;
   -moz-box-orient: horizontal;
 
   width: -moz-calc(100% - 4px);

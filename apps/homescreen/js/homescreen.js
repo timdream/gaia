@@ -521,7 +521,7 @@ LockScreen.prototype = {
     }
   },
   unlock: function(direction, instant) {
-    var offset = '100%';
+    var offset = window.innerHeight + 'px';
     if (direction < 0)
       offset = '-' + offset;
 
@@ -529,6 +529,8 @@ LockScreen.prototype = {
     style.MozTransition = instant ? '' : '-moz-transform 0.2s linear';
     style.MozTransform = 'translateY(' + offset + ')';
     changeDisplayState('unlocked');
+
+    this.isLocked = false;
 
     var unlockEvent = document.createEvent('CustomEvent');
     unlockEvent.initCustomEvent('unlocked', true, true, null);
@@ -543,6 +545,8 @@ LockScreen.prototype = {
       style.MozTransform = 'translateY(0)';
     }
     changeDisplayState('locked');
+
+    this.isLocked = true;
 
     var lockEvent = document.createEvent('CustomEvent');
     lockEvent.initCustomEvent('locked', true, true, null);
