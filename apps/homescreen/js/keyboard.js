@@ -100,8 +100,8 @@ const IMEManager = {
         if (keyboardSettingGroupKeys.indexOf(key) !== i)
           return;
 
-        dump(
-          'Having trouble getting setting for keyboard setting group: ' + key);
+        var msg = 'Having trouble getting setting for keyboard setting group: ';
+        dump(msg + key);
 
         if (++i === keyboardSettingGroupKeys.length) {
           completeSettingRequests();
