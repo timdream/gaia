@@ -2,11 +2,16 @@
 
 // Based on Resig's pretty date
 function prettyDate(time) {
+console.log(new Date());
+console.log('prettyDate: '+ time);
   var diff = (Date.now() - time) / 1000;
   var day_diff = Math.floor(diff / 86400);
 
-  if (isNaN(day_diff) || day_diff < 0 || day_diff >= 31)
-    return '';
+  if (diff < 0)
+    return 'from the future?';
+
+  if (isNaN(diff) || isNaN(day_diff))
+    return 'incorrect time';
 
   return day_diff == 0 && (
     diff < 60 && 'just now' ||
@@ -16,7 +21,9 @@ function prettyDate(time) {
     diff < 86400 && Math.floor(diff / 3600) + ' hours ago') ||
     day_diff == 1 && 'Yesterday' ||
     day_diff < 7 && day_diff + ' days ago' ||
-    day_diff < 31 && Math.ceil(day_diff / 7) + ' weeks ago';
+    day_diff < 31 && Math.ceil(day_diff / 7) + ' weeks ago' ||
+    day_diff < 365 && Math.ceil(day_diff / 30) + ' months ago' ||
+    Math.ceil(day_diff / 365) + ' years ago';
 }
 
 
@@ -382,7 +389,14 @@ var ConversationView = {
         break;
 
       case 'received':
-        var msg = evt.message;
+
+        // XXX: saving the SMS into messagesHack ourselves
+        // instead of getting the message from SMS Database
+        var msg = {};
+        for (var key in evt.message) {
+          msg[key] = evt.message[key];
+        }
+        msg.timestamp = evt.message.timestamp.getTime();
         messagesHack.unshift(msg);
 
         console.log('Received message from ' + msg.sender + ': ' + msg.body);
