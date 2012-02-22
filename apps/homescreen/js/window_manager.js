@@ -45,6 +45,7 @@ function Window(application, id) {
   element.setAttribute('mozbrowser', 'true');
   element.id = 'window_' + id;
   element.className = 'appWindow';
+  element.src = application.url;
 
   this.application = application;
   this.id = id;
@@ -55,7 +56,6 @@ Window.prototype = {
   element: null,
 
   _active: false,
-  _loaded: false,
   setActive: function window_setActive(active) {
     if (this._active === active)
       return;
@@ -81,10 +81,6 @@ Window.prototype = {
       sprite.crossFade();
 
       var element = this.element;
-      if (!this._loaded) {
-        element.src = this.application.url;
-        this._loaded = true;
-      }
       element.focus();
       element.contentWindow.postMessage({
         message: 'visibilitychange',
