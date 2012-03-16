@@ -191,7 +191,6 @@ var LockScreen = {
           this.update(function lockScreenCallback() {
             ScreenManager.turnScreenOn();
           });
-          //ScreenManager.turnScreenOn();
         }
 
         e.preventDefault();
