@@ -12,10 +12,14 @@ var MessageManager = {
       var cursor = request.result;
       if (!cursor.message) {
         callback(messages);
+console.log(messages.length);
+console.log('onsuccess');
         return;
       }
 
       messages.push(cursor.message);
+console.log(messages.length);
+console.log('continue');
       cursor.continue();
     };
 
@@ -171,7 +175,7 @@ var ConversationListView = {
       }
   } catch(e) {
       alert(conversation);
-  } 
+  }
     }
   },
 
@@ -375,7 +379,8 @@ var ConversationView = {
 
       case 'received':
         var msg = evt.message;
-        messagesHack.unshift(msg);
+        if (messagesHack)
+          messagesHack.unshift(msg);
 
         window.setTimeout(function() {
           ConversationView.showConversation(ConversationView.filter);
