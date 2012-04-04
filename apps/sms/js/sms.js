@@ -262,6 +262,7 @@ var ConversationView = {
     }).bind(this));
   },
 
+  /* Doesn't work with -moz-box scrolling divs */
   scrollViewToBottom: function cv_scrollViewToBottom(animateFromPos) {
     if (!animateFromPos) {
       this.view.scrollTop = this.view.scrollHeight;
@@ -288,14 +289,6 @@ var ConversationView = {
     input.style.height = null;
     input.style.height = input.scrollHeight + 4 + 'px';
 
-    var newHeight = input.getBoundingClientRect().height;
-    var bottomToolbarHeight = (newHeight + 32) + 'px';
-    var bottomToolbar =
-      document.getElementById('view-bottom-toolbar');
-
-    bottomToolbar.style.height = bottomToolbarHeight;
-
-    this.view.style.bottom = bottomToolbarHeight;
     this.scrollViewToBottom();
   },
 

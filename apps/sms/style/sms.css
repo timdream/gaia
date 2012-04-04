@@ -29,6 +29,26 @@ body {
   src: url('fonts/Open-Sans-Semibold.woff');
 }
 
+.hbox {
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  width: 100%;
+}
+
+.vbox {
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  height: 100%;
+}
+
+.box-item {
+  -moz-box-flex: 1;
+}
+
+.box-fixed-item {
+  -moz-box-flex: 0;
+}
+
 .panel {
   position: absolute;
   display: block;
@@ -36,6 +56,17 @@ body {
   height: 100%;
   -moz-transition: -moz-transform 0.3s ease;
   top: 0;
+}
+
+/*
+  bug 668837:
+    Nested div needed here because absolute positioned blocks
+    cannot be -moz-box.
+*/
+.panel > .hbox,
+.panel > .vbox {
+  width: 100%;
+  height: 100%;
 }
 
 body.conversation .panel {
@@ -49,8 +80,6 @@ body.transition-back #view {
 
 .toolbar {
   -moz-box-sizing: border-box;
-  position: absolute;
-  display: block;
   left: 0;
   right: 0;
   background-color: #fff;
@@ -60,7 +89,6 @@ body.transition-back #view {
 }
 
 .toolbar-top {
-  top: 0;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
   height: 64px;
@@ -68,25 +96,10 @@ body.transition-back #view {
 }
 
 .toolbar-bottom {
-  bottom: 0;
   height: 80px;
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
   border-top: solid 3px #9b9b9b;
-}
-
-.toolbar-panel {
-  display: -moz-box;
-  -moz-box-orient: horizontal;
-  width: 100%;
-}
-
-.toolbar-panel-item {
-  -moz-box-flex: 1;
-}
-
-.toolbar-panel-fixed-item {
-  -moz-box-flex: 0;
 }
 
 /* media queries for removing rounded border when keyboard is shown */
@@ -100,9 +113,6 @@ body.transition-back #view {
 }
 
 .list {
-  position: absolute;
-  top: 64px;
-  bottom: 80px;
   left: 0;
   right: 0;
   overflow-y: auto;
@@ -233,7 +243,6 @@ input, textarea {
   margin-top: 14px;
   margin-left: 32px;
   height: 48px;
-  line-height: 48px;
   font-size: 24px;
   font-weight: bold;
   width: -moz-calc(100% - 32px - 32px);
@@ -241,14 +250,11 @@ input, textarea {
 
 #view-back {
   padding-left: 40px;
-  background: url(./images/top-navibar-left-arrow.png) no-repeat 16px 50%;
-  line-height: 60px;
+  background: url(./images/top-navibar-left-arrow.png) no-repeat 20px 50%;
+  line-height: 64px;
   font-size: 18px;
   font-weight: 600;
   color: #828282;
-
-  position: absolute;
-  top: 3px; left: 0;
   height: 60px;
   width: 96px;
 }
@@ -256,7 +262,7 @@ input, textarea {
 #view-name {
   font-size: 26px;
   font-weight: bold;
-  margin: 0 96px;
+  margin: 0;
   padding: 0;
   line-height: 64px;
   text-align: center;
@@ -271,20 +277,17 @@ body.conversation-new-msg #view-name {
 }
 
 #view-num {
-  display: block;
   margin: 10px 152px;
   padding: 0 20px;
   -moz-box-sizing: border-box;
   width: -moz-calc(100% - 300px);
 }
 
-body.conversation-new-msg #view-num {
-  display: block;
+body:not(.conversation-new-msg) #view-num {
+  display: none;
 }
 
 #view-edit-container {
-  position: absolute;
-  top: 0; right: 0;
   height: 60px;
   width: 96px;
 }
@@ -424,9 +427,8 @@ body.conversation-new-msg #view-num {
   font-size: 24px;
   font-weight: bold;
   line-height: 44px;
-  margin: 14px 0 0 16px;
+  margin: 14px 16px;
   overflow: auto;
-  overflow-x: auto;
   min-height: 50px;
   max-height: 200px;
 }
