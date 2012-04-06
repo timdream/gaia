@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html mozapptheme="true">
 <head>
   <meta charset="utf-8">
   <title>UI tests</title>
@@ -8,17 +8,17 @@
   <script type="text/javascript" src="js/uitest.js"></script>
 </head>
 <body>
-  <div id="tests" class="panel">
-    <div class="toolbar toolbar-top">
-      <p class="toolbar-title">UI Tests</p>
-    </div>
-    <ul class="list" id="test-list">
-      <li data-name="empty">Empty test</li>
-      <li data-name="keyboard">Keyboard test</li>
-    </ul>
-  </div>
-  <div id="test-panel" class="panel">
+  <section id="tests">
+    <header>
+      <h1>UI Tests</h1>
+    </header>
+    <menu id="test-list">
+      <p data-name="empty">Empty test</p>
+      <p data-name="keyboard">Keyboard test</p>
+    </menu>
+  </section>
+  <section id="test-panel">
     <iframe id="test-iframe"></iframe>
-  </div>
+  </section>
 </body>
 </html>

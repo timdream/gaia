@@ -1,4 +1,4 @@
-html, body {
+html[mozapptheme="true"] {
   height: 100%;
   padding: 0;
   margin: 0;
@@ -6,7 +6,13 @@ html, body {
   overflow-y: hidden;
 }
 
-body {
+html[mozapptheme="true"] body {
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  overflow-x: hidden;
+  overflow-y: hidden;
+
   margin: 0;
   width: 100%;
   height: 100%;
@@ -29,7 +35,7 @@ body {
   src: url('fonts/Open-Sans-Semibold.woff');
 }
 
-.panel {
+html[mozapptheme="true"] section {
   position: absolute;
   display: block;
   width: 100%;
@@ -38,7 +44,7 @@ body {
   top: 0;
 }
 
-body.test .panel {
+body.test section {
   -moz-transform: translateX(-100%);
 }
 
@@ -84,7 +90,8 @@ body.test #tests {
   -moz-transition: -moz-transform 0.3s ease, width 0s linear 0.5s;
 }
 
-.toolbar {
+html[mozapptheme="true"] section > header,
+html[mozapptheme="true"] section > footer {
   -moz-box-sizing: border-box;
   position: absolute;
   display: block;
@@ -94,9 +101,9 @@ body.test #tests {
   background: url("images/app-texture.png") repeat scroll 50% 50%, -moz-linear-gradient(center top , rgb(244, 244, 244), rgb(234, 234, 234)) repeat scroll 0% 0% transparent;
   margin: 0;
   padding: 0;
-}
 
-.toolbar-top {
+
+html[mozapptheme="true"] section > header {
   top: 0;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
@@ -104,21 +111,41 @@ body.test #tests {
   border-bottom: solid 3px #9b9b9b;
 }
 
-.list {
+html[mozapptheme="true"] section > footer {
+  bottom: 0;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  height: 64px;
+  border-top: solid 3px #9b9b9b;
+}
+
+html[mozapptheme="true"] section > menu {
   position: absolute;
   top: 64px;
-  bottom: 0;
+  bottom: 64px;
   left: 0;
   right: 0;
+  padding: 0;
+  margin: 0;
   overflow-y: auto;
   -moz-user-select: none;
 
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
+  background: url("images/app-texture.png") repeat scroll 50% 50%, rgb(243, 243, 243);
 }
 
+html[mozapptheme="true"] section > menu:first-child {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  top: 0;
+}
 
-.toolbar-title {
+html[mozapptheme="true"] section > menu:last-child {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  bottom: 0;
+}
+
+html[mozapptheme="true"] section > header > h1 {
   font-size: 26px;
   font-weight: bold;
   margin: 0;
@@ -131,16 +158,11 @@ body.test #tests {
   white-space: nowrap;
 }
 
-#test-list {
-    background: url("images/app-texture.png") repeat scroll 50% 50%, rgb(243, 243, 243);
-    margin: 0;
-    padding: 0;
-}
-
-#test-list > li {
+html[mozapptheme="true"] section > menu > * {
   -moz-box-sizing: border-box;
   height: 56px;
   padding: 4px 16px;
+  margin: 0;
   border-top: 1px solid hsla(207,22%,92%,1);
   border-bottom: 1px solid hsla(223,7%,81%,1);
 
@@ -150,7 +172,7 @@ body.test #tests {
   font-weight: 600;
 }
 
-#test-list > li:active {
+html[mozapptheme="true"] section > menu > *:active {
   background: hsla(35,100%,50%,.2);
 }
 
