@@ -1,0 +1,160 @@
+/*
+
+This is the proposed system-wide theme to ship as browser default.
+
+They all begin with html[mozapptheme="true"] and apply to elements
+directly instead of classNames.
+
+Web authors can opt-in these application theme with <html mozapptheme="true">.
+Since this is a opt-in style, it won't break the current web & force people to do CSS resets.
+
+In the future this should extend to media queries
+in order for apps to run on browsers without apptheme:
+
+@media not (-moz-apptheme) {
+  ... apply my application style here ...
+}
+
+<link media="not (-moz-apptheme)" rel="stylesheet" type="text/css" href="myapptheme.css">
+
+or in Javascript:
+
+if (! 'mozapptheme' in document.documentElement) {
+  ... bind my own app interaction here ...
+}
+
+*/
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url('fonts/Open-Sans.woff');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-weight: bold;
+  src: url('fonts/Open-Sans-Bold.woff');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-weight: 600;
+  src: url('fonts/Open-Sans-Semibold.woff');
+}
+
+html[mozapptheme="true"] {
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+html[mozapptheme="true"] body {
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  overflow-x: hidden;
+  overflow-y: hidden;
+
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  font-family: 'Open Sans', sans-serif;
+}
+
+html[mozapptheme="true"] section {
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 100%;
+  -moz-transition: -moz-transform 0.3s ease;
+  top: 0;
+}
+
+html[mozapptheme="true"] section > header,
+html[mozapptheme="true"] section > footer {
+  -moz-box-sizing: border-box;
+  position: absolute;
+  display: block;
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  background: url("images/app-texture.png") repeat scroll 50% 50%, -moz-linear-gradient(center top , rgb(244, 244, 244), rgb(234, 234, 234)) repeat scroll 0% 0% transparent;
+  margin: 0;
+  padding: 0;
+}
+
+html[mozapptheme="true"] section > header {
+  top: 0;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  height: 64px;
+  border-bottom: solid 3px #9b9b9b;
+}
+
+html[mozapptheme="true"] section > header > h1 {
+  font-size: 26px;
+  font-weight: bold;
+  margin: 0;
+  padding: 0;
+  line-height: 64px;
+  text-align: center;
+  color: rgb(51, 51, 51);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+html[mozapptheme="true"] section > footer {
+  bottom: 0;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  height: 64px;
+  border-top: solid 3px #9b9b9b;
+}
+
+html[mozapptheme="true"] section > menu {
+  position: absolute;
+  top: 64px;
+  bottom: 64px;
+  left: 0;
+  right: 0;
+  padding: 0;
+  margin: 0;
+  overflow-y: auto;
+  -moz-user-select: none;
+
+  background: url("images/app-texture.png") repeat scroll 50% 50%, rgb(243, 243, 243);
+}
+
+html[mozapptheme="true"] section > menu:first-child {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  top: 0;
+}
+
+html[mozapptheme="true"] section > menu:last-child {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  bottom: 0;
+}
+
+html[mozapptheme="true"] section > menu > * {
+  -moz-box-sizing: border-box;
+  height: 56px;
+  padding: 4px 16px;
+  margin: 0;
+  border-top: 1px solid hsla(207,22%,92%,1);
+  border-bottom: 1px solid hsla(223,7%,81%,1);
+
+  font-size: 26px;
+  color: rgb(18, 47, 64);
+  line-height: 48px;
+  font-weight: 600;
+}
+
+html[mozapptheme="true"] section > menu > *:active {
+  background: hsla(35,100%,50%,.2);
+}
