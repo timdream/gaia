@@ -1,0 +1,167 @@
+html, body {
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  font-family: 'Open Sans', sans-serif;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url('fonts/Open-Sans.woff');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-weight: bold;
+  src: url('fonts/Open-Sans-Bold.woff');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-weight: 600;
+  src: url('fonts/Open-Sans-Semibold.woff');
+}
+
+.panel {
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 100%;
+  -moz-transition: -moz-transform 0.3s ease;
+  top: 0;
+}
+
+.toolbar {
+  -moz-box-sizing: border-box;
+  position: absolute;
+  display: block;
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  background: url("images/app-texture.png") repeat scroll 50% 50%, -moz-linear-gradient(center top , rgb(244, 244, 244), rgb(234, 234, 234)) repeat scroll 0% 0% transparent;
+  margin: 0;
+  padding: 0;
+}
+
+.toolbar-top {
+  top: 0;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  height: 64px;
+  border-bottom: solid 3px #9b9b9b;
+}
+
+.list {
+  position: absolute;
+  top: 64px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow-y: auto;
+  -moz-user-select: none;
+
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+
+.toolbar-title {
+  font-size: 26px;
+  font-weight: bold;
+  margin: 0;
+  padding: 0;
+  line-height: 64px;
+  text-align: center;
+  color: rgb(51, 51, 51);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+#mms-list {
+  background: url('images/conversation-view-list-bg.png');
+  margin: 0;
+  padding: 0;
+}
+
+#mms-list > div {
+  background: url("images/app-texture.png") repeat scroll 50% 50%, rgb(191, 204, 215);
+  margin: 8px;
+  min-height: 64px;
+  border-radius: 8px;
+  position: relative;
+  padding: 16px;
+  -moz-box-sizing: border-box;
+}
+
+#mms-list > div.sender {
+  padding-left: 96px;
+}
+
+#mms-list .photo {
+  position: absolute;
+  top: 0;
+  width: 80px;
+  height: 80px;
+  margin: 8px;
+  border-radius: 5px;
+  box-shadow: inset 0 1px 0 #ddd, 0 1px 0 #999;
+  overflow: hidden;
+  background-color: #ccc;
+  z-index: 2;
+}
+
+#mms-list > div.sender .photo {
+  left: 0;
+}
+
+#mms-list > div.receiver .photo {
+  right: 0;
+}
+
+#mms-list .photo img {
+  width: 100%;
+}
+
+#mms-list > div .text {
+  font-size: 24px;
+  font-weight: 600;
+  color: rgb(18, 47, 64);
+  text-shadow: 0 1px 0 #ddd;
+  line-height: 32px;
+}
+
+#mms-list > div .attach-image {
+  max-width: 100%;
+  display: block;
+  margin: 0 auto;
+}
+
+#mms-list > div .time {
+  font-size: 18px;
+  line-height: 23px;
+  color: rgb(62, 86, 106);
+  text-shadow: 0 1px 0 #ddd;
+}
+
+#mms-list > div::before {
+  content: '';
+  display: block;
+  width: 11.2px; /* 8px * sqrt(2) */
+  height: 11.2px;
+  position: absolute;
+  top: 20px;
+  background: url("images/app-texture.png") repeat scroll 50% 50%, rgb(191, 204, 215);
+  -moz-transform: rotate(45deg);
+}
+
+#mms-list > div.sender::before {
+  left: -5.6px;
+}
