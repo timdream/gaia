@@ -28,7 +28,7 @@
 
   var SpellChecker = function spellchecker() {
     var settings;
-    var dictionary;
+    var dictionaryWorker;
 
     var currentWord = '';
 
@@ -37,47 +37,22 @@
       var affData;
       var dicData;
 
-      var load = function load() {
-        if (!affData || !dicData || typeof Typo == 'undefined')
+      dictionaryWorker = new Worker(settings.path + '/typo-js.worker.js');
+      dictionaryWorker.onmessage = function (evt) {
+        if (typeof evt.data == 'string') {
+          debug(evt.data);
           return;
-        debug('load');
-        dictionary = new Typo(settings.lang, affData, dicData);
+        }
+        debug('got dictionary worker msg');
+        var candidates = [];
+        evt.data.forEach(function (word) {
+          candidates.push([word]);
+        });
+        settings.sendCandidates(candidates);
       };
 
-      /* load typo.js */
-      var script = document.createElement('script');
-      script.src = settings.path + '/typo.js';
-      script.addEventListener('load', function typoJSLoaded() {
-        script.removeEventListener('load', typoJSLoaded);
-        load();
-      });
-      document.body.appendChild(script);
-
-      /* load dictionaries */
-      var affXhr = new XMLHttpRequest();
-      affXhr.open('GET', (settings.path + '/dictionaries/' + settings.lang + '/' + settings.lang + '.aff'), true);
-      affXhr.overrideMimeType('text/plain; charset=utf-8');
-      affXhr.onreadystatechange = function xhrReadystatechange(ev) {
-        if (affXhr.readyState !== 4)
-          return;
-        affData = affXhr.responseText;
-        load();
-        affXhr = null;
-      }
-      affXhr.send();
-
-      var dicXhr = new XMLHttpRequest();
-      dicXhr.open('GET', (settings.path + '/dictionaries/' + settings.lang + '/' + settings.lang + '.dic'), true);
-      dicXhr.responseType = 'text';
-      dicXhr.overrideMimeType('text/plain; charset=utf-8');
-      dicXhr.onreadystatechange = function xhrReadystatechange(ev) {
-        if (dicXhr.readyState !== 4)
-          return;
-        dicData = dicXhr.responseText;
-        load();
-        dicXhr = null;
-      }
-      dicXhr.send();
+      // first postMessage starts the loading
+      dictionaryWorker.postMessage(settings.lang);
     };
 
     var empty = function spellchecker_empty() {
@@ -88,16 +63,7 @@
     this.empty = empty;
 
     var doSpellCheck = function () {
-      setTimeout(function spellcheckTheWord() {
-        debug('output suggestion.');
-
-        var suggestions = dictionary.suggest(currentWord);
-        var candidates = [];
-        suggestions.forEach(function (word) {
-          candidates.push([word]);
-        });
-        settings.sendCandidates(candidates);
-      });
+      dictionaryWorker.postMessage(currentWord);
     };
 
     this.click = function spellchecker_click(keyCode) {
