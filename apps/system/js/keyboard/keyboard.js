@@ -16,6 +16,12 @@ const IMEManager = {
     return this.IMEngines[Keyboards[this.currentKeyboard].imEngine];
   },
 
+  // Spell checkers are self registering here.
+  SpellCheckers: {},
+  get currentSpellChecker() {
+    return this.SpellCheckers[Keyboards[this.currentKeyboard].spellchecker];
+  },
+
   currentKeyboard: '',
   currentKeyboardMode: '',
   // keyboard layouts selected by the user from settings
@@ -441,9 +447,14 @@ const IMEManager = {
 
   loadKeyboard: function km_loadKeyboard(name) {
     var keyboard = Keyboards[name];
-    if (keyboard.type !== 'ime')
-      return;
+    if (keyboard.type == 'ime')
+      this.loadIMEngine(name);
+    if (keyboard.spellchecker)
+      this.loadSpellChecker(name);
+  },
 
+  loadIMEngine: function km_loadIMEngine(name) {
+    var keyboard = Keyboards[name];
     var sourceDir = './js/keyboard/imes/';
     var imEngine = keyboard.imEngine;
 
@@ -486,6 +497,55 @@ const IMEManager = {
     script.addEventListener('load', (function IMEnginesLoaded() {
       var engine = this.IMEngines[imEngine];
       engine.init(glue);
+    }).bind(this));
+
+    document.body.appendChild(script);
+  },
+
+  loadSpellChecker: function km_loadSpellChecker(name) {
+    var keyboard = Keyboards[name];
+    var sourceDir = './js/keyboard/spellchecker/';
+    var spellchecker = keyboard.spellchecker;
+
+    // Same IME Engine could be load by multiple keyboard layouts
+    // keep track of it by adding a placeholder to the registration point
+    if (this.SpellCheckers[spellchecker])
+      return;
+
+    this.SpellCheckers[spellchecker] = {};
+
+    var script = document.createElement('script');
+    script.src = sourceDir + spellchecker + '/' + spellchecker + '.js';
+    var self = this;
+    var glue = {
+      path: sourceDir + spellchecker,
+      lang: keyboard.spellcheckerLang,
+      sendCandidates: function(candidates) {
+        self.showCandidates(candidates);
+      },
+      sendPendingSymbols: function(symbols) {
+        self.showPendingSymbols(symbols);
+      },
+      sendKey: function(keyCode) {
+        switch (keyCode) {
+          case KeyEvent.DOM_VK_BACK_SPACE:
+          case KeyEvent.DOM_VK_RETURN:
+            window.navigator.mozKeyboard.sendKey(keyCode, 0);
+            break;
+
+          default:
+            window.navigator.mozKeyboard.sendKey(0, keyCode);
+            break;
+        }
+      },
+      sendString: function(str) {
+        for (var i = 0; i < str.length; i++)
+          this.sendKey(str.charCodeAt(i));
+      }
+    };
+
+    script.addEventListener('load', (function SpellCheckerLoaded() {
+      this.SpellCheckers[spellchecker].init(glue);
     }).bind(this));
 
     document.body.appendChild(script);
@@ -577,6 +637,8 @@ const IMEManager = {
             return;
           }
           window.navigator.mozKeyboard.sendKey(keyCode, 0);
+          if (Keyboards[this.currentKeyboard].spellchecker)
+            this.currentSpellChecker.click(keyCode);
         }).bind(this);
 
         sendDelete(false);
@@ -676,7 +738,11 @@ const IMEManager = {
 
         var dataset = target.dataset;
         if (dataset.selection) {
-          this.currentEngine.select(target.textContent, dataset.data);
+          if (Keyboards[this.currentKeyboard].type == 'ime') {
+            this.currentEngine.select(target.textContent, dataset.data);
+          } else if (Keyboards[this.currentKeyboard].spellchecker) {
+            this.currentSpellChecker.click(target.textContent, dataset.data);
+          }
           delete this.currentKey.dataset.active;
           delete this.currentKey;
 
@@ -750,6 +816,8 @@ const IMEManager = {
           case this.DOT_COM:
             ('.com').split('').forEach((function sendDotCom(key) {
               window.navigator.mozKeyboard.sendKey(0, key.charCodeAt(0));
+              if (Keyboards[this.currentKeyboard].spellchecker)
+                this.currentSpellChecker.click(keyCode);
             }).bind(this));
           break;
 
@@ -795,6 +863,8 @@ const IMEManager = {
             }
 
             window.navigator.mozKeyboard.sendKey(keyCode, 0);
+            if (Keyboards[this.currentKeyboard].spellchecker)
+              this.currentSpellChecker.click(keyCode);
           break;
 
           default:
@@ -805,6 +875,8 @@ const IMEManager = {
             }
 
             window.navigator.mozKeyboard.sendKey(0, keyCode);
+            if (Keyboards[this.currentKeyboard].spellchecker)
+              this.currentSpellChecker.click(keyCode);
 
             if (this.isUpperCase &&
                 !this.isUpperCaseLocked && !this.currentKeyboardMode) {
@@ -1029,13 +1101,16 @@ const IMEManager = {
     // insert candidate panel if the keyboard layout needs it
 
     var ime = this.ime;
-    if (layout.needsCandidatePanel) {
+    if (layout.needsCandidatePanel || layout.spellchecker) {
       ime.insertBefore(this.candidatePanelToggleButton, ime.firstChild);
       ime.insertBefore(this.candidatePanel, ime.firstChild);
       ime.insertBefore(this.pendingSymbolPanel, ime.firstChild);
       this.showPendingSymbols('');
       this.showCandidates([], true);
-      this.currentEngine.empty();
+      if (layout.needsCandidatePanel)
+        this.currentEngine.empty();
+      if (layout.spellchecker)
+        this.currentSpellChecker.empty();
     }
   },
 

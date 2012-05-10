@@ -40,6 +40,8 @@ const Keyboards = {
   },
   en: {
     type: 'keyboard',
+    spellchecker: 'typo-js',
+    spellcheckerLang: 'en_US',
     label: 'English',
     menuLabel: 'English',
     alt: {
