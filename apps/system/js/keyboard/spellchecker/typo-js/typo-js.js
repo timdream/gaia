@@ -51,8 +51,51 @@
         settings.sendCandidates(candidates);
       };
 
-      // first postMessage starts the loading
-      dictionaryWorker.postMessage(settings.lang);
+      /* load dictionaries */
+      var lang = settings.lang;
+
+      dictionaryWorker.postMessage(
+        {
+          name: 'lang',
+          value: lang
+        }
+      );
+
+      var affXhr = new XMLHttpRequest();
+      affXhr.open('GET', (settings.path + '/dictionaries/' + lang + '/' + lang + '.aff'), true);
+      affXhr.overrideMimeType('text/plain; charset=utf-8');
+      affXhr.onreadystatechange = function xhrReadystatechange(ev) {
+        if (affXhr.readyState !== 4)
+          return;
+        debug('aff file loaded, length: ' + affXhr.responseText.length);
+        dictionaryWorker.postMessage(
+          {
+            name: 'affData',
+            value: affXhr.responseText
+          }
+        );
+        affXhr = null;
+      }
+      affXhr.send();
+
+      var dicXhr = new XMLHttpRequest();
+      dicXhr.open('GET', (settings.path + '/dictionaries/' + lang + '/' + lang + '.dic'), true);
+      dicXhr.responseType = 'text';
+      dicXhr.overrideMimeType('text/plain; charset=utf-8');
+      dicXhr.onreadystatechange = function xhrReadystatechange(ev) {
+        if (dicXhr.readyState !== 4)
+          return;
+        debug('dic file loaded, length: ' + dicXhr.responseText.length);
+        dictionaryWorker.postMessage(
+          {
+            name: 'dicData',
+            value: dicXhr.responseText
+          }
+        );
+        dicXhr = null;
+      }
+      dicXhr.send();
+
     };
 
     var empty = function spellchecker_empty() {

@@ -3,6 +3,7 @@
 var dictionary;
 var affData;
 var dicData;
+var lang;
 
 var debug = function(str) {
   self.postMessage('Worker: ' + str);
@@ -11,9 +12,9 @@ var debug = function(str) {
 /* load typo.js */
 importScripts('typo.js');
 
-function load(lang) {
+function load() {
   debug('Load');
-  if (!affData || !dicData || typeof Typo == 'undefined')
+  if (!affData || !dicData || !lang || typeof Typo == 'undefined')
     return;
 
   dictionary = new Typo(lang, affData, dicData);
@@ -25,41 +26,15 @@ function load(lang) {
   dicData = undefined;
 };
 
-function loadDic(lang) {
-  debug('LoadDic: ' + lang);
-
-  /* load dictionaries */
-  var affXhr = new XMLHttpRequest();
-  affXhr.open('GET', ('./dictionaries/' + lang + '/' + lang + '.aff'), true);
-  affXhr.overrideMimeType('text/plain; charset=utf-8');
-  affXhr.onreadystatechange = function xhrReadystatechange(ev) {
-    if (affXhr.readyState !== 4)
-      return;
-    affData = affXhr.responseText;
-    debug('aff file loaded, length: ' + affData.length);
-    load(lang);
-    affXhr = null;
-  }
-  affXhr.send();
-
-  var dicXhr = new XMLHttpRequest();
-  dicXhr.open('GET', ('./dictionaries/' + lang + '/' + lang + '.dic'), true);
-  dicXhr.responseType = 'text';
-  dicXhr.overrideMimeType('text/plain; charset=utf-8');
-  dicXhr.onreadystatechange = function xhrReadystatechange(ev) {
-    if (dicXhr.readyState !== 4)
-      return;
-    dicData = dicXhr.responseText;
-    debug('dic file loaded, length: ' + dicData.length);
-    load(lang);
-    dicXhr = null;
-  }
-  dicXhr.send();
-}
-
 self.onmessage = function (evt) {
-  if (!dictionary)
-    return loadDic(evt.data);
+  if (typeof evt.data !== 'string') {
+    var data = evt.data;
+    debug('Got data: ' + data.name + ', length: ' + data.value.length);
+    self[data.name] = data.value;
+    load();
+    return;
+  }
+
   debug('Got word: ' + evt.data);
   self.postMessage(dictionary.suggest(evt.data));
 };
