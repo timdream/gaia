@@ -128,7 +128,7 @@
         settings.sendKey(KeyEvent.DOM_VK_BACK_SPACE);
       }
 
-      settings.sendString(text);
+      settings.sendString(text + ' ');
       empty();
       settings.sendCandidates([]);
     };

@@ -741,7 +741,7 @@ const IMEManager = {
           if (Keyboards[this.currentKeyboard].type == 'ime') {
             this.currentEngine.select(target.textContent, dataset.data);
           } else if (Keyboards[this.currentKeyboard].spellchecker) {
-            this.currentSpellChecker.click(target.textContent, dataset.data);
+            this.currentSpellChecker.select(target.textContent, dataset.data);
           }
           delete this.currentKey.dataset.active;
           delete this.currentKey;
