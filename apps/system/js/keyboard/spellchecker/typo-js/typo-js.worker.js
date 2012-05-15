@@ -36,5 +36,5 @@ self.onmessage = function (evt) {
   }
 
   debug('Got word: ' + evt.data);
-  self.postMessage(dictionary.suggest(evt.data));
+  self.postMessage(dictionary.suggest(evt.data, 10, false));
 };
