@@ -1,6 +1,5 @@
 const Keyboards = {
   alternateLayout: {
-    type: 'keyboard',
     keys: [
       [{ value: '1' }, { value: '2' }, { value: '3' } , { value: '4' }, { value: '5' } , { value: '6' }, { value: '7' } , { value: '8' }, { value: '9' }, { value: '0' }],
       [{ value: '@' }, { value: '#' }, { value: '$' }, { value: '%' }, { value: '&' } , { value: '*' }, { value: '-' }, { value: '+' }, { value: '(' }, { value: ')' }],
@@ -9,7 +8,6 @@ const Keyboards = {
     ]
   },
   symbolLayout: {
-    type: 'keyboard',
     keys: [
       [{ value: '`' }, { value: '~' }, { value: '_' }, { value: '^' }, { value: '±' }, { value: '|' }, { value: '[' }, { value: ']' }, { value: '{' }, { value: '}' }],
       [{ value: '°' }, { value: '²' }, { value: '³' }, { value: '©' }, { value: '®' }, { value: '§' }, { value: '<' }, { value: '>' }, { value: '«' }, { value: '»' }],
@@ -18,7 +16,6 @@ const Keyboards = {
     ]
   },
   numberLayout: {
-    type: 'keyboard',
     width: 9,
     keys: [
       [{ value: '1', ratio: 3},{ value: '2', ratio: 3},{ value: '3', ratio: 3}],
@@ -28,7 +25,6 @@ const Keyboards = {
     ]
   },
   telLayout: {
-    type: 'keyboard',
     width: 9,
     keys: [
       [{ value: '1', ratio: 3},{ value: '2', ratio: 3},{ value: '3', ratio: 3}],
@@ -39,9 +35,11 @@ const Keyboards = {
     ]
   },
   en: {
-    type: 'keyboard',
     label: 'English',
     menuLabel: 'English',
+    needsCandidatePanel: true,
+    suggestionEngine: 'typo-js',
+    suggestionEngineLang: 'en_US',
     alt: {
       a: 'àáâãäåāæ',
       c: 'çćč',
@@ -61,7 +59,6 @@ const Keyboards = {
     ]
   },
   fr: {
-    type: 'keyboard',
     label: 'French',
     menuLabel: 'français',
     alt: {
@@ -83,7 +80,6 @@ const Keyboards = {
     ]
   },
   de: {
-    type: 'keyboard',
     label: 'German',
     menuLabel: 'Deutsch',
     alt: {
@@ -119,7 +115,6 @@ const Keyboards = {
     ]
   },
   nb: {
-    type: 'keyboard',
     label: 'Norwegian Bokmal',
     menuLabel: 'Norsk',
     alt: {
@@ -149,7 +144,6 @@ const Keyboards = {
     ]
   },
   ru: {
-    type: 'keyboard',
     label: 'Russian',
     menuLabel: 'русский',
     alt: {
@@ -164,7 +158,6 @@ const Keyboards = {
     ]
   },
   'sr-Cyrl': {
-    type: 'keyboard',
     label: 'Serbian (Cyrillic)',
     menuLabel: 'српска ћирилица',
     alt: {
@@ -179,7 +172,6 @@ const Keyboards = {
     ]
   },
   sk: {
-    type: 'keyboard',
     label: 'Slovak',
     menuLabel: 'Slovenčina',
     alt: {
@@ -205,7 +197,6 @@ const Keyboards = {
     ]
   },
   tr: {
-    type: 'keyboard',
     label: 'Turkish',
     menuLabel: 'Türkçe',
     upperCase: {
@@ -230,7 +221,6 @@ const Keyboards = {
     ]
   },
   'en-Dvorak': {
-    type: 'keyboard',
     label: 'English - Dvorak',
     menuLabel: 'Dvorak',
     alt: {
@@ -256,7 +246,6 @@ const Keyboards = {
     ]
   },
   'zh-Hant-Zhuyin': {
-    type: 'ime',
     label: 'Chinese - Traditional - Zhuyin',
     menuLabel: '繁體注音輸入',
     needsCandidatePanel: true,
@@ -275,7 +264,6 @@ const Keyboards = {
     ]
   },
   'zh-Hans-Pinyin': {
-    type: 'ime',
     label: 'Chinese - Simplified & Traditional - Pinyin',
     menuLabel: '拼音输入',
     needsCandidatePanel: true,
@@ -295,7 +283,6 @@ const Keyboards = {
     ]
   },
   'zh-Hans-Pinyin-tr': {
-    type: 'keyboard',
     width: 10,
     needsCandidatePanel: true,
     disableAlternateLayout: true,
@@ -312,7 +299,6 @@ const Keyboards = {
     ]
   },
   'zh-Hans-Pinyin-number': {
-    type: 'keyboard',
     disableAlternateLayout: true,
     hidesSwitchKey: true,
     typeInsensitive: true,
@@ -324,7 +310,6 @@ const Keyboards = {
     ]
   },
   'zh-Hans-Pinyin-symbol0': {
-    type: 'keyboard',
     disableAlternateLayout: true,
     hidesSwitchKey: true,
     typeInsensitive: true,
@@ -336,7 +321,6 @@ const Keyboards = {
     ]
   },
   'zh-Hans-Pinyin-symbol1': {
-    type: 'keyboard',
     disableAlternateLayout: true,
     hidesSwitchKey: true,
     typeInsensitive: true,
@@ -348,7 +332,6 @@ const Keyboards = {
     ]
   },
   'zh-Hans-Pinyin-symbol2': {
-    type: 'keyboard',
     disableAlternateLayout: true,
     hidesSwitchKey: true,
     typeInsensitive: true,
@@ -360,7 +343,6 @@ const Keyboards = {
     ]
   },
   ar: {
-    type: 'keyboard',
     label: 'Arabic',
     menuLabel: 'العربية',
     alternateLayoutKey: '123',
@@ -412,7 +394,6 @@ const Keyboards = {
     }
   },
   el: {
-    type: 'keyboard',
     label: 'Greek',
     menuLabel: 'Greek',
     alt: {
