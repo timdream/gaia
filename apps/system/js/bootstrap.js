@@ -4,11 +4,11 @@
 'use strict';
 
 function startup() {
+  SleepMenu.init();
   LockScreen.init();
   PinLock.init();
   StatusBar.init();
   KeyHandler.init();
-  SleepMenu.init();
 
   Applications.rebuild(function start(apps) {
     // FIXME Loop over all the registered activities from the applications
@@ -36,7 +36,7 @@ function startup() {
   // https://bugzilla.mozilla.org/show_bug.cgi?id=753245
   function dumbListener2(event) {}
   window.addEventListener("devicemotion", dumbListener2, false);
-  
+
   window.setTimeout(function() {
     window.removeEventListener("devicemotion", dumbListener2, false);
   }, 2000);
@@ -72,82 +72,6 @@ var SoundManager = {
     this._timeout = window.setTimeout(function hideSound() {
       classes.remove('visible');
     }, 3000);
-  }
-};
-
-var SleepMenu = {
-  get element() {
-    delete this.element;
-    return this.element = document.getElementById('sleep');
-  },
-
-  get visible() {
-    return this.element.classList.contains('visible');
-  },
-
-  init: function sm_init() {
-    window.addEventListener('click', SleepMenu, true);
-    window.addEventListener('keyup', SleepMenu, true);
-  },
-
-  show: function sm_show() {
-    this.element.classList.add('visible');
-  },
-
-  hide: function sm_hide() {
-    this.element.classList.remove('visible');
-  },
-
-  handleEvent: function sm_handleEvent(evt) {
-    if (!this.visible)
-      return;
-
-    switch (evt.type) {
-      case 'click':
-        var action = evt.target.dataset.value;
-        switch (action) {
-          case 'airplane':
-            var settings = window.navigator.mozSettings;
-            if (settings)
-              settings.getLock().set({ 'ril.radio.disabled': true});
-
-            break;
-          case 'silent':
-            var settings = window.navigator.mozSettings;
-            if (settings)
-              settings.getLock().set({ 'phone.ring.incoming': false});
-
-            document.getElementById('silent').hidden = true;
-            document.getElementById('normal').hidden = false;
-            break;
-          case 'normal':
-            var settings = window.navigator.mozSettings;
-            if (settings)
-              settings.getLock().set({'phone.ring.incoming': true});
-
-            document.getElementById('silent').hidden = false;
-            document.getElementById('normal').hidden = true;
-            break;
-          case 'restart':
-            navigator.mozPower.reboot();
-            break;
-          case 'power':
-            navigator.mozPower.powerOff();
-            break;
-        }
-        this.hide();
-        break;
-
-      case 'keyup':
-        if (evt.keyCode == evt.DOM_VK_ESCAPE ||
-            evt.keyCode == evt.DOM_VK_HOME) {
-
-            this.hide();
-            evt.preventDefault();
-            evt.stopPropagation();
-         }
-        break;
-    }
   }
 };
 

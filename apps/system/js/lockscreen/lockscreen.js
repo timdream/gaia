@@ -40,12 +40,15 @@ var LockScreen = {
   locked: true,
 
   init: function lockscreen_init() {
-    var events = ['touchstart', 'touchmove', 'touchend',
-        'keydown', 'keyup', 'transitionend'];
+    var events = ['touchstart', 'touchmove', 'touchend', 'transitionend'];
     AddEventHandlers(LockScreen.overlay, this, events);
     this.update();
 
     this.notification.addEventListener('click', this);
+
+    window.addEventListener('keydown', this, true);
+    window.addEventListener('keyup', this, true);
+
     window.addEventListener('mozChromeEvent', this);
 
     PadLock.init();
@@ -171,19 +174,19 @@ var LockScreen = {
     }
   },
 
-  onTouchStart: function lockscreen_touchStart(e) {
-    this.startY = this.lastY = e.pageY;
-    this.lastTime = e.timeStamp;
+  onTouchStart: function lockscreen_touchStart(evt) {
+    this.startY = this.lastY = evt.pageY;
+    this.lastTime = evt.timeStamp;
     this.velocity = 0;
     this.moving = true;
   },
 
-  onTouchMove: function lockscreen_touchMove(e) {
+  onTouchMove: function lockscreen_touchMove(evt) {
     if (this.moving) {
-      this.velocity = (this.lastY - e.pageY) / (e.timeStamp - this.lastTime);
-      this.lastY = e.pageY;
-      this.lastTime = e.timeStamp;
-      var dy = Math.max(0, this.startY - e.pageY);
+      this.velocity = (this.lastY - evt.pageY) / (evt.timeStamp - this.lastTime);
+      this.lastY = evt.pageY;
+      this.lastTime = evt.timeStamp;
+      var dy = Math.max(0, this.startY - evt.pageY);
       var style = this.overlay.style;
       style.MozTransition = '';
       style.MozTransform = 'translateY(' + (-dy) + 'px)';
@@ -194,7 +197,7 @@ var LockScreen = {
   FRICTION: 0.01,           // pixels/ms/ms
   UNLOCK_THRESHOLD: 0.25,    // fraction of screen height
 
-  onTouchEnd: function lockscreen_touchend(e) {
+  onTouchEnd: function lockscreen_touchend(evt) {
     if (this.moving) {
       this.moving = false;
 
@@ -205,9 +208,9 @@ var LockScreen = {
       //
       // If the user's gesture plus the distance due to the gesture velocity
       // is more than the unlock threshold times screen height,
-      // unlock the phone. Otherwise move the lockscreen back down again.
+      // unlock the phonevt. Otherwise move the lockscreen back down again.
       //
-      var dy = Math.max(0, this.startY - e.pageY);
+      var dy = Math.max(0, this.startY - evt.pageY);
       var distance = dy +
         0.5 * this.velocity * this.velocity / LockScreen.FRICTION;
 
@@ -224,10 +227,10 @@ var LockScreen = {
     }
   },
 
-  handleEvent: function lockscreen_handleEvent(e) {
-    switch (e.type) {
+  handleEvent: function lockscreen_handleEvent(evt) {
+    switch (evt.type) {
       case 'mozChromeEvent':
-        var detail = e.detail;
+        var detail = evt.detail;
         if (!this.locked || detail.type !== 'desktop-notification')
           return;
 
@@ -239,66 +242,70 @@ var LockScreen = {
         break;
 
       case 'transitionend':
-        if (this.locked) {
+        if (this.locked)
           this.lockPadlock();
-        } else {
-
-        }
         break;
 
       case 'touchstart':
-        this.onTouchStart(e.touches[0]);
+        this.onTouchStart(evt.touches[0]);
         this.overlay.setCapture(false);
-
+        evt.preventDefault();
         break;
 
       case 'touchmove':
-        this.onTouchMove(e.touches[0]);
+        this.onTouchMove(evt.touches[0]);
+        evt.preventDefault();
         break;
 
       case 'touchend':
-        this.onTouchEnd(e.changedTouches[0]);
+        this.onTouchEnd(evt.changedTouches[0]);
         document.releaseCapture();
+        evt.preventDefault();
         break;
 
       case 'keydown':
-        if (e.keyCode !== e.DOM_VK_SLEEP && e.keyCode !== e.DOM_VK_HOME)
+        /*
+        * Turn on the screen when sleep or home button is pressed.
+        * Cancel other actions bind to the buttons.
+        */
+        if (evt.keyCode !== evt.DOM_VK_SLEEP && evt.keyCode !== evt.DOM_VK_HOME)
           return;
 
-        if (navigator.mozPower.screenEnabled) {
-          if (e.keyCode == e.DOM_VK_SLEEP && !SleepMenu.visible) {
-            this._timeout = window.setTimeout(function() {
-              SleepMenu.show();
-            }, 1500);
-          }
-        } else {
-          this.update();
-          ScreenManager.turnScreenOn();
-        }
+        if (ScreenManager.screenEnabled)
+          return;
 
-        e.preventDefault();
-        e.stopPropagation();
+        this.isJustTurnedOn = true;
+        this.update();
+        ScreenManager.turnScreenOn();
+        evt.preventDefault();
+        evt.stopPropagation();
+
         break;
 
       case 'keyup':
-        if (e.keyCode != e.DOM_VK_SLEEP || SleepMenu.visible || !this._timeout)
+        /*
+        * Turn off the screen when sleep button is released.
+        *
+        */
+        if (evt.keyCode !== evt.DOM_VK_SLEEP && evt.keyCode !== evt.DOM_VK_HOME)
           return;
-        window.clearTimeout(this._timeout);
-        this._timeout = null;
 
-        if (navigator.mozPower.screenEnabled) {
-          this.update();
-          ScreenManager.turnScreenOff();
+        if (this.isJustTurnedOn) {
+          this.isJustTurnedOn = false;
+          return;
         }
 
-        e.preventDefault();
-        e.stopPropagation();
-        break;
+        if (!ScreenManager.screenEnabled ||
+            evt.keyCode !== evt.DOM_VK_SLEEP)
+          return;
 
-      default:
-        return;
+        this.update();
+        ScreenManager.turnScreenOff();
+        evt.preventDefault();
+        evt.stopPropagation();
+
+        break;
     }
-    e.preventDefault();
   }
 };
 
