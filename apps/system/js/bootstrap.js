@@ -4,7 +4,6 @@
 'use strict';
 
 function startup() {
-  ScreenManager.init();
   LockScreen.init();
   PinLock.init();
   StatusBar.init();
