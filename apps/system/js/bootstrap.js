@@ -8,7 +8,6 @@ function startup() {
   LockScreen.init();
   PinLock.init();
   StatusBar.init();
-  SoundManager.init();
   SleepMenu.init();
   SourceView.init();
   ReloadManager.init();

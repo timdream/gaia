@@ -29,7 +29,7 @@ var SoundManager = {
     window.addEventListener('keyup', this);
   },
 
-  handleEvent: function kh_handleEvent(evt) {
+  handleEvent: function soundManager_handleEvent(evt) {
     if (!ScreenManager.screenEnabled)
       return;
 
@@ -115,7 +115,7 @@ var SoundManager = {
     this.sendEvent();
   },
 
-  sendEvent: function scm_sendEvent() {
+  sendEvent: function soundManager_sendEvent() {
     var evt = document.createEvent('CustomEvent');
     evt.initCustomEvent('volumechange',
       /* canBubble */ true, /* cancelable */ false,
@@ -123,3 +123,5 @@ var SoundManager = {
     window.dispatchEvent(evt);
   }
 };
+
+SoundManager.init();
