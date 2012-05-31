@@ -19,6 +19,7 @@ var BackgroundServiceManager = (function bsm() {
 
   /* Init */
   window.addEventListener('load', function bsm_init() {
+    window.removeEventListener('load', bsm_init);
     apps.mgmt.getAll().onsuccess = function mgmt_getAll(evt) {
       evt.target.result.forEach(function app_forEach(app) {
         installedApps[app.origin] = app;
@@ -30,8 +31,8 @@ var BackgroundServiceManager = (function bsm() {
   /* XXX: https://bugzilla.mozilla.org/show_bug.cgi?id=731746
   addEventListener does't work for now (workaround follows) */
 
-  var OriginalOninstall = apps.mgmt.oninstall;
-  var OriginalOnuninstall = apps.mgmt.onuninstall;
+  var originalOninstall = apps.mgmt.oninstall;
+  var originalOnuninstall = apps.mgmt.onuninstall;
 
   apps.mgmt.oninstall = function bsm_install(evt) {
     var newapp = evt.application;
@@ -39,8 +40,8 @@ var BackgroundServiceManager = (function bsm() {
 
     open(newapp.origin);
 
-    if (OriginalOninstall)
-      OriginalOninstall.apply(this, arguments);
+    if (originalOninstall)
+      originalOninstall.apply(this, arguments);
   };
 
   apps.mgmt.onuninstall = function bsm_uninstall(evt) {
@@ -49,8 +50,8 @@ var BackgroundServiceManager = (function bsm() {
 
     close(newapp.origin);
 
-    if (OriginalOninstall)
-      OriginalOnuninstall.apply(this, arguments);
+    if (originalOninstall)
+      originalOnuninstall.apply(this, arguments);
   };
   /* // workaround */
 
