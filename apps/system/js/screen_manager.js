@@ -20,7 +20,9 @@ var ScreenManager = {
     * ScreenManager also handle the hardware keys on behalf of SleepMenu
     * XXX: Should move to the appropriate component.
     */
-    window.addEventListener('keydown', this);
+    window.addEventListener('keydown', this, this);
+    window.addEventListener('keypress', this, this);
+    window.addEventListener('keyup', this, this);
     window.addEventListener('keyup', this);
   },
 
@@ -28,13 +30,18 @@ var ScreenManager = {
     this._syncScreenEnabledValue();
     switch (evt.type) {
       case 'keydown':
-        if (evt.keyCode !== evt.DOM_VK_SLEEP && evt.keyCode !== evt.DOM_VK_HOME)
-          return;
-
+        var turnOnKeys = [evt.DOM_VK_SLEEP, evt.DOM_VK_HOME];
         this._turnOffScreenOnKeyup = true;
         if (!this.screenEnabled) {
-          this.turnScreenOn();
-          this._turnOffScreenOnKeyup = false;
+          if (turnOnKeys.indexOf(evt.keyCode) !== -1) {
+            this.turnScreenOn();
+            this._turnOffScreenOnKeyup = false;
+          } else {
+            // If the screen is turned off,
+            // we prevent all other modules from handling the event for real.
+            evt.stopImmediatePropagation();
+            evt.preventDefault();
+          }
         }
 
         if (evt.keyCode == evt.DOM_VK_SLEEP && !SleepMenu.visible) {
@@ -46,7 +53,29 @@ var ScreenManager = {
         }
 
         break;
+
+      case 'keypress':
+        if (this.screenEnabled)
+          return;
+
+        // If the screen is turned off,
+        // we prevent all other modules from handling the event for real.
+        evt.stopImmediatePropagation();
+        evt.preventDefault();
+
+        break;
+
       case 'keyup':
+        if (evt.eventPhase == evt.CAPTURING_PHASE) {
+          if (!this.screenEnabled) {
+            // If the screen is turned off,
+            // we prevent all other modules from handling the event for real.
+            evt.stopImmediatePropagation();
+            evt.preventDefault();
+          }
+          return;
+        }
+
         if (evt.keyCode != evt.DOM_VK_SLEEP)
           return;
 
