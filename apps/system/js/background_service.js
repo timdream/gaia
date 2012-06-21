@@ -95,9 +95,10 @@ var BackgroundServiceManager = (function bsm() {
     if (!app || !hasBackgroundPermission(app))
       return false;
 
-    if (frames[origin] && frames[origin][name]) {
-      frames[origin][name].src = url;
-      return frames[origin][name];
+    var framesFromOrigin = frames[origin];
+    if (framesFromOrigin && framesFromOrigin[name]) {
+      framesFromOrigin[name].src = url;
+      return framesFromOrigin[name];
     }
 
     var frame = document.createElement('iframe');
@@ -109,12 +110,12 @@ var BackgroundServiceManager = (function bsm() {
     frame.dataset.frameName = name;
     frame.dataset.frameOrigin = origin;
 
-    if (!frames[origin])
-      frames[origin] = {};
-    frames[origin][name] = frame;
+    if (!framesFromOrigin)
+      framesFromOrigin = frames[origin] = {};
+    framesFromOrigin[name] = frame;
 
     document.body.appendChild(frame);
-    return frames[origin][name];
+    return framesFromOrigin[name];
   };
 
   /* The close function will remove the iframe from DOM and
