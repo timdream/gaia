@@ -34,10 +34,28 @@
   position: absolute;
 }
 
-.lockscreen-panel.tbd {
-  color: #919191;
-  text-align: center;
-  margin-top: 50px;
+.lockscreen-panel > h1 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  margin: 0;
+  padding: 20px 28px;
+  -moz-box-sizing: border-box;
+  font-size: 32px;
+  line-height: 32px;
+  font-weight: normal;
+  text-shadow: 0 0 3px #333;
+}
+
+@media screen and (height: 800px) {
+  .lockscreen-panel > h1 {
+    height: 150px;
+    padding: 30px 42px;
+    font-size: 48px;
+    line-height: 48px;
+  }
 }
 
 #lockscreen-header {
@@ -322,20 +340,6 @@
   display: none;
 }
 
-#lockscreen-passcode-status {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100px;
-  margin: 0;
-  padding: 20px 28px;
-  -moz-box-sizing: border-box;
-  font-size: 32px;
-  line-height: 32px;
-  text-shadow: 0 0 3px #333;
-}
-
 /* Smiley */
 #lockscreen-panel-passcode::before {
   content: ': )';
@@ -365,12 +369,6 @@
 }
 
 @media screen and (height: 800px) {
-  #lockscreen-passcode-status {
-    height: 150px;
-    padding: 30px 42px;
-    font-size: 48px;
-    line-height: 48px;
-  }
   #lockscreen-panel-passcode::before {
     top: 45px;
     right: 30px;
@@ -492,6 +490,10 @@
   padding: 12px;
 }
 
+.no-calls #lockscreen-passcode-pad > a[data-key="e"] {
+  visibility: hidden;
+}
+
 .passcode-entered #lockscreen-passcode-pad > a[data-key="c"] {
   display: none;
 }
@@ -581,4 +583,59 @@
 
 [data-panel="camera"] .lockscreen-panel:not(#lockscreen-panel-camera) {
   display: none;
+}
+
+#lockscreen-emergency-call-buttons {
+  -moz-box-sizing: border-box;
+  position: absolute;
+  bottom: 0;
+  height: 264px;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+#lockscreen-emergency-call-buttons > a {
+  -moz-box-sizing: border-box;
+  display: block;
+  height: -moz-calc(50px - 10px);
+  width: -moz-calc(100% - 40px);
+  margin: 10px 20px;
+  outline: none;
+  font-size: 16px;
+  line-height: 20px;
+  color: #232323;
+  border-radius: 5px;
+  text-decoration: none;
+  padding: 10px 15px;
+  background: -moz-linear-gradient(#eeeeee, #e0e0e0);
+}
+
+#lockscreen-emergency-call-buttons > a:active {
+  color: #000;
+  background: -moz-linear-gradient(#cccccc, #c0c0c0);
+}
+
+#lockscreen-emergency-call-buttons > a[data-num=""] {
+  color: #999;
+}
+
+a#lockscreen-emergency-call-cancel,
+a#lockscreen-emergency-call-cancel:active {
+  color: #fff;
+  background: -moz-linear-gradient(#b70404, #870b0b);
+}
+
+@media screen and (height: 800px) {
+  #lockscreen-emergency-call-buttons {
+    height: 395px;
+  }
+  #lockscreen-emergency-call-buttons > a {
+    height: -moz-calc(75px - 15px);
+    width: -moz-calc(100% - 60px);
+    margin: 15px 30px;
+    font-size: 24px;
+    line-height: 30px;
+    border-radius: 7px;
+    padding: 15px 22px;
+  }
 }

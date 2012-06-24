@@ -44,7 +44,7 @@
     <!-- Accessibility -->
     <link rel="stylesheet" type="text/css" href="style/accessibility/accessibility.css">
     <script defer src="js/accessibility.js"></script>
-    
+
     <!-- List Menu -->
     <link rel="stylesheet" type="text/css" href="style/list_menu/list_menu.css">
     <script defer src="js/list_menu.js"></script>
@@ -185,7 +185,7 @@
             <div id="lockscreen-area-camera" class="lockscreen-handle"></div>
           </div>
           <div id="lockscreen-panel-passcode" class="lockscreen-panel">
-            <p id="lockscreen-passcode-status" data-l10n-id="enter-security-code">Enter Security&nbsp;Code</p>
+            <h1 data-l10n-id="enter-security-code">Enter Security&nbsp;Code</h1>
             <p id="lockscreen-passcode-code"><span></span><span></span><span></span><span></span></p>
             <div id="lockscreen-passcode-pad">
               <a href="#" data-key="1">1</a>
@@ -203,9 +203,15 @@
               <a href="#" data-key="b">⌫</a>
             </div>
           </div>
-          <div id="lockscreen-panel-emergency-call" class="lockscreen-panel tbd">
-            <h1>Emergency call panel</h1>
-            <p>To be done.</p>
+          <div id="lockscreen-panel-emergency-call" class="lockscreen-panel">
+            <h1 data-l10n-id="emergency-call">Emergency Call</h1>
+            <div id="lockscreen-emergency-call-buttons">
+              <a href="#" id="lockscreen-emergency-call-ice" data-num="" data-l10n-id="ice-number">I.C.E. Number</a>
+              <a href="#" id="lockscreen-emergency-call-emergency" data-num="112" data-l10n-id="emergencies">Emergencies</a>
+              <a href="#" id="lockscreen-emergency-call-police" data-num="911" data-l10n-id="local-polices">Local Polices</a>
+              <a href="#" id="lockscreen-emergency-call-firefighter" data-num="911" data-l10n-id="fire-fighters">Fire Fighters</a>
+              <a href="#" id="lockscreen-emergency-call-cancel" data-l10n-id="cancel-button">Cancel</a>
+            </div>
           </div>
           <div id="lockscreen-panel-camera" class="lockscreen-panel">
             <iframe id="lockscreen-camera" src="blank.html"></iframe>
