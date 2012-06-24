@@ -98,6 +98,9 @@ var LockScreen = {
     this.camera.addEventListener('load', this);
     this.camera.addEventListener('unload', this);
 
+    /* Emergency Call buttons */
+    this.emergencyCallButtons.addEventListener('click', this);
+
     /* switching panels */
     window.addEventListener('keyup', this, true);
 
@@ -124,6 +127,26 @@ var LockScreen = {
 
       self.setPassCodeEnabled(value);
     });
+
+    var telephony = window.navigator.mozTelephony;
+    if (!telephony) {
+      this.overlay.classList.add('no-calls');
+      return;
+    }
+
+    var emergencyCallSettings = [
+      { setting: 'ice', id: 'emergencyCallIce', def: '' },
+      { setting: 'emergency', id: 'emergencyCallEmergency', def: '112' },
+      { setting: 'police', id: 'emergencyCallPolice', def: '911' },
+      { setting: 'firefighter', id: 'emergencyCallFirefighter', def: '911' }
+    ];
+
+    emergencyCallSettings.forEach(function observeEmergencySettings(o) {
+      SettingsListener.observe('emergency-number.' + o.setting, o.def,
+        function emergencyNumChange(value) {
+          self[o.id].dataset.num = value;
+        });
+    }, this);
   },
 
   /*
@@ -176,6 +199,7 @@ var LockScreen = {
           case this.notification:
             this.hideNotification();
             break;
+
           case this.passcodePad:
             if (!evt.target.dataset.key)
               break;
@@ -183,6 +207,28 @@ var LockScreen = {
             // Cancel the default action of <a>
             evt.preventDefault();
             this.handlePassCodeInput(evt.target.dataset.key);
+
+            break;
+
+          case this.emergencyCallButtons:
+            var target = evt.target;
+
+            // Cancel the default action of <a>
+            evt.preventDefault();
+
+            if (target.id == 'lockscreen-emergency-call-cancel') {
+              this.switchPanel();
+              return;
+            }
+
+            if (!target.dataset.num)
+              return;
+
+            var sanitizedNumber = target.dataset.num.replace(/-/g, '');
+            // Dial the emergency number with mozTelephony API
+            // this will trigger a 'callchange' event and allow
+            // dialer call screen to pop-up.
+            navigator.mozTelephony.dial(sanitizedNumber);
 
             break;
         }
@@ -501,7 +547,10 @@ var LockScreen = {
         'notification-detail', 'notification-time',
         'area-unlock', 'area-camera',
         'passcode-code', 'passcode-pad',
-        'camera'];
+        'camera',
+        'emergency-call-buttons', 'emergency-call-ice',
+        'emergency-call-emergency', 'emergency-call-police',
+        'emergency-call-firefighter'];
 
     var toCamelCase = function toCamelCase(str) {
       return str.replace(/\-(.)/g, function replacer(str, p1) {
