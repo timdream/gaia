@@ -1,22 +1,29 @@
 <!DOCTYPE html>
-<html manifest="manifest.appcache">
-
+<html>
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="pragma" content="no-cache">
-    <title>Template</title>
-
+    <title>requestFullscreen test</title>
     <style>
+    button {
+      font-size: 40px;
+    }
     </style>
-
     <script>
+    function fullscreen() {
+      document.getElementById('fullscreen-content').mozRequestFullScreen();
+    };
     </script>
   </head>
-
   <body>
+    <h1>mozRequestFullScreen</h1>
 
-    <p>Implement me</p>
+    <p><button onclick="fullscreen()">mozRequestFullScreen()</button></p>
 
+    <p>Press the hardware back button to go back.</p>
+
+    <div id="fullscreen-content">
+      <h2>Full screen content</h2>
+      <input type="text" value="keyboard test" >
+    </div>
   </body>
-
 </html>
