@@ -4,7 +4,6 @@
 'use strict';
 
 function startup() {
-  PinLock.init();
   SoundManager.init();
   SleepMenu.init();
   SourceView.init();

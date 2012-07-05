@@ -1,0 +1,16 @@
+{
+  "name": "SIM Lock",
+  "description": "Unlock SIM",
+  "launch_path": "/",
+  "developer": {
+    "name": "The Gaia Team",
+    "url": "https://github.com/mozilla-b2g/gaia"
+  },
+  "permissions": [
+    "mobileconnection"
+  ],
+  "default_locale": "en-US",
+  "icons": {
+    "128": "/style/icons/Blank.png"
+  }
+}

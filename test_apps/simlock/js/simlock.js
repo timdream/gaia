@@ -140,3 +140,5 @@ var PinLock = {
     }
   }
 };
+
+PinLock.init();
