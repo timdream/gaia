@@ -25,11 +25,9 @@ var PinLock = {
   },
 
   hideKeypad: function hideKeypad() {
-    this.pinlockOverlay.style.display = 'none';
   },
 
   showKeypad: function showKeypad() {
-    this.pinlockOverlay.style.display = 'block';
     this.updateCodeUI();
   },
 
