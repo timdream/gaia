@@ -16,7 +16,7 @@ var PinLock = {
     this.hideKeypad();
     this.conn = window.navigator.mozMobileConnection;
     if (!this.conn) {
-      console.debug('No mozMobileConnection :(');
+      alert('No mozMobileConnection :(');
       return;
     }
     this.conn.addEventListener('cardstatechange', this);
@@ -40,13 +40,13 @@ var PinLock = {
 
   unlockSim: function unlockSim() {
     if (!this.conn.cardState == 'pin_required') {
-      console.log('No PIN code required.');
+      alert('No PIN code required.');
       this.reset();
       return;
     }
 
     if (!this.pinCode.length) {
-      console.log("No PIN code provided, can't unlock.");
+      alert("No PIN code provided, can't unlock.");
       return;
     }
     var unlock = this.conn.unlockCardLock({lockType: 'pin', pin: this.pinCode});
@@ -58,11 +58,11 @@ var PinLock = {
          PIN code is good and we will clear and exit, or it
          is not and there is no point in keeping it */
       pinLock.reset();
-      console.log('Unlocking SIM: ' + res.result);
+      alert('Unlocking SIM: ' + res.result);
       if (res.result == true) {
         pinLock.hideKeypad();
       } else {
-        console.log('Bad PIN code! Number of retries: ' + res.retryCount);
+        alert('Bad PIN code! Number of retries: ' + res.retryCount);
         this.notifyRetryCount(res.retryCount);
       }
     }
@@ -121,7 +121,7 @@ var PinLock = {
 
           case 'o':
             if (!this.pinCode.length) {
-              console.log('Cannot submit empty pincode!');
+              alert('Cannot submit empty pincode!');
               break;
             }
             this.unlockSim();
@@ -135,7 +135,7 @@ var PinLock = {
         break;
 
       default:
-        console.log('Got unhandled event: ' + ev.type);
+        alert('Got unhandled event: ' + ev.type);
         break;
     }
   }
