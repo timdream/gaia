@@ -55,6 +55,7 @@ var NotificationScreen = {
           break;
 
         case 'permission-prompt':
+dump('====' + JSON.stringify(detail));
           // XXX Needs to implements more UI but for now let's allow stuffs
           var event = document.createEvent('CustomEvent');
           event.initCustomEvent('mozContentEvent', true, true, {

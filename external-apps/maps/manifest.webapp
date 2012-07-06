@@ -1,0 +1,7 @@
+{
+  "name": "Maps",
+  "default_locale": "en-US",
+  "icons": {
+    "60": "https://www.google.com/favicon.ico"
+  }
+}
