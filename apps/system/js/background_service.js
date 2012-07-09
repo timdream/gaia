@@ -23,9 +23,28 @@ var BackgroundServiceManager = (function bsm() {
       if (!applications[origin].manifest.background_page)
         return;
 
+      var app = applications[origin];
+      if (!app || !hasBackgroundPermission(app))
+        return;
+
       // XXX: this work as if background_page is always a path not a full URL.
-      var url = origin + applications[origin].manifest.background_page;
-      open(origin, AUTO_OPEN_BG_PAGE_NAME, url);
+      var url = origin + app.manifest.background_page;
+
+      // Create an opener iframe to run window.open within
+      // given mozapp boundary.
+      // see https://bugzilla.mozilla.org/show_bug.cgi?id=766873
+      var opener = document.createElement('iframe');
+      opener.setAttribute('mozbrowser', 'true');
+      opener.setAttribute('mozapp', app.manifestURL);
+      opener.dataset.frameType = 'background-opener';
+      opener.dataset.frameOrigin = origin;
+      opener.src = 'data:text/html,' +
+        '<!DOCTYPE html><html><head><meta charset="utf-8"><script>' +
+          'window.open("' + encodeURIComponent(url) + '", ' +
+            '"' + AUTO_OPEN_BG_PAGE_NAME + '", "background");' +
+          'window.close();' +
+        '<\/script><\/head><\/html>';
+      document.body.appendChild(opener);
     });
   });
 
@@ -42,13 +61,20 @@ var BackgroundServiceManager = (function bsm() {
     var origin = evt.target.dataset.frameOrigin;
 
     var detail = evt.detail;
+
     open(origin, detail.name, detail.url, detail.frameElement);
   }, true);
 
   /* mozbrowserclose */
   window.addEventListener('mozbrowserclose', function bsm_winclose(evt) {
-    if (!'frameType' in evt.target.dataset ||
-        evt.target.dataset.frameType !== 'background')
+    var frameType = evt.target.dataset.frameType;
+
+    if (frameType == 'background-opener') {
+      document.body.removeChild(evt.target);
+      return;
+    }
+
+    if (frameType !== 'background')
       return;
 
     close(evt.target.dataset.frameOrigin, evt.target.dataset.frameName);
@@ -97,9 +123,6 @@ var BackgroundServiceManager = (function bsm() {
       return false;
     }
 
-    if (!frame) {
-      frame = document.createElement('iframe');
-    }
     frame.className = 'backgroundWindow';
     frame.setAttribute('mozbrowser', 'true');
     frame.setAttribute('mozapp', app.manifestURL);
