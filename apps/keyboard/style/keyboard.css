@@ -82,10 +82,24 @@ button::-moz-focus-inner {
   width: 100%;
   -moz-box-sizing: border-box;
   position: relative;
+
+  background:
+  url(images/key-radius-top-left.png) no-repeat top left,
+  url(images/key-radius-top-right.png) no-repeat top right,
+  url(images/key-radius-bottom-left.png) no-repeat left bottom,
+  url(images/key-radius-bottom-right.png) no-repeat right bottom,
+  url(images/key-bg.png) no-repeat center bottom,
+  #252220;
+
+  /*
+  * Disable due to slow down the rendering
+
   border: solid 1px #000;
   border-radius: 0.3rem;
   background: #252220 url(images/key-bg.png) no-repeat center bottom;
   background-size: 100% 100%;
+
+  */
 }
 
 /* Rounded corners hack, this was tested against using border-radius CSS propery
@@ -162,7 +176,7 @@ button::-moz-focus-inner {
   height: 0.5rem;
   background: #6ec5d5;
   z-index: 1;
-} 
+}
 
 .keyboard-key:not(.special-key).highlighted > .visual-wrapper > span {
   font: 3.8rem/4.5rem Open Sans, Sans-serif;
@@ -211,7 +225,7 @@ button::-moz-focus-inner {
   border-color: #2a2c2e;
   background: #43474a;
 }
-.keyboard-key.special-key > .visual-wrapper > span { 
+.keyboard-key.special-key > .visual-wrapper > span {
   border-top-color: #696c6e;
   font-size: 1.5rem;
   line-height: 4rem;
@@ -242,7 +256,7 @@ button::-moz-focus-inner {
 
 /* Spacebar exceptions */
 .keyboard-key[data-keycode="32"] > .visual-wrapper {
-background-position: center 2.2rem; 
+background-position: center 2.2rem;
 }
 
 .keyboard-key.highlighted[data-keycode="32"] > .visual-wrapper {
@@ -384,7 +398,7 @@ background-position: center 2.2rem;
   height: 5.8rem;
 }
 
-#keyboard-accent-char-menu .keyboard-key.highlighted > .visual-wrapper:after, 
+#keyboard-accent-char-menu .keyboard-key.highlighted > .visual-wrapper:after,
 #keyboard-accent-char-menu .keyboard-key.highlighted > .visual-wrapper:before,
 #keyboard-accent-char-menu .keyboard-key.highlighted > .visual-wrapper > span:after {
   display: none;
@@ -466,7 +480,7 @@ background-position: center 2.2rem;
   right: 0;
   height: 0.5rem;
   z-index: 1;
-} 
+}
 
 #keyboard-accent-char-menu.kbr-menu-lang > .keyboard-key {
   padding: 0;
@@ -492,8 +506,8 @@ background-position: center 2.2rem;
   right: 0;
 }
 
-#keyboard-accent-char-menu.kbr-menu-lang > .keyboard-key > .visual-wrapper > span { 
-  font-family: 'Open Sans';  
+#keyboard-accent-char-menu.kbr-menu-lang > .keyboard-key > .visual-wrapper > span {
+  font-family: 'Open Sans';
   font-weight: 600;
   font-size: 1.8rem;
   line-height: 4rem;
