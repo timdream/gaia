@@ -356,13 +356,16 @@ var StatusBar = {
     },
 
     sms: function sb_updateSms() {
-      if (!this.smsSentNum) {
-        this.icon.sms.hidden = true;
+      if (!this.smsSentNum && !this.icon.sms.hidden)
+        this.icon.sms.classList.add('leave');
 
         return;
       }
 
-      this.icon.sms.hidden = false;
+      if (this.icon.sms.hidden) {
+        this.icon.sms.hidden = false;
+        this.icon.sms.classList.add('enter');
+      }
       this.icon.sms.dataset.num = this.smsSentNum;
     },
 

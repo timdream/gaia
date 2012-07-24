@@ -55,6 +55,18 @@
   display: none;
 }
 
+#statusbar-sms {
+  -moz-transition: -moz-transform 1s ease;
+}
+
+#statusbar-sms.enter {
+  -moz-transform: translateY(20px);
+}
+
+#statusbar-sms.leave {
+  -moz-transform: translateY(-20px);
+}
+
 .sb-icon {
   width: 16px;
   height: 16px;
