@@ -15,6 +15,8 @@ var StatusBar = {
 
   wifiConnected: false,
 
+  smsSentNum: 0,
+
   init: function sb_init() {
     this.getAllElements();
 
@@ -72,6 +74,20 @@ var StatusBar = {
         this.update.data.call(this);
         break;
 
+      case 'sent':
+        this.smsSentNum++;
+
+        this.update.sms.call(this);
+
+        // Hide the icon after 2 min of inactivity
+        if (this._smsTimer)
+          window.clearTimeout(this._smsTimer);
+
+        var self = this;
+        this._smsTimer = window.setTimeout(function resetSmsIcon() {
+          self.smsSentNum = 0;
+          self.update.sms.call(self);
+        }, 2*60*1000);
     }
   },
 
@@ -110,6 +126,11 @@ var StatusBar = {
 
         this.update.bluetooth.call(this);
       }
+
+      var sms = window.navigator.mozSms;
+      if (sms) {
+        sms.addEventListener('sent', this);
+      }
     } else {
       clearTimeout(this._clockTimer);
 
@@ -124,6 +145,11 @@ var StatusBar = {
       if (conn) {
         conn.removeEventListener('voicechange', this);
         conn.removeEventListener('datachange', this);
+      }
+
+      var sms = window.navigator.mozSms;
+      if (sms) {
+        sms.removeEventListener('sent', this);
       }
     }
   },
@@ -330,9 +356,14 @@ var StatusBar = {
     },
 
     sms: function sb_updateSms() {
-      // TBD
-      // this.icon.sms.hidden = ?
-      // this.icon.sms.dataset.num = ?;
+      if (!this.smsSentNum) {
+        this.icon.sms.hidden = true;
+
+        return;
+      }
+
+      this.icon.sms.hidden = false;
+      this.icon.sms.dataset.num = this.smsSentNum;
     },
 
     geolocation: function sb_updateGeolocation() {
