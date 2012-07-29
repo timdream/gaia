@@ -432,7 +432,8 @@ lint:
 #     let us remove the update-offline-manifests target dependancy of the
 #     default target.
 stamp-commit-hash:
-	(if [ -d ./.git ]; then \
+  @echo 'Stamp Git commit'
+	@(if [ -d ./.git ]; then \
 	  git log -1 --format="%H%n%at" HEAD > apps/settings/gaia-commit.txt; \
 	else \
 	  echo 'Unknown Git commit; build date shown here.' > apps/settings/gaia-commit.txt; \
