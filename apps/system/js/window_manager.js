@@ -152,8 +152,15 @@ var WindowManager = (function() {
     frame.setVisible(true);
     frame.focus();
 
-    if (callback)
-      callback();
+    if (callback || app.manifest.fullscreen) {
+      frame.addEventListener('transitionend', function frameTransitionend() {
+        frame.removeEventListener('transitionend', frameTransitionend);
+        if (app.manifest.fullscreen)
+          frame.mozRequestFullScreen();
+        if (callback)
+          callback();
+      });
+    }
 
     // Dispatch a 'appopen' event,
     // Modal dialog would use this.
@@ -165,6 +172,10 @@ var WindowManager = (function() {
   function closeWindow(origin, callback) {
     var app = runningApps[origin];
     var frame = app.frame;
+
+    if (document.mozFullScreen)
+      document.mozCancelFullScreen();
+
     frame.classList.remove('active');
     windows.classList.remove('active');
 
@@ -244,11 +255,6 @@ var WindowManager = (function() {
       setOrientationForApp(newApp);
     }
 
-    // Exit fullscreen mode if we're going to the homescreen
-    if (newApp === null && document.mozFullScreen) {
-      document.mozCancelFullScreen();
-    }
-
     displayedApp = origin;
 
     // Update the loading icon since the displayedApp is changed
@@ -298,6 +304,12 @@ var WindowManager = (function() {
         '<body style="background-color: black">' +
         '  <h3 style="' + style + '">' + localizedLoading + '</h3>' +
         '</body>';
+
+      setTimeout(function () {
+          frame.src = url;
+      });
+    } else {
+      frame.src = url;
     }
 
     // Note that we don't set the frame size here.  That will happen
@@ -460,13 +472,7 @@ var WindowManager = (function() {
 
     // Now animate the window opening and actually set the iframe src
     // when that is done.
-    setDisplayedApp(origin, function() {
-      frame.src = url;
-
-      if (manifest.fullscreen) {
-        frame.mozRequestFullScreen();
-      }
-    });
+    setDisplayedApp(origin);
   }
 
 
@@ -496,7 +502,6 @@ var WindowManager = (function() {
 
     var app = Applications.getByOrigin(origin);
     var name = app.manifest.name;
-
 
     // Check if it's a virtual app from a entry point.
     // If so, change the app name and origin to the

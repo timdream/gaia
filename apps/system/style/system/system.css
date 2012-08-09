@@ -96,7 +96,7 @@ body {
   top: 20px;
   opacity: 0;
   -moz-transform: scale(0.5);
-  -moz-transition-property: -moz-transform, opacity;
+  -moz-transition-property: -moz-transform, opacity, visibility;
   -moz-transition-duration: 0.5s;
   -moz-transition-timing-function: ease;
 /*

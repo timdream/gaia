@@ -8,6 +8,7 @@
   "icons": {
     "120": "/style/icons/Uitest.png"
   },
+  "fullscreen": true,
   "permissions": [
     "background",
     "contacts",
