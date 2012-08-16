@@ -258,11 +258,12 @@ var ScreenManager = {
     * Actual screen brightness will be updated shortly
     * with next devicelight event.
     */
-    navigator.mozPower.screenBrightness = this._brightness;
+    if (this.screenEnabled)
+      navigator.mozPower.screenBrightness = this._brightness;
   },
 
   setDeviceLightEnabled: function scm_setDeviceLightEnabled(enabled) {
-    if (!enabled && this._deviceLightEnabled) {
+    if (!enabled && this._deviceLightEnabled && this.screenEnabled) {
       // Disabled -- set the brightness back to preferred brightness
       navigator.mozPower.screenBrightness = this._brightness;
     }
