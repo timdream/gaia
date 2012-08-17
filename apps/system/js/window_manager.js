@@ -256,8 +256,14 @@ var WindowManager = (function() {
     var currentApp = displayedApp, newApp = origin;
     disposition = disposition || 'window';
 
+    var displayingInlineWindow = false;
+
+    // Case 0: handling an inline disposition request
+    if (disposition == 'inline') {
+      // XXX WHAT TO DO HERE?
+    }
     // Case 1: the app is already displayed
-    if (currentApp && currentApp == newApp) {
+    else if (currentApp && currentApp == newApp) {
       // Just run the callback right away
       if (callback)
         callback();
