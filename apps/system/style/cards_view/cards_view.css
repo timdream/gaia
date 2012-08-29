@@ -11,7 +11,7 @@
   background-color: rgba(0, 0, 0, 0);
 }
 
-#screen.cards-view > #cards-view {
+#cards-view.active {
   background-color: rgba(0, 0, 0, 0.8);
   visibility: inherit;
 }
@@ -55,7 +55,7 @@
   z-index: 2;
 }
 
-#screen.cards-view > #cards-view .card:first-child {
+#cards-view.active .card:first-child {
   transform: scale(0.6);
 }
 

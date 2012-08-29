@@ -156,6 +156,7 @@ var CardsView = (function() {
         setTimeout(function() {
           // Make the cardsView overlay active
           screenElement.classList.add('cards-view');
+          cardsView.classList.add('active');
         });
       });
 
@@ -227,7 +228,7 @@ var CardsView = (function() {
 
   function hideCardSwitcher() {
     // Make the cardsView overlay inactive
-    screenElement.classList.remove('cards-view');
+    cardsView.classList.remove('active');
 
     // And remove all the cards from the document after the transition
     cardsView.addEventListener('transitionend', function removeCards() {
@@ -236,6 +237,8 @@ var CardsView = (function() {
       while (cardsList.firstElementChild) {
         cardsList.removeChild(cardsList.firstElementChild);
       }
+
+      screenElement.classList.remove('cards-view');
     });
 
     // If there is a displayed app, give the keyboard focus back
