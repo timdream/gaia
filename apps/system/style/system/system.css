@@ -103,6 +103,10 @@ body {
   background-color: #fff;
 }
 
+#screen.cards-view > #windows > iframe.appWindow.active:not(.homescreen) {
+  visibility: hidden;
+}
+
 #windows > iframe.appWindow:not(.active):not(.homescreen) {
   visibility: hidden;
 }

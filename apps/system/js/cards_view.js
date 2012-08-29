@@ -23,6 +23,7 @@ var CardsView = (function() {
   var MANUAL_CLOSING = true;
 
   var cardsView = document.getElementById('cards-view');
+  var screenElement = document.getElementById('screen');
   var cardsList = cardsView.firstElementChild;
   var displayedApp;
   var runningApps;
@@ -141,9 +142,10 @@ var CardsView = (function() {
       cardsView.addEventListener('mousedown', this);
     }
 
-
-    // Then make the cardsView overlay active
-    cardsView.classList.add('active');
+    setTimeout(function showCardsView() {
+      // Then make the cardsView overlay active
+      screenElement.classList.add('cards-view');
+    });
 
     // Make sure we're in portrait mode
     screen.mozLockOrientation('portrait');
@@ -162,16 +164,13 @@ var CardsView = (function() {
       var card = document.createElement('li');
       card.classList.add('card');
 
-      // First we create white background
-      card.style.backgroundColor = '#FFF';
-
       // And then switch it with screenshots when one will be ready
       // (instead of -moz-element backgrounds)
       app.frame.getScreenshot().onsuccess = function(screenshot) {
         if (screenshot.target.result) {
-          this.style.backgroundImage = 'url(' + screenshot.target.result + ')';
+          card.style.backgroundImage = 'url(' + screenshot.target.result + ')';
         }
-      }.bind(card);
+      };
 
       card.dataset['origin'] = origin;
 
@@ -208,10 +207,16 @@ var CardsView = (function() {
 
   function hideCardSwitcher() {
     // Make the cardsView overlay inactive
-    cardsView.classList.remove('active');
+    screenElement.classList.remove('cards-view');
 
-    // And remove all the cards from the document.
-    cardsList.textContent = '';
+    // And remove all the cards from the document after the transition
+    cardsView.addEventListener('transitionend', function removeCards() {
+      cardsView.removeEventListener('transitionend', removeCards);
+
+      while (cardsList.firstElementChild) {
+        cardsList.removeChild(cardsList.firstElementChild);
+      }
+    });
 
     // If there is a displayed app, give the keyboard focus back
     // And switch back to that's apps orientation
@@ -222,7 +227,7 @@ var CardsView = (function() {
   }
 
   function cardSwitcherIsShown() {
-    return cardsView.classList.contains('active');
+    return screenElement.classList.contains('cards-view');
   }
 
   //scrolling cards
