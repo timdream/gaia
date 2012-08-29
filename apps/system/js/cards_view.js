@@ -142,11 +142,6 @@ var CardsView = (function() {
       cardsView.addEventListener('mousedown', this);
     }
 
-    setTimeout(function showCardsView() {
-      // Then make the cardsView overlay active
-      screenElement.classList.add('cards-view');
-    });
-
     // Make sure we're in portrait mode
     screen.mozLockOrientation('portrait');
 
@@ -154,10 +149,32 @@ var CardsView = (function() {
     if (displayedApp)
       runningApps[displayedApp].frame.blur();
 
+    function showCardsView(card) {
+      window.addEventListener('MozAfterPaint', function cardPainted() {
+        window.removeEventListener('MozAfterPaint', cardPainted);
+
+        setTimeout(function() {
+          // Make the cardsView overlay active
+          screenElement.classList.add('cards-view');
+        });
+      });
+
+      // We don't need to add the class again.
+      showCardsView = function() {};
+    }
+
     function addCard(origin, app) {
       // Not showing homescreen
-      if (app.frame.classList.contains('homescreen'))
+      if (app.frame.classList.contains('homescreen')) {
+        if (displayedApp == origin) {
+          setTimeout(function() {
+            // Make the cardsView overlay active
+            screenElement.classList.add('cards-view');
+          });
+        }
+
         return;
+      }
 
       // Build a card representation of each window.
       // And add it to the card switcher
@@ -170,6 +187,9 @@ var CardsView = (function() {
         if (screenshot.target.result) {
           card.style.backgroundImage = 'url(' + screenshot.target.result + ')';
         }
+
+        if (displayedApp == origin)
+          showCardsView(card);
       };
 
       card.dataset['origin'] = origin;
