@@ -35,7 +35,7 @@
   margin-left: -25%;
   position: relative;
   background-color: #fff;
-  background-size: 100% 100%;
+  background-size: cover;
   background-repeat: no-repeat;
   transform: scale(0.6);
 }
