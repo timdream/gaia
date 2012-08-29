@@ -130,7 +130,7 @@ var CardsView = (function() {
         addCard(origin, runningApps[origin]);
       });
 
-      cardsView.addEventListener('contextmenu', this);
+      cardsView.addEventListener('contextmenu', CardsView);
 
     }
 
@@ -139,7 +139,7 @@ var CardsView = (function() {
     }
 
     if (SNAPPING_SCROLLING || MANUAL_CLOSING) {
-      cardsView.addEventListener('mousedown', this);
+      cardsView.addEventListener('mousedown', CardsView);
     }
 
     // Make sure we're in portrait mode
@@ -249,6 +249,22 @@ var CardsView = (function() {
   function cardSwitcherIsShown() {
     return screenElement.classList.contains('cards-view');
   }
+
+  window.addEventListener('home', function cardsViewHomePressed(evt) {
+    if (!cardSwitcherIsShown())
+      return;
+
+    hideCardSwitcher();
+    evt.stopImmediatePropagation();
+  }, true);
+
+  window.addEventListener('holdhome', function cardsViewHoldHome(evt) {
+    if (LockScreen.locked || cardSwitcherIsShown())
+      return;
+
+    SleepMenu.hide();
+    showCardSwitcher();
+  });
 
   //scrolling cards
   var initialCardViewPosition;

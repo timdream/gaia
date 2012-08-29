@@ -623,9 +623,7 @@ var WindowManager = (function() {
     // Note that for this to work, the lockscreen and other overlays must
     // be included in index.html before this one, so they can register their
     // event handlers before we do.
-    if (CardsView.cardSwitcherIsShown()) {
-      CardsView.hideCardSwitcher();
-    } else if (document.mozFullScreen) {
+    if (document.mozFullScreen) {
       document.mozCancelFullScreen();
     } else if (displayedApp !== homescreen) {
       setDisplayedApp(homescreen);
@@ -636,14 +634,6 @@ var WindowManager = (function() {
           type: 'application/x-application-list'
         }
       });
-    }
-  });
-
-  window.addEventListener('holdhome', function(e) {
-    if (!LockScreen.locked &&
-        !CardsView.cardSwitcherIsShown()) {
-      SleepMenu.hide();
-      CardsView.showCardSwitcher();
     }
   });
 
