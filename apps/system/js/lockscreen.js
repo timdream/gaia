@@ -714,22 +714,28 @@ var LockScreen = {
     }
 
     if (voice.emergencyCallsOnly) {
+      // XXX: Keywords need clarification
+      // https://bugzilla.mozilla.org/show_bug.cgi?id=788094
+
       switch (conn.cardState) {
         case 'absent':
           updateConnstateLine1('emergencyCallsOnlyNoSIM');
 
           break;
 
+        case 'pin_required':
         case 'pinRequired':
           updateConnstateLine1('emergencyCallsOnlyPinRequired');
 
           break;
 
+        case 'puk_required':
         case 'pukRequired':
           updateConnstateLine1('emergencyCallsOnlyPukRequired');
 
           break;
 
+        case 'network_locked':
         case 'networkLocked':
           updateConnstateLine1('emergencyCallsOnlyNetworkLocked');
 
