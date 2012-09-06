@@ -64,6 +64,43 @@ var WindowManager = (function() {
   // that's the question.
   var useScreenshotInSprite = false;
 
+  // These apps currently have bugs preventing them from being
+  // run out of process. All other apps will be run OOP.
+  //
+  var outOfProcessBlackList = [
+    // Bugs that are shared among multiple apps are listed here.
+    // Bugs that affect only specific apps should be listed under
+    // the apps themselves.
+    //
+    // Keyboard always shows up alpha when app using keyboard is run OOP
+    //   https://bugzilla.mozilla.org/show_bug.cgi?id=776118
+    // Keyboard doesn't show up correctly when app run OOP
+    //   https://github.com/mozilla-b2g/gaia/issues/2656
+
+    'Browser',
+    // Requires nested content processes (bug 761935)
+
+    'Cost Control',
+    // Cross-process SMS (bug 775997)
+
+    'E-Mail',
+    // SSL/TLS support can only happen in the main process although
+    // the TCP support without security will accidentally work OOP
+    // (bug 770778)
+
+    'Image Uploader',
+    // Cannot upload files when OOP
+    // bug 783878
+
+    // /!\ Also remove it from outOfProcessBlackList of background_service.js
+    // Once this app goes OOP. (can be done by reverting a commit)
+    'Messages',
+    // Crashes when launched OOP (bug 775997)
+
+    'Settings'
+    // Bluetooth is not remoted yet (bug 755943)
+  ];
+
   // Some document elements we use
   var loadingIcon = document.getElementById('statusbar-loading');
   var windows = document.getElementById('windows');
@@ -565,43 +602,6 @@ var WindowManager = (function() {
     // platform.
     frame.setAttribute('mozbrowser', 'true');
     frame.setAttribute('mozapp', manifestURL);
-
-    // These apps currently have bugs preventing them from being
-    // run out of process. All other apps will be run OOP.
-    //
-    var outOfProcessBlackList = [
-      // Bugs that are shared among multiple apps are listed here.
-      // Bugs that affect only specific apps should be listed under
-      // the apps themselves.
-      //
-      // Keyboard always shows up alpha when app using keyboard is run OOP
-      //   https://bugzilla.mozilla.org/show_bug.cgi?id=776118
-      // Keyboard doesn't show up correctly when app run OOP
-      //   https://github.com/mozilla-b2g/gaia/issues/2656
-
-      'Browser',
-      // Requires nested content processes (bug 761935)
-
-      'Cost Control',
-      // Cross-process SMS (bug 775997)
-
-      'E-Mail',
-      // SSL/TLS support can only happen in the main process although
-      // the TCP support without security will accidentally work OOP
-      // (bug 770778)
-
-      'Image Uploader',
-      // Cannot upload files when OOP
-      // bug 783878
-
-      // /!\ Also remove it from outOfProcessBlackList of background_service.js
-      // Once this app goes OOP. (can be done by reverting a commit)
-      'Messages',
-      // Crashes when launched OOP (bug 775997)
-
-      'Settings'
-      // Bluetooth is not remoted yet (bug 755943)
-    ];
 
     if (!isOutOfProcessDisabled &&
         outOfProcessBlackList.indexOf(name) === -1) {
