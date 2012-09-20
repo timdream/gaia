@@ -119,10 +119,11 @@ body {
 }
 
 #windows > iframe.appWindow.inlineActivity.active {
-  transform: translateY(0);
+  transform: none;
+  transition: none;
 }
 
-#screen.fullscreen-app > #windows > iframe.appWindow.active:not(.homescreen) {
+#screen.fullscreen-app:not(.attention) > #windows > iframe.appWindow.active:not(.homescreen) {
   top: 0;
 }
 
@@ -154,9 +155,31 @@ body {
   background: rgba(0, 0, 0, 0.5);
 }
 
-#screen.fullscreen-app > #windowSprite {
+#screen.fullscreen-app:not(.attention) > #windowSprite {
   height: 100%;
   top: 0;
+}
+
+#windowSprite.before-inline-activity {
+  transform: translateY(-moz-calc(100% - 1px));
+  opacity: 1;
+  visibility: visible;
+}
+
+#windowSprite.inline-activity-opening {
+  transition: transform 0.5s ease;
+
+  transform: translateY(0);
+  opacity: 1;
+  visibility: visible;
+}
+
+#windowSprite.inline-activity-opened {
+  transition: opacity 0.3s ease;
+
+  transform: translateY(0);
+  opacity: 0;
+  visibility: visible;
 }
 
 #windowSprite.before-open {
@@ -267,7 +290,7 @@ iframe.backgroundWindow {
 }
 
 #screen:-moz-full-screen-ancestor #dialog-overlay,
-#screen.fullscreen-app #dialog-overlay {
+#screen.fullscreen-app:not(.attention) #dialog-overlay {
   top: 0;
   height: 100%;
 }
