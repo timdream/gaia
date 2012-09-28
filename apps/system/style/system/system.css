@@ -172,12 +172,6 @@ body {
   opacity: 1;
 }
 
-#windowSprite[data-mask="true"] > div {
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-}
-
 #screen.fullscreen-app > #windowSprite {
   height: 100%;
   top: 0;

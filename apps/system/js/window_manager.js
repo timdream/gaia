@@ -197,7 +197,6 @@ var WindowManager = (function() {
   sprite.id = 'windowSprite';
   sprite.dataset.zIndexLevel = 'window-sprite';
   screenElement.appendChild(sprite);
-  sprite.appendChild(document.createElement('div'));
 
   // This event handler is triggered when the transition ends.
   // We're going to do two transitions, so it gets called twice.
@@ -343,24 +342,62 @@ var WindowManager = (function() {
     };
   })();
 
+  function desaturateImage(data, callback) {
+    // Before the data is stored, we'll destratuate it first
+    var img = new Image();
+    img.src = data;
+    img.onerror = function imageError() {
+      console.warn(
+        'Window Manager: screenshot data is not image.');
+    };
+    img.onload = function imageLoaded() {
+      var canvas = document.createElement('canvas');
+      var width = canvas.width = img.width;
+      var height = canvas.height = img.height;
+
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+
+      var imgDataArr = ctx.getImageData(0, 0, width, height).data;
+      var outputImgData = ctx.createImageData(width, height);
+      var outputImgDataArr = outputImgData.data;
+      var i = width * height;
+
+      while (i--) {
+        var p = i * 4;
+        var num = (imgDataArr[p] +
+                   imgDataArr[p + 1] +
+                   imgDataArr[p + 2]) / 3 * ( 2 / 3 ) + ( 255 / 3 );
+        outputImgDataArr[p] =
+          outputImgDataArr[p + 1] =
+          outputImgDataArr[p + 2] = num;
+        outputImgDataArr[p + 3] = imgDataArr[p + 3]; // alpha
+      }
+      ctx.putImageData(outputImgData, 0, 0);
+      callback(canvas.toDataURL('image/png'));
+    };
+  }
+
   function putAppScreenshotToDatabase(url, data) {
-    if (!database)
+    if (!database || !data)
       return;
 
-    var txn = database.transaction(DB_SCREENSHOT_OBJSTORE, 'readwrite');
-    txn.onerror = function() {
-      console.warn(
-        'Window Manager: transaction error while trying to save screenshot.');
-    };
-    var store = txn.objectStore(DB_SCREENSHOT_OBJSTORE);
-    var req = store.put({
-      url: url,
-      screenshot: data
+    desaturateImage(data, function gotMonotoneImage(data) {
+      var txn = database.transaction(DB_SCREENSHOT_OBJSTORE, 'readwrite');
+      txn.onerror = function() {
+        console.warn(
+          'Window Manager: transaction error while trying to save screenshot.');
+      };
+      var store = txn.objectStore(DB_SCREENSHOT_OBJSTORE);
+      var req = store.put({
+        url: url,
+        screenshot: data
+      });
+      req.onerror = function(evt) {
+        console.warn(
+          'Window Manager: put error while trying to save screenshot.');
+      };
     });
-    req.onerror = function(evt) {
-      console.warn(
-        'Window Manager: put error while trying to save screenshot.');
-    };
   }
 
   function getAppScreenshotFromDatabase(url, callback) {
@@ -507,10 +544,7 @@ var WindowManager = (function() {
       // before starting the transition
       sprite.className = 'before-open';
       getAppScreenshot(openFrame, function(screenshot, isCached) {
-        sprite.dataset.mask = isCached;
-
         if (!screenshot || !useScreenshotInSprite) {
-          sprite.dataset.mask = false;
           sprite.className = 'opening';
           return;
         }
@@ -551,10 +585,7 @@ var WindowManager = (function() {
     // before starting the transition
     sprite.className = 'before-close';
     getAppScreenshot(closeFrame, function(screenshot, isCached) {
-      sprite.dataset.mask = isCached;
-
       if (!screenshot || !useScreenshotInSprite) {
-        sprite.dataset.mask = false;
         sprite.className = 'closing';
         return;
       }
@@ -576,7 +607,6 @@ var WindowManager = (function() {
       var el = document.createElement('div');
       el.className = 'windowSprite';
       el.dataset.zIndexLevel = 'window-sprite';
-      el.appendChild(document.createElement('div'));
       screenElement.insertBefore(el, sprite);
       return el;
     }
@@ -593,10 +623,7 @@ var WindowManager = (function() {
     // Fill the opening app sprite with screenshot.
     getAppScreenshot(openingAppFrame,
       function gotScreenshot(screenshot, isCached) {
-        if (!screenshot || !useScreenshotInSprite) {
-          openingAppSprite.dataset.mask = false;
-        } else {
-          openingAppSprite.dataset.mask = isCached;
+        if (screenshot && useScreenshotInSprite) {
           openingAppSprite.style.background = '#fff url(' + screenshot + ')';
         }
       }
@@ -606,10 +633,7 @@ var WindowManager = (function() {
     // when the closing one got filled we start the animation
     getAppScreenshot(closingAppFrame,
       function gotScreenshot(screenshot, isCached) {
-        if (!screenshot || !useScreenshotInSprite) {
-          closingAppSprite.dataset.mask = false;
-        } else {
-          closingAppSprite.dataset.mask = isCached;
+        if (screenshot && useScreenshotInSprite) {
           closingAppSprite.style.background = '#fff url(' + screenshot + ')';
         }
 
@@ -893,10 +917,7 @@ var WindowManager = (function() {
     // before starting the transition
     sprite.className = 'before-inline-activity';
     getAppScreenshot(inlineActivityFrame, function(screenshot, isCached) {
-      sprite.dataset.mask = isCached;
-
       if (!screenshot || !useScreenshotInSprite) {
-        sprite.dataset.mask = false;
         sprite.className = 'inline-activity-opening';
         return;
       }
