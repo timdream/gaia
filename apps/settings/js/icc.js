@@ -101,7 +101,7 @@
    * Navigate through all available STK applications
    */
   function updateMenu() {
-    debug('Showing STK main menu');
+    debug('Update STK main menu');
     window.asyncStorage.getItem('stkMainAppMenu', function(menu) {
       while (iccStkAppsList.hasChildNodes()) {
         iccStkAppsList.removeChild(iccStkAppsList.lastChild);
@@ -150,6 +150,7 @@
       iccLastCommand = null;
     };
 
+    debug('Showing STK menu');
     openDialog('icc-stk-app', function submit() {
       icc.sendStkResponse(iccLastCommand, { resultCode: icc.STK_RESULT_OK });
       iccLastCommand = null;
@@ -164,7 +165,7 @@
     var menu = command.options;
     iccLastCommand = command;
 
-    debug('Showing STK menu');
+    debug('Update STK menu');
     while (iccStkSelection.hasChildNodes()) {
       iccStkSelection.removeChild(iccStkSelection.lastChild);
     }
@@ -253,6 +254,18 @@
    * Open STK applications
    */
   iccMenuItem.onclick = function onclick() {
+    // It's possible that we are getting a STK menu already,
+    // so let's show that instead of the main menu.
+    if (iccLastCommand) {
+      debug('Showing STK menu');
+      openDialog('icc-stk-app', function submit() {
+        icc.sendStkResponse(iccLastCommand, { resultCode: icc.STK_RESULT_OK });
+        iccLastCommand = null;
+        updateMenu();
+      });
+      return;
+    }
+
     updateMenu();
   };
 
