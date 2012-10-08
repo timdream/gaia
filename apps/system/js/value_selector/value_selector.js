@@ -1,4 +1,4 @@
-/* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- /
+/* -*- Mode: js; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- /
 /* vim: set shiftwidth=2 tabstop=2 autoindent cindent expandtab: */
 
 'use strict';
@@ -56,6 +56,7 @@ var ValueSelector = {
 
 
     this._element = document.getElementById('value-selector');
+    this._element.addEventListener('mousedown', this);
     this._containers['select'] =
       document.getElementById('value-selector-container');
     this._containers['select'].addEventListener('click', this);
@@ -63,6 +64,7 @@ var ValueSelector = {
 
     this._popups['select'] =
       document.getElementById('select-option-popup');
+    this._popups['select'].addEventListener('submit', this);
     this._popups['time'] =
       document.getElementById('time-picker-popup');
     this._popups['date'] =
@@ -113,6 +115,15 @@ var ValueSelector = {
             this.handleSelect(evt.target);
             break;
         }
+        break;
+
+      case 'submit':
+        // Prevent the form to submit.
+      case 'mousedown':
+        // Prevent focus being taken away by us.
+        evt.preventDefault();
+        evt.stopPropagation();
+
         break;
 
       default:
