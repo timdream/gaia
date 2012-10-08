@@ -7,7 +7,7 @@ var Launcher = (function() {
   }
 
   function currentAppFrame() {
-    return WindowManager.getCurrentDisplayedApp().frame;
+    return WindowManager.getRunningApps(WindowManager.getRunningApps());
   }
 
   var BUTTONBAR_TIMEOUT = 5000;

@@ -26,7 +26,7 @@ var TrustedUIManager = {
       this._currentPopup = null;
     } else {
       this._lastDisplayedApp = WindowManager.getDisplayedApp();
-      WindowManager.setDisplayedApp(null);
+      WindowManager.launch(null);
     }
 
     this.popupContainer.dataset.trusty = true;
@@ -52,7 +52,7 @@ var TrustedUIManager = {
       self.container.removeChild(self._currentPopup);
       delete self._currentPopup;
 
-      WindowManager.setDisplayedApp(self._lastDisplayedApp);
+      WindowManager.launch(self._lastDisplayedApp);
       self._lastDisplayedApp = null;
 
       if (callback)

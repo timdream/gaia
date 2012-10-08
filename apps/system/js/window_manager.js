@@ -1,4 +1,4 @@
-/* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- /
+/* -*- Mode: js; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- /
 /* vim: set shiftwidth=2 tabstop=2 autoindent cindent expandtab: */
 
 //
@@ -26,26 +26,24 @@
 // The public API of the module is small. It defines an WindowManager object
 // with these methods:
 //
-//    launch(origin): switch to the specified app
+//    launch(origin): switch to the specified running app
 //    kill(origin, callback): stop specified app
 //    reload(origin): reload the given app
-//    getDisplayedApp(origin): return the origin of the currently displayed app
+//    getDisplayedApp(): return the origin of the currently displayed app
 //    setOrientationForApp(origin): set the phone to orientation to a given app
 //    getAppFrame(origin): returns the iframe element for the specified origin
 //      which is assumed to be running.  This is only currently used
 //      for tests and chrome stuff: see the end of the file
-//    setDisplayedApp(origin): set displayed app.
-//      XXX: should be removed.
-//
-// This module does not (at least not currently) have anything to do
-// with the homescreen.  It simply assumes that if it hides all running
-// apps the homescreen will show
+//    getRunningApps(): get the app references of the running apps.
 //
 // TODO
-// It would be nice eventually to centralize much of the homescreen
-// event handling code in a single place. When or if we do that, then
-// this module will just expose methods for managing the list of apps
-// and app visibility but will leave all the event handling to another module.
+// The "origin" does not actually refer to app's origin but rather a identifier
+// of the app reference that one gets from |getDisplayedApp()| or
+// iterates |getRunningApps|. The string is make up of the specified
+// launching entry point, origin, or the website url launched by wrapper.
+// It would be ideal if the variable get correctly named and it's rule is being
+// properly documented.
+// See https://bugzilla.mozilla.org/show_bug.cgi?id=796629
 //
 
 'use strict';
@@ -96,18 +94,16 @@ var WindowManager = (function() {
   // Make the specified app the displayed app.
   // Public function.  Pass null to make the homescreen visible
   function launch(origin) {
-    // If it is already being displayed, do nothing
-    if (displayedApp === origin)
-      return;
-
-    // If the app is already running (or there is no app), just display it
-    if (!origin || isRunning(origin))
+    // If the origin is indeed valid we make that app as the displayed app.
+    if (isRunning(origin)) {
       setDisplayedApp(origin);
+      return;
+    }
 
-    // launch() can be called from outside the card switcher
-    // hiding it if needed
-    if (CardsView.cardSwitcherIsShown())
-      CardsView.hideCardSwitcher();
+    // ... if not, we have no choice but to show the homescreen.
+    // We cannot launch/relaunch a given app based on the "origin" because
+    // we would need the manifest URL and the specific entry point.
+    setDisplayedApp(homescreen);
   }
 
   function isRunning(origin) {
@@ -965,23 +961,6 @@ var WindowManager = (function() {
     });
   }
 
-  // Start running the specified app.
-  // In order to have a nice smooth open animation,
-  // we don't actually set the iframe src property until
-  // the animation has completed.
-  function start(origin) {
-    if (isRunning(origin))
-      return;
-
-    var app = Applications.getByOrigin(origin);
-
-    // TODO: is the startPoint argument implemented?
-    // and is it passed back to us in the webapps-launch method?
-    // If so, we could use that to pass a query string or fragmentid
-    // to append to the apps' URL.
-    app.launch();
-  }
-
   // There are two types of mozChromeEvent we need to handle
   // in order to launch the app for Gecko
   window.addEventListener('mozChromeEvent', function(e) {
@@ -1340,10 +1319,6 @@ var WindowManager = (function() {
     getAppFrame: getAppFrame,
     getRunningApps: function() {
       return runningApps;
-    },
-    setDisplayedApp: setDisplayedApp,
-    getCurrentDisplayedApp: function() {
-      return runningApps[displayedApp];
     }
   };
 }());
