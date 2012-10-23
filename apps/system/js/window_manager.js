@@ -55,10 +55,6 @@ var WindowManager = (function() {
   var homescreenURL = '';
   var homescreenManifestURL = '';
 
-  // Screenshot in sprite -- to use, or not to use,
-  // that's the question.
-  var useScreenshotInSprite = true;
-
   // keep the reference of inline activity frame here
   var inlineActivityFrame = null;
 
@@ -525,7 +521,7 @@ var WindowManager = (function() {
       getAppScreenshot(openFrame, function(screenshot, isCached) {
         sprite.dataset.mask = isCached;
 
-        if (!screenshot || !useScreenshotInSprite) {
+        if (!screenshot) {
           sprite.dataset.mask = false;
           sprite.className = 'opening';
           return;
@@ -569,7 +565,7 @@ var WindowManager = (function() {
     getAppScreenshot(closeFrame, function(screenshot, isCached) {
       sprite.dataset.mask = isCached;
 
-      if (!screenshot || !useScreenshotInSprite) {
+      if (!screenshot) {
         sprite.dataset.mask = false;
         sprite.className = 'closing';
         return;
@@ -609,7 +605,7 @@ var WindowManager = (function() {
     // Fill the opening app sprite with screenshot.
     getAppScreenshot(openingAppFrame,
       function gotScreenshot(screenshot, isCached) {
-        if (!screenshot || !useScreenshotInSprite) {
+        if (!screenshot) {
           openingAppSprite.dataset.mask = false;
         } else {
           openingAppSprite.dataset.mask = isCached;
@@ -622,7 +618,7 @@ var WindowManager = (function() {
     // when the closing one got filled we start the animation
     getAppScreenshot(closingAppFrame,
       function gotScreenshot(screenshot, isCached) {
-        if (!screenshot || !useScreenshotInSprite) {
+        if (!screenshot) {
           closingAppSprite.dataset.mask = false;
         } else {
           closingAppSprite.dataset.mask = isCached;
@@ -921,7 +917,7 @@ var WindowManager = (function() {
     getAppScreenshot(inlineActivityFrame, function(screenshot, isCached) {
       sprite.dataset.mask = isCached;
 
-      if (!screenshot || !useScreenshotInSprite) {
+      if (!screenshot) {
         sprite.dataset.mask = false;
         sprite.className = 'inline-activity-opening';
         return;
