@@ -213,8 +213,7 @@ var WindowManager = (function() {
         if (prop !== 'transform')
           return;
 
-        openFrame.classList.add('active');
-        windows.classList.add('active');
+        windowOpening(openFrame);
 
         // If frame is still unpainted to this point, we will have to pause
         // the transition and wait for the mozbrowserfirstpaint event.
@@ -239,25 +238,11 @@ var WindowManager = (function() {
         }
 
         sprite.className = 'opened';
-        if ('wrapper' in openFrame.dataset) {
-          wrapperFooter.classList.add('visible');
-        }
         break;
 
       case 'opened':
-        // Take the focus away from the currently displayed app
-        var app = runningApps[displayedApp];
-        if (app && app.frame)
-          app.frame.blur();
 
-        // Give the focus to the frame
-        openFrame.setVisible(true);
-        openFrame.focus();
-
-        // Dispatch an 'appopen' event.
-        var evt = document.createEvent('CustomEvent');
-        evt.initCustomEvent('appopen', true, false, { origin: displayedApp });
-        openFrame.dispatchEvent(evt);
+        windowOpened(openFrame);
 
         setTimeout(openCallback);
 
@@ -268,15 +253,9 @@ var WindowManager = (function() {
         break;
 
       case 'closing':
-        closeFrame.classList.remove('active');
-        windows.classList.remove('active');
 
-        screenElement.classList.remove('fullscreen-app');
-
+        windowClosing(closeFrame);
         sprite.className = 'closed';
-        if ('wrapper' in closeFrame.dataset) {
-          wrapperFooter.classList.remove('visible');
-        }
         break;
 
       case 'closed':
@@ -285,6 +264,7 @@ var WindowManager = (function() {
         if (prop !== 'transform')
           return;
 
+        windowClosed(closeFrame);
         setTimeout(closeCallback);
 
         sprite.style.background = '';
@@ -326,6 +306,52 @@ var WindowManager = (function() {
         break;
     }
   });
+
+  // Executes when the opening transition scale the app
+  // to full size.
+  function windowOpening(frame) {
+    frame.classList.add('active');
+    windows.classList.add('active');
+
+    if ('wrapper' in frame.dataset) {
+      wrapperFooter.classList.add('visible');
+    }
+  }
+
+  // Executes when the screenshot fades and the app is really visible, or
+  // right after the opening transition if there is no screenshot.
+  function windowOpened(frame) {
+    // Take the focus away from the currently displayed app
+    var app = runningApps[displayedApp];
+    if (app && app.frame)
+      app.frame.blur();
+
+    // Give the focus to the frame
+    frame.setVisible(true);
+    frame.focus();
+
+    // Dispatch an 'appopen' event.
+    var evt = document.createEvent('CustomEvent');
+    evt.initCustomEvent('appopen', true, false, { origin: displayedApp });
+    frame.dispatchEvent(evt);
+  }
+
+  // Executes right before app or app screenshot closing transition begin
+  function windowClosing(frame) {
+    frame.classList.remove('active');
+    windows.classList.remove('active');
+
+    screenElement.classList.remove('fullscreen-app');
+
+    if ('wrapper' in frame.dataset) {
+      wrapperFooter.classList.remove('visible');
+    }
+  }
+
+  // Executes when app or app screenshot transition finishes.
+  function windowClosed(frame) {
+    // Nothing here yet.
+  }
 
   // On-disk database for window manager.
   // It's only for app screenshots right now.
