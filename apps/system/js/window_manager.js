@@ -194,6 +194,28 @@ var WindowManager = (function() {
   var openCallback = null;
   var closeCallback = null;
 
+  function setOpenFrame(frame) {
+    if (openFrame === null) {
+      openFrame = frame;
+      return;
+    }
+
+    openFrame.classList.remove('opening');
+    openFrame.classList.remove('closing');
+    openFrame = frame;
+  }
+
+  function setCloseFrame(frame) {
+    if (closeFrame === null) {
+      closeFrame = frame;
+      return;
+    }
+
+    closeFrame.classList.remove('opening');
+    closeFrame.classList.remove('closing');
+    closeFrame = frame;
+  }
+
   // Create a window sprite element to perform windows open/close
   // animations.
   var sprite = document.createElement('div');
@@ -248,7 +270,7 @@ var WindowManager = (function() {
 
         sprite.style.background = '';
         sprite.className = '';
-        openFrame = null;
+        setOpenFrame(null);
 
         break;
 
@@ -269,7 +291,7 @@ var WindowManager = (function() {
 
         sprite.style.background = '';
         sprite.className = '';
-        closeFrame = null;
+        setCloseFrame(null);
 
         break;
 
@@ -301,9 +323,32 @@ var WindowManager = (function() {
 
         sprite.style.background = '';
         sprite.className = '';
-        openFrame = null;
+        setOpenFrame(null);
 
         break;
+    }
+  });
+
+  windows.addEventListener('transitionend', function frameTransitionend(evt) {
+    var prop = evt.propertyName;
+    var frame = evt.target;
+    if (prop !== 'transform')
+      return;
+
+    if (frame === openFrame) {
+      windowOpening(frame);
+      windowOpened(frame);
+      setTimeout(openCallback);
+
+      setOpenFrame(null);
+    }
+
+    if (frame === closeFrame) {
+      windowClosing(frame);
+      windowClosed(frame);
+      setTimeout(closeCallback);
+
+      setCloseFrame(null);
     }
   });
 
@@ -526,7 +571,7 @@ var WindowManager = (function() {
   // Perform an "open" animation for the app's iframe
   function openWindow(origin, callback) {
     var app = runningApps[origin];
-    openFrame = app.frame;
+    setOpenFrame(app.frame);
 
     openCallback = callback || function() {};
 
@@ -536,19 +581,28 @@ var WindowManager = (function() {
       openFrame.classList.add('homescreen');
       openFrame.setVisible(true);
       openFrame.focus();
-      openFrame = null;
+      setOpenFrame(null);
     } else {
       if (app.manifest.fullscreen)
         screenElement.classList.add('fullscreen-app');
 
+      // Dispatch a appwillopen event
+      var evt = document.createEvent('CustomEvent');
+      evt.initCustomEvent('appwillopen', true, false, { origin: displayedApp });
+      app.frame.dispatchEvent(evt);
+
+      if (!('unpainted' in openFrame.dataset)) {
+        // The frame is painted. Let's animate itself instead of using sprite
+        openFrame.classList.add('opening');
+
+        return;
+      }
+
       // Get the screenshot of the app and put it on the sprite
       // before starting the transition
       sprite.className = 'before-open';
-      getAppScreenshot(openFrame, function(screenshot, isCached) {
-        sprite.dataset.mask = isCached;
-
+      getAppScreenshotFromDatabase(openFrame.src, function(screenshot) {
         if (!screenshot) {
-          sprite.dataset.mask = false;
           sprite.className = 'opening';
           return;
         }
@@ -561,17 +615,12 @@ var WindowManager = (function() {
         });
       });
     }
-
-    // Dispatch a appwillopen event
-    var evt = document.createEvent('CustomEvent');
-    evt.initCustomEvent('appwillopen', true, false, { origin: displayedApp });
-    app.frame.dispatchEvent(evt);
   }
 
   // Perform a "close" animation for the app's iframe
   function closeWindow(origin, callback) {
     var app = runningApps[origin];
-    closeFrame = app.frame;
+    setCloseFrame(app.frame);
     closeCallback = callback || function() {};
 
     // Send a synthentic 'appwillclose' event.
@@ -585,14 +634,20 @@ var WindowManager = (function() {
     closeFrame.blur();
     closeFrame.setVisible(false);
 
+    if (!('unpainted' in closeFrame.dataset)) {
+      // The frame is painted. Let's animate itself instead of using sprite
+      closeFrame.classList.add('closing');
+      closeFrame.classList.remove('active');
+
+      return;
+    }
+
     // Get the screenshot of the app and put it on the sprite
     // before starting the transition
     sprite.className = 'before-close';
-    getAppScreenshot(closeFrame, function(screenshot, isCached) {
-      sprite.dataset.mask = isCached;
+    getAppScreenshotFromDatabase(closeFrame.src, function(screenshot) {
 
       if (!screenshot) {
-        sprite.dataset.mask = false;
         sprite.className = 'closing';
         return;
       }
@@ -706,8 +761,12 @@ var WindowManager = (function() {
 
   function restoreCurrentApp() {
     var frame = getAppFrame(displayedApp);
-    frame.classList.add('restored');
     frame.classList.remove('hideBottom');
+    frame.classList.add('restored');
+    frame.addEventListener('transitionend', function removeRestored() {
+      frame.removeEventListener('transitionend', execCallback);
+      frame.classList.remove('restored');
+    });
   }
 
   // Switch to a different app
@@ -940,11 +999,8 @@ var WindowManager = (function() {
     // Get the screenshot of the app and put it on the sprite
     // before starting the transition
     sprite.className = 'before-inline-activity';
-    getAppScreenshot(inlineActivityFrame, function(screenshot, isCached) {
-      sprite.dataset.mask = isCached;
-
+    getAppScreenshotFromDatabase(inlineActivityFrame.src, function(screenshot) {
       if (!screenshot) {
-        sprite.dataset.mask = false;
         sprite.className = 'inline-activity-opening';
         return;
       }
@@ -968,13 +1024,13 @@ var WindowManager = (function() {
     if (openFrame == frame) {
       sprite.style.background = '';
       sprite.className = '';
-      openFrame = null;
+      setOpenFrame(null);
       setTimeout(openCallback);
     }
     if (closeFrame == frame) {
       sprite.style.background = '';
       sprite.className = '';
-      closeFrame = null;
+      setCloseFrame(null);
       setTimeout(closeCallback);
     }
 
