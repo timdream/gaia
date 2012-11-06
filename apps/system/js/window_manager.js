@@ -360,6 +360,9 @@ var WindowManager = (function() {
     frame.setVisible(true);
     frame.focus();
 
+    // Set displayedApp to the new value
+    displayedApp = frame.dataset.frameOrigin;
+
     // Dispatch an 'appopen' event.
     var evt = document.createEvent('CustomEvent');
     evt.initCustomEvent('appopen', true, false, { origin: displayedApp });
@@ -380,7 +383,7 @@ var WindowManager = (function() {
 
   // Executes when app or app screenshot transition finishes.
   function windowClosed(frame) {
-    // Nothing here yet.
+    displayedApp = homescreen;
   }
 
   // The following things needs to happen when firstpaint happens.
@@ -634,6 +637,7 @@ var WindowManager = (function() {
       openFrame.setVisible(true);
       openFrame.focus();
       setOpenFrame(null);
+      displayedApp = origin;
 
       return;
     }
@@ -681,6 +685,11 @@ var WindowManager = (function() {
 
     // Ask closeWindow() to start closing the displayedApp
     closeWindow(displayedApp, callback);
+
+    // This ensures when the switchWindow() transition is canceled,
+    // the state is being set to homescreen.
+    displayedApp = homescreen;
+
     // Ask openWindow() to show a card on the right waiting to be opened
     openWindow(origin);
   }
@@ -843,9 +852,6 @@ var WindowManager = (function() {
     // for making screenshots.
     if (newApp)
       runningApps[newApp].launchTime = Date.now();
-
-    // Set displayedApp to the new value
-    displayedApp = newApp;
 
     // If the app has a attention screen open, displaying it
     AttentionScreen.showForOrigin(newApp);
@@ -1342,11 +1348,15 @@ var WindowManager = (function() {
     // Note that for this to work, the lockscreen and other overlays must
     // be included in index.html before this one, so they can register their
     // event handlers before we do.
+
+    // openFrame check in the second |else if| for the current transition
+    // -- if there one, is the user would like to cancel it instead of
+    // toggling homescreen panels.
     if (document.mozFullScreen) {
       document.mozCancelFullScreen();
     } else if (inlineActivityFrame) {
       stopInlineActivity();
-    } else if (displayedApp !== homescreen) {
+    } else if (displayedApp !== homescreen || openFrame) {
       setDisplayedApp(homescreen);
     } else {
       ensureHomescreen(null, true);
