@@ -194,21 +194,53 @@ var SleepMenu = {
         break;
 
       case 'restart':
-        var power = navigator.mozPower;
-        if (!power)
-          return;
+        this.startPowerOff(true);
 
-        power.reboot();
         break;
 
       case 'power':
-        var power = navigator.mozPower;
-        if (!power)
-          return;
+        this.startPowerOff(false);
 
-        power.powerOff();
         break;
     }
+  },
+
+  startPowerOff: function sm_startPowerOff(reboot) {
+    var power = navigator.mozPower;
+    if (!power)
+      return;
+
+    var div = document.createElement('div');
+    div.dataset.zIndexLevel = 'poweroff-splash';
+    div.id = 'poweroff-splash';
+    div.appendChild(document.createElement('span'));
+
+    div.className = 'step1';
+    var n = 1;
+
+    var nexAnimation = function nexAnimation() {
+      // Switch to next class
+      div.className = 'step' + (++n);
+
+      if (n < 3)
+        return;
+
+      // Actual poweroff/reboot
+      setTimeout(function powerOffAnimated() {
+        if (reboot) {
+          power.reboot();
+        } else {
+          power.powerOff();
+        }
+      });
+
+      // Paint screen to black before reboot/poweroff
+      ScreenManager.turnScreenOff(true);
+    };
+
+    div.addEventListener('animationend', nexAnimation);
+
+    document.getElementById('screen').appendChild(div);
   }
 };
 
