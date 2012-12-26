@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>GPS Test</title>
+    <style>
+    button, select {
+      font-size: 25px;
+    }
+    </style>
+    <script type="text/javascript" src="js/sensor.js"></script>
+  </head>
+  <body>
+    Accelerometer:<label id="accelerometer"></label><br />
+    Magnetic:<label id="magnetic"></label><br />
+    Gyroscope:<label id="gyroscope"></label><br />
+    Light:<label id="light"></label><br />
+    Proximity:<label id="proximity"></label><br />
+    <input type="submit" onclick="calibration();" value="Accelerometer and Gyroscope Calibration" />
+  </body>
+</html>

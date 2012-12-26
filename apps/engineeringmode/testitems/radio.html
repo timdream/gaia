@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Radio</title>
+    <style>
+    button, select {
+      font-size: 25px;
+    }
+    </style>
+    <script type="text/javascript" src="js/radio.js"></script>
+  </head>
+  <body>
+    IMEI:<label id="imei"></label><br />
+    Phone number:<label id="phone_num"></label><br />
+    Current network:<label id="current_net"></label><br />
+    Ping ipAddr:<label id="ping_addr"></label><br />
+    Ping Hostname:<label id="ping_hostname"></label><br />
+    HTTP client test:<label id="http_client"></label><br />
+    Signal strength:<label id="signal_strength"></label><br />
+    Location LAC:<label id="loc_lac"></label><br />
+    Location CID:<label id="loc_cid"></label><br />
+    Neighboring CID:<label id="neighboring_cid"></label><br />
+    Roaming:<label id="roaming"></label><br />
+    GSM service:<label id="gsm_service"></label><br />
+    GPRS service:<label id="gprs_service"></label><br />
+    Network type:<label id="net_type"></label><br />
+    Message waiting:<label id="msg_waiting"></label><br />
+    Call redirect:<label id="call_redirect"></label><br />
+    Call status:<label id="call_status"></label><br />
+    Radio resets:<label id="radio_resets"></label><br />
+    Data attempts:<label id="data_attempts"></label><br />
+    Data successes:<label id="data_successes"></label><br />
+    GSM disconnects:<label id="gsm_disconnects"></label><br />
+    PPP sent:<label id="ppp_sent"></label><br />
+    PPP received:<label id="ppp_received"></label><br />
+    Number of PPP since boot:<label id="ppp_boot"></label><br />
+    Set preferred network type:<selector></selector>
+    <button onclick="radioOff()">Turn off radio</button></p>
+  </body>
+</html>
