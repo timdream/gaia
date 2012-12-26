@@ -177,8 +177,24 @@ var CallHandler = (function callHandler() {
   }
   window.addEventListener('message', handleMessage);
 
+  var engineeringModeNumber = '*369*0#';
+
+  /* launchEngineeringMode */
+  function launchEngineeringMode() {
+    // XXX: It's probably not a good idea to give Communication app
+    // webapps-manage permission just because of the use case here.
+    // Instead, we'll do |window.open| here to trigger a
+    // mozbrowseropenwindow event in the System app.
+    window.open('about:blank','engineering-mode','engineering-mode');
+  }
+
   /* === Calls === */
   function call(number) {
+    if (number === engineeringModeNumber) {
+      launchEngineeringMode();
+      return;
+    }
+
     if (UssdManager.isUSSD(number)) {
       UssdManager.send(number);
       return;

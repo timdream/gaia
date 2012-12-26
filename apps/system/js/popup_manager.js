@@ -169,6 +169,36 @@ var PopupManager = {
           return;
         }
 
+        // XXX dirty hack:
+        // Dialer app is asking us to launch the Engineering Mode app
+        if (detail.name === 'engineering-mode' &&
+            detail.features === 'engineering-mode') {
+          var mozPerms = navigator.mozPermissionSettings;
+          if (!mozPerms)
+            return;
+
+          // Make sure this is really coming from the dialer app
+          var appManifestUrl = evt.target.getAttribute('mozapp');
+          var app = Applications.getByManifestURL(appManifestUrl);
+          if (!app ||
+              'allow' !== mozPerms.get('telephony',
+                                       app.manifestURL, app.origin, false)) {
+            return;
+          }
+
+          var engModeAppManifestUrl = document.location.toString()
+                                      .replace('system', 'engineeringmode')
+                                      .replace('index.html', 'manifest.webapp');
+          var engModeApp = Applications.getByManifestURL(engModeAppManifestUrl);
+          if (!engModeApp) {
+            return;
+          }
+
+          engModeApp.launch();
+
+          return;
+        }
+
         this.throbber.classList.remove('loading');
 
         var frame = detail.frameElement;

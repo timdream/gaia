@@ -121,7 +121,8 @@ let hidden_apps = [
   gaiaManifestURL('wallpaper'),
   gaiaManifestURL('bluetooth'),
   gaiaManifestURL('system'),
-  gaiaManifestURL('pdfjs')
+  gaiaManifestURL('pdfjs'),
+  gaiaManifestURL('engineeringmode')
 ];
 
 init = getFile(GAIA_DIR, GAIA_CORE_APP_SRCDIR, 'homescreen', 'js', 'hiddenapps.js');
