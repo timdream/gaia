@@ -56,7 +56,7 @@ MockFb.contacts = function() {
 
   return {
     'getAll': getAll
-  }
+  };
 
 }();
 

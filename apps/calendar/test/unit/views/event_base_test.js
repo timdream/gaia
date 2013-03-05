@@ -72,7 +72,7 @@ suiteGroup('Views.EventBase', function() {
     subject._returnTo = '/foo';
     subject._updateUI = function() {
       assert.equal(subject._returnTo, '/foo');
-      assert.equal(subject._returnTop, '/foo');      
+      assert.equal(subject._returnTop, '/foo');
     };
     subject.dispatch({params: {}});
 

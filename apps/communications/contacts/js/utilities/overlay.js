@@ -41,7 +41,7 @@ var utils = this.utils || {};
         setClass(clazzName);
         clazz = clazzName;
         // To refresh the message according to the new clazzName
-        if(clazzName === 'activityBar' || clazzName === 'spinner') {
+        if (clazzName === 'activityBar' || clazzName === 'spinner') {
           progressMsg.textContent = null;
         }
       }
@@ -71,12 +71,12 @@ var utils = this.utils || {};
 
   function setAsProgress() {
     statusContainer.classList.remove('loading-icon');
-    progressElement.setAttribute('max','100');
-    progressElement.setAttribute('value','0');
+    progressElement.setAttribute('max', '100');
+    progressElement.setAttribute('value', '0');
   }
 
   function setClass(clazzName) {
-    switch(clazzName) {
+    switch (clazzName) {
       case 'spinner':
         progressElement.classList.remove('pack-activity');
         statusContainer.classList.add('loading-icon');

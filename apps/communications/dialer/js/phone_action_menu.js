@@ -1,4 +1,4 @@
-var PhoneNumberActionMenu = (function () {
+var PhoneNumberActionMenu = (function() {
 
   var _initiated, _newPhoneNumber, _addContactActionMenu, _callMenuItem,
     _createNewContactMenuItem, _addToExistingContactMenuItem,

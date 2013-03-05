@@ -6,29 +6,29 @@ suite('contacts - launch', function() {
   var helper = IntegrationHelper;
   var app;
   var newContact = {
-    "adr": [
+    'adr': [
       {
-        "countryName": "Brazil",
-        "locality": "Blumenau",
-        "postalCode": "89062-090",
-        "streetAddress": "Rua Lisete Fischer, 892"
+        'countryName': 'Brazil',
+        'locality': 'Blumenau',
+        'postalCode': '89062-090',
+        'streetAddress': 'Rua Lisete Fischer, 892'
       }
     ],
-    "email": [
+    'email': [
       {
-        "value": "LucasCastroAzevedo@teleworm.us"
+        'value': 'LucasCastroAzevedo@teleworm.us'
       }
     ],
-    "familyName": "Azevedo",
-    "givenName": "Lucas",
-    "org": "Omni Realty",
-    "tel": [
+    'familyName': 'Azevedo',
+    'givenName': 'Lucas',
+    'org': 'Omni Realty',
+    'tel': [
       {
-        "value": "(47) 5098-7516",
-        "carrier": "Telefonica"
+        'value': '(47) 5098-7516',
+        'carrier': 'Telefonica'
       }
     ],
-    "comment": ["test1"]
+    'comment': ['test1']
   };
 
   suiteTeardown(function() {
@@ -95,7 +95,7 @@ suite('contacts - launch', function() {
     var elements = yield detailsList.findElements('[data-phone]');
     assert.equal(elements.length, 1);
     var phone = yield detailsList.findElement('#call-or-pick-0');
-    var text = newContact.tel[0].value + " " + newContact.tel[0].carrier
+    var text = newContact.tel[0].value + ' ' + newContact.tel[0].carrier;
     var value = yield phone.text();
     assert.equal(value, text);
 
@@ -152,7 +152,7 @@ suite('contacts - launch', function() {
       givenName: 'Test',
       tel: [
         {
-          value: "(47) 5098-7516-22"
+          value: '(47) 5098-7516-22'
         }
       ]
     };
@@ -174,7 +174,7 @@ suite('contacts - launch', function() {
     var elements = yield detailsList.findElements('[data-phone]');
     assert.equal(elements.length, 1);
     var phone = yield detailsList.findElement('#call-or-pick-0');
-    var text = updatedContact.tel[0].value + " " + newContact.tel[0].carrier
+    var text = updatedContact.tel[0].value + ' ' + newContact.tel[0].carrier;
     var value = yield phone.text();
     assert.equal(value, text);
 

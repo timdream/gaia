@@ -3,7 +3,7 @@
 
 'use strict';
 
-(function(window){
+(function(window) {
 
   var _ = navigator.mozL10n.get;
 
@@ -33,7 +33,7 @@
   window.AppError = function AppError(app) {
     var self = this;
     this.app = app;
-    this.app.frame.addEventListener('mozbrowsererror', function (evt) {
+    this.app.frame.addEventListener('mozbrowsererror', function(evt) {
       if (evt.detail.type != 'other')
         return;
 

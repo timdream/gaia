@@ -105,13 +105,13 @@ contacts.List = (function() {
   var initOrder = function initOrder(callback) {
     if (orderByLastName === null) {
       asyncStorage.getItem(ORDER_KEY, function valueReady(value) {
-        if(typeof value !== 'boolean') {
+        if (typeof value !== 'boolean') {
         // This code only will be executed first time contacts app is opened
           var req = utils.config.load('/contacts/config.json');
           req.onload = function configReady(configData) {
             orderByLastName = (configData.defaultContactsOrder ===
                     ORDER_BY_FAMILY_NAME ? true : false);
-            if(callback) {
+            if (callback) {
               callback();
             }
             // The default value got in config is stored
@@ -120,7 +120,7 @@ contacts.List = (function() {
           req.onerror = function configError() {
             window.console.error('Error while reading configuration file');
             orderByLastName = false;
-            if(callback) {
+            if (callback) {
               callback();
             }
             // The default value got in config is stored
@@ -215,7 +215,7 @@ contacts.List = (function() {
     contactsCache[contact.id] = {
       contact: contact,
       container: contactContainer
-    }
+    };
     renderOrg(contact, contactContainer, true);
 
     // Facebook data, favorites and images will be lazy loaded
@@ -788,7 +788,7 @@ contacts.List = (function() {
           enrichedContact = fbContact.merge(fbData);
         }
         addToList(contact, enrichedContact);
-        if(callback) {
+        if (callback) {
           callback(id);
         }
       });

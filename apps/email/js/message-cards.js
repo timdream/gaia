@@ -17,8 +17,8 @@ var SCROLL_MAX_RETENTION_SCREENS = 7;
  * Format the message subject appropriately.  This means ensuring that if the
  * subject is empty, we use a placeholder string instead.
  *
- * @param subjectNode the DOM node for the message's subject
- * @param message the message object
+ * @param subjectNode the DOM node for the message's subject.
+ * @param message the message object.
  */
 function displaySubject(subjectNode, message) {
   var subject = message.subject && message.subject.trim();
@@ -802,7 +802,7 @@ MessageListCard.prototype = {
 
     if (this.selectedMessages.length === 0)
       return;
-  
+
     var dialog = msgNodes['delete-confirm'].cloneNode(true);
     var content = dialog.getElementsByTagName('p')[0];
     content.textContent = mozL10n.get('message-multiedit-delete-confirm',

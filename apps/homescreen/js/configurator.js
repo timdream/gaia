@@ -12,7 +12,7 @@ const Configurator = (function() {
     destroy: function() {
       // Do nothing
     }
-  }
+  };
 
   var xhr = new XMLHttpRequest();
   xhr.overrideMimeType('application/json');
@@ -56,5 +56,5 @@ const Configurator = (function() {
     getSection: function(section) {
       return conf[section];
     }
-  }
+  };
 }());

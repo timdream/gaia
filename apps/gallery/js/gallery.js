@@ -661,7 +661,7 @@ function startPick(activityRequest) {
   }
   // We need this for cropping the photo
   loader.load('js/ImageEditor.js', function() {
-    setView(pickView);    
+    setView(pickView);
   });
 }
 

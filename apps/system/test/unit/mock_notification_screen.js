@@ -19,7 +19,7 @@ var MockNotificationScreen = {
           return {
             addEventListener: function() {},
             removeEventListener: function() {}
-          }
+          };
         }
       };
     }, this);

@@ -244,7 +244,7 @@ var NotificationScreen = {
       this.toasterIcon.src = detail.icon;
       this.toasterIcon.hidden = false;
     } else {
-      this.toasterIcon.hidden = true
+      this.toasterIcon.hidden = true;
     }
 
     var time = document.createElement('span');
@@ -351,7 +351,7 @@ var NotificationScreen = {
 
     if (notificationNode)
       notificationNode.parentNode.removeChild(notificationNode);
-    
+
     if (lockScreenNotificationNode)
       lockScreenNotificationNode.parentNode.removeChild(lockScreenNotificationNode);
     this.updateStatusBarIcon();

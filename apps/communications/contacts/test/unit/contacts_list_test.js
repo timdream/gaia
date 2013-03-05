@@ -833,7 +833,7 @@ suite('Render contacts list', function() {
 
           // Check as well the correct highlight
           // familyName to be in bold
-          var highlight =  window.utils.text.escapeHTML(mockContact.givenName[0], true) + ' <strong>' +
+          var highlight = window.utils.text.escapeHTML(mockContact.givenName[0], true) + ' <strong>' +
              window.utils.text.escapeHTML(mockContact.familyName[0], true) + '</strong>';
           assert.isTrue(printed.innerHTML.indexOf(highlight) == 0);
         }
@@ -850,7 +850,7 @@ suite('Render contacts list', function() {
         var mockContact = mockContacts[mockContacts.length - 1];
         var expected = getStringToBeOrdered(mockContact, false);
 
-        assert.equal(name.dataset['order'],  window.utils.text.escapeHTML(expected, true));
+        assert.equal(name.dataset['order'], window.utils.text.escapeHTML(expected, true));
 
         // Check highlight
         // Given name to be in bold

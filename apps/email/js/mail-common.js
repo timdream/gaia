@@ -495,7 +495,7 @@ var Cards = {
       return undefined;
   },
 
-  hasCard: function (query) {
+  hasCard: function(query) {
     return this._findCard(query, true) > -1;
   },
 
@@ -685,7 +685,7 @@ var Cards = {
   /**
    * Shortcut for removing all the cards
    */
-  removeAllCards: function () {
+  removeAllCards: function() {
     return this.removeCardAndSuccessors(null, 'none');
   },
 
@@ -936,14 +936,14 @@ var Toaster = {
    * Tell toaster listeners about a mutation we just made.
    *
    * @args[
-   *   @param[undoableOp]
-   *   @param[pending #:optional Boolean]{
+   *   @param [undoableOp].
+   *   @param[pending #:optional Boolean] {
    *     If true, indicates that we should wait to display this banner until we
    *     transition to the next card.  This is appropriate for things like
    *     deleting the message that is displayed on the current card (and which
    *     will be imminently closed).
    *   }
-   * ]
+   * ].
    */
   logMutation: function(undoableOp, pending) {
     if (pending) {

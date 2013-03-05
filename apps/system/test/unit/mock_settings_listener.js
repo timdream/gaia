@@ -18,7 +18,7 @@ var MockSettingsListener = {
     }
     return {
       set: set
-    }
+    };
   },
 
   mName: null,

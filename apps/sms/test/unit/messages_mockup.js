@@ -1,7 +1,7 @@
 'use strict';
 
 function MockThreadMessages() {
-	
+
 	var messagesMockup = [
 		{
       sender: null,

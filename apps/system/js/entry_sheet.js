@@ -17,13 +17,13 @@ var EntrySheet = (function invocation() {
 
   EntrySheet.prototype.open = function() {
     // Transtion won't happen if adding class directly
-    setTimeout(function(){
+    setTimeout(function() {
       this.element.classList.add('active');
     }.bind(this));
   }
 
   EntrySheet.prototype.close = function() {
-    this.element.addEventListener('transitionend', function onTransitionend(){
+    this.element.addEventListener('transitionend', function onTransitionend() {
       this.element.removeEventListener('transitionend', onTransitionend);
       this.element.classList.remove('disappearing');
       this.element.classList.remove('active');
@@ -68,10 +68,10 @@ var EntrySheet = (function invocation() {
     // XXX: We may make entry sheet to generate browser frame by itself,
     // hence we don't need to check the type here.
     if (typeof(BrowserFrame) != 'undefined' && content instanceof BrowserFrame) {
-      content.element.addEventListener('mozbrowserloadstart', function onLoadStart(){
+      content.element.addEventListener('mozbrowserloadstart', function onLoadStart() {
         self.throbberElement.dataset.loading = true;
       });
-      content.element.addEventListener('mozbrowserloadend', function onLoadEnd(){
+      content.element.addEventListener('mozbrowserloadend', function onLoadEnd() {
         delete self.throbberElement.dataset.loading;
       });
       this.content.appendChild(content.element);

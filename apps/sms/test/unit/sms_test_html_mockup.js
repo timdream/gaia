@@ -1,18 +1,18 @@
 'use strict';
 
 function renderThreadListHeader() {
-	return  '<menu type="toolbar">' +
+	return '<menu type="toolbar">' +
 	        	'<a href="#new" id="icon-add">' +
 	            '<span class="icon icon-compose"></span>' +
 	          '</a>' +
 	          '<a href="#edit" id="icon-edit-threads">' +
 	            '<span class="icon icon-edit"></span>' +
 	          '</a>' +
-	        '</menu>';	
+	        '</menu>';
 }
 
 function renderThreadListEdit() {
-	return  '<section>' +
+	return '<section>' +
             '<header>' +
               '<button id="threads-cancel-button">' +
                 '<span data-l10n-id="cancel" class="icon icon-close">close</span>' +

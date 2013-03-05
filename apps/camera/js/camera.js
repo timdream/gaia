@@ -463,7 +463,9 @@ var Camera = {
                                      onsuccess, onerror);
     }).bind(this);
 
-    DCFApi.createDCFFilename(this._videoStorage, 'video', (function(path, name) {
+    DCFApi.createDCFFilename(this._videoStorage,
+                             'video',
+                             (function(path, name) {
       this._videoPath = path + name;
 
       // The CameraControl API will not automatically create directories
@@ -657,7 +659,8 @@ var Camera = {
       }).bind(this);
       camera.onRecorderStateChange = this.recordingStateChanged.bind(this);
       if (this.captureMode === this.CAMERA) {
-        camera.getPreviewStream(this._previewConfig, gotPreviewScreen.bind(this));
+        camera.getPreviewStream(this._previewConfig,
+                                gotPreviewScreen.bind(this));
       } else {
         this._previewConfigVideo.rotation = this._phoneOrientation;
         this._cameraObj.getPreviewStreamVideoMode(this._previewConfigVideo,
@@ -736,7 +739,9 @@ var Camera = {
     this._manuallyFocused = false;
     this.hideFocusRing();
     this.restartPreview();
-    DCFApi.createDCFFilename(this._pictureStorage, 'image', (function(path, name) {
+    DCFApi.createDCFFilename(this._pictureStorage,
+                             'image',
+                             (function(path, name) {
       var addreq = this._pictureStorage.addNamed(blob, path + name);
       addreq.onsuccess = (function() {
         if (this._pendingPick) {
