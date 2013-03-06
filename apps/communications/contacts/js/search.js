@@ -35,7 +35,8 @@ contacts.Search = (function() {
       imgLoader,
       searchEnabled = false;
 
-  var init = function load(_conctactsListView, _groupFavorites, _clickHandler, defaultEnabled) {
+  var init = function load(_conctactsListView, _groupFavorites, _clickHandler,
+                           defaultEnabled) {
     conctactsListView = _conctactsListView;
 
     searchView = document.getElementById('search-view');
@@ -108,7 +109,7 @@ contacts.Search = (function() {
     remainingPending = true;
   }
 
-  function addRemainingResults(nodes,from) {
+  function addRemainingResults(nodes, from) {
     if (remainingPending !== true) {
       return;
     }
@@ -244,8 +245,8 @@ contacts.Search = (function() {
             hideProgressResults();
           }
           // Only an initial page of elements is loaded in the search list
-          if (Object.keys(currentSet).length
-             < SEARCH_PAGE_SIZE && !(contact.dataset.uuid in currentSet)) {
+          if (Object.keys(currentSet).length <
+              SEARCH_PAGE_SIZE && !(contact.dataset.uuid in currentSet)) {
             var clonedNode = getClone(contact);
             currentSet[contact.dataset.uuid] = clonedNode;
             searchList.appendChild(clonedNode);

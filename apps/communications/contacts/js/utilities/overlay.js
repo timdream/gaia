@@ -13,7 +13,7 @@ var utils = this.utils || {};
 
   utils.overlay.show = function showOverlay(message, progressClass, textId) {
     // Constructor for the progress element
-    function ProgressBar(pMsgId,pClass) {
+    function ProgressBar(pMsgId, pClass) {
       var counter = 0;
       var total = 0;
       var progressTextId = pMsgId || 'genericProgress';

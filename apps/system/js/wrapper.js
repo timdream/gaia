@@ -98,13 +98,14 @@ var Launcher = (function() {
   });
 
   function onLocationChange() {
-    currentAppIframe().getCanGoForward().onsuccess = function forwardSuccess(e) {
-      if (e.target.result === true) {
-        delete forward.dataset.disabled;
-      } else {
-        forward.dataset.disabled = true;
+    currentAppIframe().getCanGoForward().onsuccess =
+      function forwardSuccess(e) {
+        if (e.target.result === true) {
+          delete forward.dataset.disabled;
+        } else {
+          forward.dataset.disabled = true;
+        }
       }
-    }
 
     currentAppIframe().getCanGoBack().onsuccess = function backSuccess(e) {
       if (e.target.result === true) {

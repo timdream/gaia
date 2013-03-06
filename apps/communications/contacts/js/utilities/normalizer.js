@@ -34,7 +34,8 @@ if (!utils.text) {
       }
       if (!str || typeof str != 'string')
         return '';
-      var escaped = str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      var escaped = str.replace(/&/g, '&amp;').replace(/</g, '&lt;')
+                       .replace(/>/g, '&gt;');
       if (escapeQuotes)
         return escaped.replace(/"/g, '&quot;').replace(/'/g, '&#x27;'); //"
       return escaped;

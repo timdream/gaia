@@ -296,7 +296,7 @@ suite('Render contact form', function() {
     }
   }
 
-  function assertPhoneData(c,phoneData) {
+  function assertPhoneData(c, phoneData) {
     var data = phoneData || mockContact;
 
     var valuePhone = document.querySelector('#number_' + c).value;
@@ -307,7 +307,7 @@ suite('Render contact form', function() {
     assert.isTrue(carrierPhone === data.tel[c].carrier);
   }
 
-  function assertEmailData(c,emailData) {
+  function assertEmailData(c, emailData) {
     var data = emailData || mockContact;
 
     var valueEmail = document.querySelector('#email_' + c).value;
@@ -316,7 +316,7 @@ suite('Render contact form', function() {
     assert.isTrue(typeEmail === data.email[c].type);
   }
 
-  function assertAddressData(c,addrData) {
+  function assertAddressData(c, addrData) {
     var data = addrData || mockContact;
 
     var valueType = document.querySelector('#address_type_' + c).textContent;

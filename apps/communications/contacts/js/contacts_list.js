@@ -795,7 +795,8 @@ contacts.List = (function() {
     } else {
       var contact = id;
       remove(contact.id);
-      addToList(contact); // Add without looking for extras, just what we have as contact
+      // Add without looking for extras, just what we have as contact
+      addToList(contact);
       if (callback) {
         callback(contact.id);
       }
