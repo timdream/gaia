@@ -949,7 +949,8 @@ function onTouchStart(evt) {
     var target = touch.target;
 
     // Add touchmove and touchend listeners directly to the target so that we
-    // will always hear these events, even if the target is removed from the DOM.
+    // will always hear these events, even if the target is removed from the
+    // DOM.
     // This can happen when the keyboard switches cases, as well as when we
     // show the alternate characters menu for a key.
     target.addEventListener('touchmove', onTouchMove);
@@ -1133,7 +1134,8 @@ function movePress(target, coords, touchId) {
   clearTimeout(menuTimeout);
 
   // Hide of alternatives menu if the touch moved out of it
-  if (target.parentNode !== IMERender.menu && isShowingAlternativesMenu && !inMenuLockedArea(coords))
+  if (target.parentNode !== IMERender.menu &&
+      isShowingAlternativesMenu && !inMenuLockedArea(coords))
     hideAlternatives();
 
   // Control showing alternatives menu

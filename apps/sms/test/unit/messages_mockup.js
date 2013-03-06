@@ -2,8 +2,8 @@
 
 function MockThreadMessages() {
 
-	var messagesMockup = [
-		{
+  var messagesMockup = [
+    {
       sender: null,
       receiver: '197746797',
       body: 'Error message:)',

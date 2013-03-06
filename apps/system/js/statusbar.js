@@ -102,7 +102,10 @@ var StatusBar = {
    */
   systemDownloadsCount: 0,
 
-  /* Objects used to animate the system downloads and network activity canvas elements */
+  /**
+   * Objects used to animate the system downloads and
+   * network activity canvas elements
+   */
   networkActivityAnimation: null,
   systemDownloadsAnimation: null,
 

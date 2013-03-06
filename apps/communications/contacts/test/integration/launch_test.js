@@ -102,7 +102,8 @@ suite('contacts - launch', function() {
     // Asserting address
     elements = yield detailsList.findElements('[data-address]');
     assert.equal(elements.length, 1);
-    var address = yield detailsList.findElement('#address-details-template-0 b');
+    var address =
+      yield detailsList.findElement('#address-details-template-0 b');
     var text = newContact.adr[0].streetAddress;
     text += ' ' + newContact.adr[0].postalCode;
     text += ' ' + newContact.adr[0].locality;
@@ -219,7 +220,8 @@ suite('contacts - launch', function() {
     // var editButton = yield app.element('editButton');
     // var addNewEmailButton = yield app.element('addNewEmailButton');
     // var doneButton = yield app.element('doneButton');
-    // var deleteEmailButton = yield contactsForm.findElement('#add-email-0 > button span');
+    // var deleteEmailButton =
+    //   yield contactsForm.findElement('#add-email-0 > button span');
 
     // yield editButton.click();
     // yield app.waitUntilElement(contactsForm, 'displayed');
@@ -270,14 +272,17 @@ suite('contacts - launch', function() {
     var detailsList = yield app.element('detailsList');
 
     yield app.waitFor(function(expected) {
-      app.waitForElementsLengthEqual(detailsList, '[data-comment]', 2, expected);
+      app.waitForElementsLengthEqual(
+        detailsList, '[data-comment]', 2, expected);
     });
-    var commentField = yield detailsList.findElement('#note-details-template-0');
+    var commentField =
+      yield detailsList.findElement('#note-details-template-0');
     var text = newContact['comment'][0];
     var value = yield commentField.text();
     assert.equal(value, text);
 
-    var commentField = yield detailsList.findElement('#note-details-template-1');
+    var commentField =
+      yield detailsList.findElement('#note-details-template-1');
     var text = comment;
     var value = yield commentField.text();
     assert.equal(value, text);
@@ -333,7 +338,8 @@ suite('contacts - launch', function() {
     yield addressType.click();
     yield app.waitUntilElement(tagsView, 'displayed');
 
-    var workType = yield tagsView.findElement('#tags-list li:last-child button');
+    var workType =
+      yield tagsView.findElement('#tags-list li:last-child button');
     yield workType.click();
     // assert icon
     var classButton = yield workType.getAttribute('class');

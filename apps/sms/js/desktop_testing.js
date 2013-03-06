@@ -119,7 +119,8 @@ if (!navigator.mozSms) {
     ];
   })();
 
-  var GetMessagesHack = function gmhack(stepCB, filter, invert, endCB, cllbckArgs) {
+  var GetMessagesHack = function gmhack(stepCB, filter, invert,
+                                        endCB, cllbckArgs) {
     function applyFilter(msgs) {
       if (!filter)
         return msgs;

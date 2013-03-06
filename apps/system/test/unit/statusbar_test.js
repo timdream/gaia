@@ -59,7 +59,8 @@ suite('system/Statusbar', function() {
 
     StatusBar.ELEMENTS.forEach(function testAddElement(elementName) {
       var elt;
-      if (elementName == 'system-downloads' || elementName == 'network-activity') {
+      if (elementName == 'system-downloads' ||
+          elementName == 'network-activity') {
         elt = document.createElement('canvas');
       } else {
         elt = document.createElement('div');
