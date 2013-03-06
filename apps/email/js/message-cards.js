@@ -17,8 +17,8 @@ var SCROLL_MAX_RETENTION_SCREENS = 7;
  * Format the message subject appropriately.  This means ensuring that if the
  * subject is empty, we use a placeholder string instead.
  *
- * @param subjectNode the DOM node for the message's subject.
- * @param message the message object.
+ * @param {DOMElement} subjectNode the DOM node for the message's subject.
+ * @param {Object} message the message object.
  */
 function displaySubject(subjectNode, message) {
   var subject = message.subject && message.subject.trim();

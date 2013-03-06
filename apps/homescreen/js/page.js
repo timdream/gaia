@@ -245,12 +245,14 @@ Icon.prototype = {
       ctx.shadowColor = 'rgba(0,0,0,0.8)';
       ctx.shadowBlur = 2;
       ctx.shadowOffsetY = 2;
-      ctx.drawImage(background, 2 * SCALE_RATIO, 2 * SCALE_RATIO, MAX_ICON_SIZE, MAX_ICON_SIZE);
+      ctx.drawImage(background, 2 * SCALE_RATIO,
+                    2 * SCALE_RATIO, MAX_ICON_SIZE, MAX_ICON_SIZE);
       // Disable smoothing on icon resize
       ctx.shadowBlur = 0;
       ctx.shadowOffsetY = 0;
       ctx.mozImageSmoothingEnabled = false;
-      ctx.drawImage(img, 16 * SCALE_RATIO, 16 * SCALE_RATIO, 32 * SCALE_RATIO, 32 * SCALE_RATIO);
+      ctx.drawImage(img, 16 * SCALE_RATIO, 16 * SCALE_RATIO,
+                    32 * SCALE_RATIO, 32 * SCALE_RATIO);
       canvas.toBlob(self.renderBlob.bind(self));
     };
   },
