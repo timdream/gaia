@@ -116,7 +116,7 @@ contacts.List = (function() {
             }
             // The default value got in config is stored
             asyncStorage.setItem(ORDER_KEY, orderByLastName);
-          }
+          };
           req.onerror = function configError() {
             window.console.error('Error while reading configuration file');
             orderByLastName = false;
@@ -125,7 +125,7 @@ contacts.List = (function() {
             }
             // The default value got in config is stored
             asyncStorage.setItem(ORDER_KEY, orderByLastName);
-          }
+          };
         }
         else {
           orderByLastName = value;
@@ -140,7 +140,7 @@ contacts.List = (function() {
         callback();
       }
     }
-  }
+  };
 
   var renderGroupHeader = function renderGroupHeader(group, letter) {
     var letteredSection = document.createElement('section');
@@ -195,7 +195,7 @@ contacts.List = (function() {
     }
 
     return contactContainer;
-  }
+  };
 
   // This method returns the very essential information needed
   // for rendering the contacts list
@@ -238,7 +238,7 @@ contacts.List = (function() {
     });
     var escapedValue = utils.text.escapeHTML(searchInfo.join(' '), true);
     return utils.text.normalize(escapedValue);
-  }
+  };
 
   var getHighlightedName = function getHighlightedName(contact) {
     var givenName = '';
@@ -435,7 +435,7 @@ contacts.List = (function() {
     imgLoader.reload();
     imagesLoaded = true;
     dispatchCustomEvent('finishLazyLoading');
-  }
+  };
 
   var lazyLoadFacebookData = function lazyLoadFacebookData() {
     Contacts.loadFacebook(function() {
@@ -489,7 +489,7 @@ contacts.List = (function() {
   var dispatchCustomEvent = function dispatchCustomEvent(eventName) {
     var event = new CustomEvent(eventName);
     window.dispatchEvent(event);
-  }
+  };
 
   var renderPhoto = function renderPhoto(contact, link) {
     if (!contact.photo || !contact.photo.length) {
@@ -539,7 +539,7 @@ contacts.List = (function() {
     meta.innerHTML = '<span class="org"></span>';
     link.appendChild(meta);
     return meta;
-  }
+  };
 
   var toggleNoContactsScreen = function cl_toggleNoContacs(show) {
     if (show && !ActivityHandler.currentlyHandling) {
@@ -844,7 +844,7 @@ contacts.List = (function() {
       renderGroupHeader(letter, letter);
     }
     renderGroupHeader('und', '#');
-  }
+  };
 
   var setOrderByLastName = function setOrderByLastName(value) {
     orderByLastName = value;

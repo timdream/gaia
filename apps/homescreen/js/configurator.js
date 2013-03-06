@@ -39,12 +39,12 @@ const Configurator = (function() {
       console.error('Failed parsing homescreen configuration file: ' + e);
       startHomescreenByDefault();
     }
-  }
+  };
 
   xhr.onerror = function _xhrOnError(evt) {
     console.error('File not found: js/init.json');
     startHomescreenByDefault();
-  }
+  };
 
   function startHomescreenByDefault() {
     var searchPage = document.querySelector('div[role="search-page"]');

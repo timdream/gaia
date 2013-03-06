@@ -149,7 +149,7 @@ var ApplicationsList = {
 
       self._sortApps();
       self.render();
-    }
+    };
   },
 
   render: function al_render() {

@@ -105,7 +105,7 @@ var Launcher = (function() {
         } else {
           forward.dataset.disabled = true;
         }
-      }
+      };
 
     currentAppIframe().getCanGoBack().onsuccess = function backSuccess(e) {
       if (e.target.result === true) {
@@ -113,7 +113,7 @@ var Launcher = (function() {
       } else {
         back.dataset.disabled = true;
       }
-    }
+    };
   }
 
   window.addEventListener('mozbrowserlocationchange', function() {
@@ -182,7 +182,7 @@ var Launcher = (function() {
           !currentAppIframe().dataset.searchURL) {
           bookmarkButton.dataset.disabled = true;
         }
-      }
+      };
     }
 
     var data = {

@@ -379,7 +379,7 @@ fb.Contact = function(deviceContact, cid) {
           var out = this.merge(fbdata);
           outReq.done(out);
 
-        }.bind(this);
+        };.bind(this);
 
         fbreq.onerror = function() {
           outReq.failed(fbreq.error);
@@ -454,7 +454,7 @@ fb.Contact = function(deviceContact, cid) {
 
           outReq.done([out1, out2]);
 
-        }.bind(this);
+        };.bind(this);
 
         fbreq.onerror = function() {
           outReq.failed(fbreq.error);

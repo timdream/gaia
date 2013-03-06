@@ -137,7 +137,7 @@ const GridManager = (function() {
       // Remember this for next time.
       lastPrediction = prediction;
       return prediction;
-    }
+    };
   }
 
   function addActive(target) {
@@ -146,7 +146,7 @@ const GridManager = (function() {
       removeActive = function _removeActive() {
         target.classList.remove('active');
         removeActive = noop;
-      }
+      };
     } else {
       removeActive = noop;
     }
@@ -273,13 +273,13 @@ const GridManager = (function() {
               var opacity = opacityOnAppGridPageMax -
                     (Math.abs(deltaX) / windowWidth) * opacityOnAppGridPageMax;
               overlayStyle.opacity = Math.round(opacity * 10) / 10;
-            }
+            };
           } else if (currentPage === landingPage) {
             setOpacityToOverlay = function() {
               var opacity = (Math.abs(deltaX) / windowWidth) *
                             opacityOnAppGridPageMax;
               overlayStyle.opacity = Math.round(opacity * 10) / 10;
-            }
+            };
           } else {
             setOpacityToOverlay = function() {
               if (forward)
@@ -288,7 +288,7 @@ const GridManager = (function() {
               var opacity = opacityOnAppGridPageMax -
                     (Math.abs(deltaX) / windowWidth) * opacityOnAppGridPageMax;
               overlayStyle.opacity = Math.round(opacity * 10) / 10;
-            }
+            };
           }
 
           var pan = function(e) {

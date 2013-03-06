@@ -62,7 +62,7 @@ suite('Render contact', function() {
       DateTimeFormat: function() {
         this.localeFormat = function(date, format) {
           return date;
-        }
+        };
       }
     };
 

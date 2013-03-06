@@ -94,7 +94,7 @@ navigator.mozL10n.ready(function bluetoothSettings() {
       var req = defaultAdapter.setName(nameEntered);
       req.onsuccess = function bt_renameSuccess() {
         myName = visibleName.textContent = defaultAdapter.name;
-      }
+      };
     };
 
     // immediatly UI update, DOM element manipulation.
@@ -253,7 +253,7 @@ navigator.mozL10n.ready(function bluetoothSettings() {
         };
         this.menu.onsubmit = function closeMenu() {
           return self.close();
-        }
+        };
         this.menu.hidden = false;
       },
 

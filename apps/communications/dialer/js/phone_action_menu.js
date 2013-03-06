@@ -35,7 +35,7 @@ var PhoneNumberActionMenu = (function() {
       var activity = new MozActivity(options);
       activity.onsuccess = function() {
         Recents.refresh();
-      }
+      };
     } catch (e) {
       console.error('Error while creating activity');
     }

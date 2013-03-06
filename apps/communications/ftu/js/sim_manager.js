@@ -146,7 +146,7 @@ var SimManager = {
     var req = this.mobConn.unlockCardLock(options);
     req.onsuccess = function sm_unlockSuccess() {
       this.hideScreen();
-    }.bind(this);
+    };.bind(this);
   },
 
   clearFields: function sm_clearFields() {
@@ -196,7 +196,7 @@ var SimManager = {
     var req = this.mobConn.unlockCardLock(options);
     req.onsuccess = function sm_unlockSuccess() {
       this.hideScreen();
-    }.bind(this);
+    };.bind(this);
   },
 
   importContacts: function sm_importContacts() {

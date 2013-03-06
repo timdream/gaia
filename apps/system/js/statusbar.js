@@ -24,7 +24,7 @@ function AnimatedIcon(element, path, frames, delay) {
     var h = image.height / frames;
 
     context.drawImage(image, 0, 0, w, h, 0, 0, w, h);
-  }
+  };
 
   this.start = function() {
     var self = this;
@@ -42,14 +42,14 @@ function AnimatedIcon(element, path, frames, delay) {
           }
       }, delay);
     }
-  }
+  };
 
   this.stop = function() {
     if (this.timerId != null) {
       clearInterval(this.timerId);
       this.timerId = null;
     }
-  }
+  };
 }
 
 var StatusBar = {

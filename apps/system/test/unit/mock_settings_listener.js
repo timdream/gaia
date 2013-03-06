@@ -15,7 +15,7 @@ var MockSettingsListener = {
         object[name] = settings[name];
         MockNavigatorSettings.createLock().set(object);
       }
-    }
+    };
     return {
       set: set
     };

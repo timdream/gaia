@@ -332,7 +332,7 @@ ComposeCard.prototype = {
             break;
         }
         return false;
-      }.bind(this);
+      };.bind(this);
       contents.addEventListener('submit', formSubmit);
       return;
     }
@@ -384,7 +384,7 @@ ComposeCard.prototype = {
       } else {
         Cards.removeCardAndSuccessors(this.domNode, 'animate');
       }
-    }.bind(this);
+    };.bind(this);
     var self = this;
     var checkAddressEmpty = function() {
       var bubbles = self.domNode.querySelectorAll('.cmp-peep-bubble');
@@ -433,7 +433,7 @@ ComposeCard.prototype = {
             }
             activity = null;
           }
-        }
+        };
 
         if (self.sentAudioEnabled) {
           self.sentAudio.play();
@@ -477,7 +477,7 @@ ComposeCard.prototype = {
           self.insertBubble(emt, this.result.name, this.result.email);
           self.sendButton.setAttribute('aria-disabled', 'false');
         }
-      }
+      };
     } catch (e) {
       console.log('WebActivities unavailable? : ' + e);
     }

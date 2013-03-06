@@ -44,11 +44,11 @@ var utils = this.utils || {};
         if (clazzName === 'activityBar' || clazzName === 'spinner') {
           progressMsg.textContent = null;
         }
-      }
+      };
 
       this.setHeaderMsg = function(headerMsg) {
         progressTitle.textContent = headerMsg;
-      }
+      };
     } // ProgressBar
 
     var out;

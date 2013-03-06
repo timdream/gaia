@@ -28,7 +28,7 @@
 
     // pass in the target node, as well as the observer options
     observer.observe(target, config);
-  }
+  };
 
   window.AppError = function AppError(app) {
     var self = this;
@@ -55,11 +55,11 @@
 
   AppError.prototype.hide = function() {
     this.element.classList.remove('visible');
-  }
+  };
 
   AppError.prototype.show = function() {
     this.element.classList.add('visible');
-  }
+  };
 
   AppError.prototype.render = function() {
     this.app.frame.insertAdjacentHTML('beforeend', this.view());
@@ -75,22 +75,22 @@
     var self = this;
     this.closeButton.onclick = function() {
       self.app.kill();
-    }
+    };
 
     this.reloadButton.onclick = function() {
       self.hide();
       self.app.reload();
-    }
-  }
+    };
+  };
 
   AppError.prototype.update = function() {
     this.titleElement.textContent = this.getTitle();
     this.messageElement.textContent = this.getMessage();
-  }
+  };
 
   AppError.prototype.id = function() {
     return AppError.className + '-' + this.app.frame.id;
-  }
+  };
 
   AppError.prototype.getTitle = function() {
     if (AirplaneMode.enabled) {
@@ -100,7 +100,7 @@
     } else {
       return _('error-title', { name: this.app.name });
     }
-  }
+  };
 
   AppError.prototype.getMessage = function() {
     if (AirplaneMode.enabled) {
@@ -110,7 +110,7 @@
     } else {
       return _('error-message', { name: this.app.name });
     }
-  }
+  };
 
   AppError.prototype.view = function() {
     return '<div id="' + this.id() + '" class="' +
@@ -130,7 +130,7 @@
           _('try-again') + '</button>' +
       '</menu>' +
     '</div>';
-  }
+  };
 
   window.AppWindow = function AppWindow(configuration) {
     for (var key in configuration) {
@@ -149,7 +149,7 @@
 
   AppWindow.prototype.reload = function() {
     this.iframe.reload(true);
-  }
+  };
 
   AppWindow.prototype.kill = function() {
     // XXX: A workaround because a AppWindow instance shouldn't reference
@@ -158,6 +158,6 @@
     // in itself like resize, setVisibility...
     // And Window Manager is in charge of cross app management.
     WindowManager.kill(this.origin);
-  }
+  };
 
 }(this));

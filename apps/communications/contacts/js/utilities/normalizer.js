@@ -39,10 +39,10 @@ if (!utils.text) {
       if (escapeQuotes)
         return escaped.replace(/"/g, '&quot;').replace(/'/g, '&#x27;'); //"
       return escaped;
-    }
+    };
 
     Text.escapeRegExp = function escapeRegExp(str) {
       return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
-    }
+    };
   })();
 }

@@ -354,7 +354,7 @@ function initKeyboard() {
         enabledKeyboardGroups[name] = e.settingValue;
         handleNewKeyboards();
       }
-    }
+    };
 
     navigator.mozSettings.addObserver(settingName,
                                       createLayoutCallback(settingName));
@@ -1205,7 +1205,7 @@ function endPress(target, coords, touchId) {
     compositeKey.split('').forEach(function sendEachKey(key) {
       window.navigator.mozKeyboard.sendKey(0, key.charCodeAt(0));
     });
-  }
+  };
 
   var compositeKey = target.dataset.compositekey;
   if (compositeKey) {

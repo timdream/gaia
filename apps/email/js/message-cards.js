@@ -1052,7 +1052,7 @@ MessageReaderCard.prototype = {
           break;
       }
       return false;
-    }.bind(this);
+    };.bind(this);
     contents.addEventListener('submit', formSubmit);
   },
 

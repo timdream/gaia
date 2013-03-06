@@ -30,7 +30,7 @@ suite('Render contact form', function() {
       DateTimeFormat: function() {
         this.localeFormat = function(date, format) {
           return date;
-        }
+        };
       }
     };
     realContacts = window.Contacts;
@@ -189,7 +189,7 @@ suite('Render contact form', function() {
 
         assert.isTrue(thumbnail.classList.contains('facebook'));
         assert.isTrue(thumbnail.classList.contains('removed'));
-      }
+      };
     });
 
     test('FB Contact. Address from Facebook', function() {
@@ -217,7 +217,7 @@ suite('Render contact form', function() {
         assertAddressData(0, this.result[0]);
 
         assert.isFalse(footer.classList.contains('hide'));
-      }
+      };
     });
 
 
@@ -264,7 +264,7 @@ suite('Render contact form', function() {
           assertPhoneData(c, this.result[0]);
           assertEmailData(c, this.result[0]);
         }
-      }
+      };
     });
 
     test('FB Linked. Photo local to the device', function() {
@@ -281,7 +281,7 @@ suite('Render contact form', function() {
 
         assert.isFalse(thumbnail.classList.contains('facebook'));
         assert.isFalse(thumbnail.classList.contains('removed'));
-      }
+      };
     });
   });
 

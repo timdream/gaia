@@ -279,7 +279,7 @@ suite('Render contacts list', function() {
       DateTimeFormat: function() {
         this.localeFormat = function(date, format) {
           return date;
-        }
+        };
       }
     };
 

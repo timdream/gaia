@@ -13,14 +13,14 @@ var EntrySheet = (function invocation() {
 
   EntrySheet.prototype.setTitle = function(title) {
     this.titleElement.textContent = title;
-  }
+  };
 
   EntrySheet.prototype.open = function() {
     // Transtion won't happen if adding class directly
     setTimeout(function() {
       this.element.classList.add('active');
     }.bind(this));
-  }
+  };
 
   EntrySheet.prototype.close = function() {
     this.element.addEventListener('transitionend', function onTransitionend() {
@@ -32,7 +32,7 @@ var EntrySheet = (function invocation() {
       this.container.removeChild(this.element);
     }.bind(this));
     this.element.classList.add('disappearing');
-  }
+  };
 
   // These are helper functions and variables used by the methods above
   // They're not part of the public API of the module, but they're hidden
@@ -93,7 +93,7 @@ var EntrySheet = (function invocation() {
     var self = this;
     this.closeButton.onclick = function() {
       self.close();
-    }
+    };
   }
 
   var nextId = 0;
