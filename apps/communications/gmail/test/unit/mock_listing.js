@@ -8,14 +8,11 @@
 */
 
 var MockGoogleListing = (function MockGoogleListing() {
+  var req = new XMLHttpRequest();
+  req.open('GET', '/gmail/test/unit/mock_listing.xml', false);
+  req.send(null);
 
-  var oReq = new XMLHttpRequest();
-  oReq.responseType = 'text';
-  // XXX: perform a synchronous request here
-  oReq.open('get', 'mock_listing.xml', false);
-  oReq.send();
-
-  var entryBuffer = oReq.responseText;
+  var entryBuffer = req.responseText;
   var parser = new DOMParser();
   var listing = parser.parseFromString(entryBuffer, 'text/xml');
 

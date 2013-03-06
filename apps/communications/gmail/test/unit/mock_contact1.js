@@ -3,14 +3,11 @@
 // refer to mock_contact1.xml for the entry XML we are getting.
 
 var MockGoogleEntry = (function MockGoogleEntry() {
+  var req = new XMLHttpRequest();
+  req.open('GET', '/gmail/test/unit/mock_contact1.xml', false);
+  req.send(null);
 
-  var oReq = new XMLHttpRequest();
-  oReq.responseType = 'text';
-  // XXX: perform a synchronous request here
-  oReq.open('get', 'mock_contact1.xml', false);
-  oReq.send();
-
-  var entryBuffer = oReq.responseText;
+  var entryBuffer = req.responseText;
   var parser = new DOMParser();
   return parser.parseFromString(entryBuffer, 'text/xml');
 })();
