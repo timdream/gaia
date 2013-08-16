@@ -140,6 +140,9 @@ var IMEngine = function engine_constructor() {
   IMEngineBase.call(this);
 
   this._keypressQueue = [];
+  this._sendCandidatesTimer = null;
+  this._emEngineSearchTimer = null;
+  this._candidatesLength = 0;
 };
 
 /**
@@ -150,8 +153,7 @@ var IMEngine = function engine_constructor() {
  */
 IMEngine.CandidateData = function candidateData_constructor(id, strs) {
   this.id = id;
-  this.str = strs[0];
-  this.str_tr = strs[1];
+  this.str = strs;
 };
 
 IMEngine.CandidateData.prototype = {
@@ -193,8 +195,7 @@ IMEngine.prototype = {
   // if the length of the syllables buffer is reached.
   _kBufferLenLimit: 30,
 
-  // Whether to input traditional Chinese
-  _inputTraditionalChinese: false,
+  _symbolLayoutFullMode: true,
 
   /**
    * The last selected text used to generate prediction.
@@ -248,15 +249,21 @@ IMEngine.prototype = {
     var list = [];
     var len = candidates.length;
     for (var id = 0; id < len; id++) {
-      var strs = candidates[id];
-      var cand = this._inputTraditionalChinese ? strs[1] : strs[0];
-      if (id == 0) {
-        this._firstCandidate = cand;
-      }
-      var data = new IMEngine.CandidateData(id, strs);
+      var cand = candidates[id];
+      var data = new IMEngine.CandidateData(id, cand);
+      if (id == 0) this._firstCandidate = cand;
       list.push([cand, data.serialize()]);
     }
-    this._glue.sendCandidates(list);
+
+    if (this._sendCandidatesTimer) {
+      clearTimeout(this._sendCandidatesTimer);
+      this._sendCandidatesTimer = null;
+    }
+
+    this._sendCandidatesTimer = setTimeout(
+      this._glue.sendCandidates.bind(this, list),
+      0
+    );
   },
 
   _start: function engine_start() {
@@ -280,8 +287,7 @@ IMEngine.prototype = {
 
     if (code == 0) {
       // This is a select function operation.
-      this._updateCandidateList(this._next.bind(this));
-      this._sendPendingSymbols();
+      this._updateCandidatesAndSymbols(this._next.bind(this));
       return;
     }
 
@@ -290,27 +296,26 @@ IMEngine.prototype = {
     // Backspace - delete last input symbol if exists
     if (code === KeyEvent.DOM_VK_BACK_SPACE) {
       debug('Backspace key');
+
       if (!this._pendingSymbols) {
         if (this._firstCandidate) {
           debug('Remove candidates.');
 
           // prevent updateCandidateList from making the same suggestions
-          this._historyText = '';
-
-          this._updateCandidateList(this._next.bind(this));
+          this.empty();
         }
+
         // pass the key to IMEManager for default action
         debug('Default action.');
         this._glue.sendKey(code);
         this._next();
-        return;
+      } else {
+        this._pendingSymbols = this._pendingSymbols.substring(0,
+          this._pendingSymbols.length - 1);
+
+        this._updateCandidatesAndSymbols(this._next.bind(this));
       }
 
-      this._pendingSymbols = this._pendingSymbols.substring(0,
-        this._pendingSymbols.length - 1);
-
-      this._updateCandidateList(this._next.bind(this));
-      this._sendPendingSymbols();
       return;
     }
 
@@ -349,9 +354,7 @@ IMEngine.prototype = {
 
     // add symbol to pendingSymbols
     this._appendNewSymbol(code);
-
-    this._updateCandidateList(this._next.bind(this));
-    this._sendPendingSymbols();
+    this._updateCandidatesAndSymbols(this._next.bind(this));
   },
 
   _isSymbol: function engine_isSymbol(code) {
@@ -374,8 +377,25 @@ IMEngine.prototype = {
     this._pendingSymbols += symbol;
   },
 
+  _updateCandidatesAndSymbols: function engine_updateCandsAndSymbols(callback) {
+    var _self = this;
+
+    if (this._emEngineSearchTimer) {
+      clearTimeout(this._emEngineSearchTimer);
+      this._emEngineSearchTimer = null;
+    }
+
+    this._emEngineSearchTimer = setTimeout(function() {
+      _self._updateCandidateList(callback);
+      _self._sendPendingSymbols();
+    }, 0);
+  },
+
   _updateCandidateList: function engine_updateCandidateList(callback) {
     debug('Update Candidate List.');
+
+    this._candidatesLength = 0;
+
     if (!this._pendingSymbols) {
       // If there is no pending symbols, make prediction with the previous
       // select words.
@@ -385,6 +405,11 @@ IMEngine.prototype = {
 
         var historyText = this._historyText;
         var num = this.emEngine.getPredicts(historyText, historyText.length);
+
+        if (num > this._glue.numberOfCandidatesPerRow + 1) {
+          this._candidatesLength = num;
+          num = this._glue.numberOfCandidatesPerRow + 1;
+        }
 
         for (var id = 0; id < num; id++) {
           candidates.push(this.emEngine.getPredictAt(id));
@@ -400,14 +425,13 @@ IMEngine.prototype = {
       var num = this.emEngine.search(pendingSymbols, pendingSymbols.length);
       var candidates = [];
 
-      // TODO: We need modifying the render engine to support paging mechanism.
-      if (num > 4) num = 4;
+      if (num > this._glue.numberOfCandidatesPerRow + 1) {
+        this._candidatesLength = num;
+        num = this._glue.numberOfCandidatesPerRow + 1;
+      }
 
       for (var id = 0; id < num; id++) {
-        var strs = this.emEngine.getCandidate(id);
-
-        // TODO: We will drop the support of Traditional Chinese.
-        candidates.push([strs, '']);
+        candidates.push(this.emEngine.getCandidate(id));
       }
       this._sendCandidates(candidates);
       callback();
@@ -469,6 +493,8 @@ IMEngine.prototype = {
                 Module.cwrap('im_close_decoder', '', []),
               search:
                 Module.cwrap('im_search', 'number', ['string', 'number']),
+              resetSearch:
+                Module.cwrap('im_reset_search', '', []),
               getCandidate:
                 Module.cwrap('im_get_candidate_char', 'string', ['number']),
               getPredicts:
@@ -532,36 +558,20 @@ IMEngine.prototype = {
     IMEngineBase.prototype.click.call(this, keyCode);
 
     switch (keyCode) {
-      case -10:
-        // Switch to traditional Chinese input mode.
-        this._inputTraditionalChinese = true;
-        this._alterKeyboard('zh-Hans-Pinyin-tr');
-        break;
       case -11:
-        // Switch to simplified Chinese input mode.
-        this._inputTraditionalChinese = false;
         this._alterKeyboard('zh-Hans-Pinyin');
         break;
       case -12:
-        // Switch to number keyboard.
-        this._alterKeyboard('zh-Hans-Pinyin-number');
+        this._symbolLayoutFullMode = false;
+        this._alterKeyboard('zh-Hans-Pinyin-Symbol');
         break;
       case -13:
-        // Switch to symbol0 keyboard.
-        this._alterKeyboard('zh-Hans-Pinyin-symbol0');
+        this._symbolLayoutFullMode = true;
+        this._alterKeyboard('zh-Hans-Pinyin-Symbol-Full');
         break;
       case -14:
-        // Switch to symbol1 keyboard.
-        this._alterKeyboard('zh-Hans-Pinyin-symbol1');
-        break;
-      case -15:
-        // Switch to symbol2 keyboard.
-        this._alterKeyboard('zh-Hans-Pinyin-symbol2');
-        break;
-      case -20:
-        // Switch back to the basic keyboard.
-        var keyboard = this._inputTraditionalChinese ?
-          'zh-Hans-Pinyin-tr' : 'zh-Hans-Pinyin';
+        var keyboard = this._symbolLayoutFullMode ?
+          'zh-Hans-Pinyin-Symbol-Full' : 'zh-Hans-Pinyin-Symbol';
         this._alterKeyboard(keyboard);
         break;
       default:
@@ -582,26 +592,32 @@ IMEngine.prototype = {
    */
   select: function engine_select(text, data) {
     IMEngineBase.prototype.select.call(this, text, data);
+
     var candDataObject = new IMEngine.CandidateData(0, ['', '']);
     candDataObject.deserialize(data);
+
     if (this._pendingSymbols) {
       var candId = candDataObject.id;
       var candsNum = this.emEngine.choose(candId);
       var splStartLen = this.emEngine.getSplStart() + 1;
       var fixed = this.emEngine.getFixedLen();
+
       // Output the result if all valid pinyin string has been converted.
-      if (candsNum == 1 && fixed == splStartLen) {
-        var strs = this.emEngine.getCandidate(0);
-        var convertedText = this._inputTraditionalChinese ? strs[1] : strs[0];
+      if (candsNum == 1 && fixed == splStartLen - 1) {
+        var convertedText = this.emEngine.getCandidate(0);
+        this.emEngine.resetSearch();
+
         this._glue.sendString(convertedText);
         this._pendingSymbols = '';
-        this._historyText = strs[0];
+        this._candidatesLength = 0;
+        this._historyText = convertedText;
       }
     } else {
       // A predication candidate is selected.
-      this._historyText = candDataObject.str;
       this._glue.sendString(text);
+      this._historyText = text;
     }
+
     this._keypressQueue.push(0);
     this._start();
   },
@@ -614,7 +630,9 @@ IMEngine.prototype = {
     debug('empty.');
     this._pendingSymbols = '';
     this._historyText = '';
+    this._firstCandidate = '';
     this._sendPendingSymbols();
+    this._sendCandidates([]);
     this._isWorking = false;
   },
 
@@ -626,13 +644,37 @@ IMEngine.prototype = {
     IMEngineBase.prototype.activate.call(this, language, state, options);
     debug('Activate. Input type: ' + inputType);
     this.emEngine.flushCache();
-    var keyboard = this._inputTraditionalChinese ?
-      'zh-Hans-Pinyin-tr' : 'zh-Hans-Pinyin';
+    var keyboard = 'zh-Hans-Pinyin';
     if (inputType == '' || inputType == 'text' || inputType == 'textarea') {
       keyboard = this._keyboard;
     }
 
     this._glue.alterKeyboard(keyboard);
+  },
+
+  getMoreCandidates: function engine_getMore(indicator, maxCount, callback) {
+    var num = this._candidatesLength;
+    if (num == 0) return;
+
+    maxCount = Math.min((maxCount || num) + indicator, num);
+
+    var list = [];
+
+    if (! this._pendingSymbols) {
+      for (var id = indicator; id < maxCount; id++) {
+        var cand = this.emEngine.getPredictAt(id);
+        var data = new IMEngine.CandidateData(id, cand);
+        list.push([cand, data.serialize()]);
+      }
+    } else {
+      for (var id = indicator; id < maxCount; id++) {
+        var cand = this.emEngine.getCandidate(id);
+        var data = new IMEngine.CandidateData(id, cand);
+        list.push([cand, data.serialize()]);
+      }
+    }
+
+    callback(list);
   }
 };
 
