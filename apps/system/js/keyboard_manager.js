@@ -269,7 +269,6 @@ var KeyboardManager = {
         self.resetShowingKeyboard();
       }
       self.setKeyboardToShow(group);
-      self.showKeyboard();
 
       // We also want to show the permanent notification
       // in the UtilityTray.
@@ -389,7 +388,8 @@ var KeyboardManager = {
     };
 
     // If the keyboard is hidden, or when transitioning is not finished
-    if (this.keyboardFrameContainer.dataset.transitionIn === 'true') {
+    if (this.keyboardFrameContainer.classList.contains('hide') &&
+             this.keyboardFrameContainer.dataset.transitionOut !== 'true') {
       this.showKeyboard(updateHeight);
     } else {
       updateHeight();
@@ -560,6 +560,11 @@ var KeyboardManager = {
   },
 
   hideKeyboard: function km_hideKeyboard() {
+    // prevent hidekeyboard trigger again while 'appwillclose' is fired.
+    if (this.keyboardFrameContainer.classList.contains('hide')) {
+      return;
+    }
+
     var self = this;
     var onTransitionEnd = function(evt) {
       if (evt.propertyName !== 'transform') {
@@ -576,6 +581,7 @@ var KeyboardManager = {
       }
 
       self.resetShowingKeyboard();
+      delete self.keyboardFrameContainer.dataset.transitionOut;
     };
     this.keyboardFrameContainer.addEventListener('transitionend',
       onTransitionEnd);
@@ -583,6 +589,7 @@ var KeyboardManager = {
     this.keyboardHeight = 0;
     window.dispatchEvent(new CustomEvent('keyboardhide'));
     this.keyboardFrameContainer.classList.add('hide');
+    this.keyboardFrameContainer.dataset.transitionOut = 'true';
   },
 
   hideKeyboardImmediately: function km_hideImmediately() {
