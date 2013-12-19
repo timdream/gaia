@@ -1,7 +1,8 @@
 'use strict';
 
 var fs = require('fs'),
-    util = require('util');
+    util = require('util'),
+    InputManagerHelper = require('./input_manager_helper.js');
 
 /* This is a helper to for perftesting apps. */
 function PerfTestApp(client, origin) {
@@ -17,11 +18,17 @@ function PerfTestApp(client, origin) {
   }
   var arr = mozTestInfo.appPath.split('/');
   var appName = arr[0];
-  var entryPoint = arr[1];
+
+  if (arr[1] == '__input__') {
+    // Special treatment for keyboard layout perf measurement.
+    this.isInputApp = true;
+    this.inputId = arr[2];
+  } else {
+    this.entryPoint = arr[1];
+  }
 
   origin = util.format('app://%s.gaiamobile.org', appName);
   this.appName = appName;
-  this.entryPoint = entryPoint;
   this.client = client;
   this.origin = origin;
   this.skip = false;
@@ -42,7 +49,11 @@ PerfTestApp.prototype = {
    * Launches app, switches to frame, and waits for it to be loaded.
    */
   launch: function() {
-    this.client.apps.launch(this.origin, this.entryPoint);
+    if (this.isInputApp) {
+      InputManagerHelper.launch(this.client, this.origin, this.inputId);
+    } else {
+      this.client.apps.launch(this.origin, this.entryPoint);
+    }
     this.client.apps.switchToApp(this.origin);
     this.client.helper.waitForElement('body');
   },
