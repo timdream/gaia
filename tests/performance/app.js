@@ -1,3 +1,5 @@
+'use strict';
+
 var fs = require('fs'),
     util = require('util');
 
@@ -14,11 +16,11 @@ function PerfTestApp(client, origin) {
     return;
   }
   var arr = mozTestInfo.appPath.split('/');
-  manifestPath = arr[0];
-  entryPoint = arr[1];
+  var appName = arr[0];
+  var entryPoint = arr[1];
 
-  origin = util.format('app://%s.gaiamobile.org',
-                       manifestPath);
+  origin = util.format('app://%s.gaiamobile.org', appName);
+  this.appName = appName;
   this.entryPoint = entryPoint;
   this.client = client;
   this.origin = origin;

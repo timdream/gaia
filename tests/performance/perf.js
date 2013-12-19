@@ -6,7 +6,7 @@ global.mozTestInfo = {
 };
 
 const excludedApps = [
-  'bluetooth', 'keyboard', 'wallpaper', // no generic way to test yet
+  'bluetooth', 'wallpaper', // no generic way to test yet
   'communications/facebook', 'communications/gmail', // part of other apps
   'communications/import', 'communications/live', // part of other apps
   'communications', // not an app

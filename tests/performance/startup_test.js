@@ -4,12 +4,6 @@ var App = require('./app');
 var PerformanceHelper = requireGaia('/tests/performance/performance_helper.js');
 var MarionetteHelper = requireGaia('/tests/js-marionette/helper.js');
 
-var manifestPath, entryPoint;
-
-var arr = mozTestInfo.appPath.split('/');
-manifestPath = arr[0];
-entryPoint = arr[1];
-
 marionette('startup test > ' + mozTestInfo.appPath + ' >', function() {
 
   var app;
@@ -49,10 +43,10 @@ marionette('startup test > ' + mozTestInfo.appPath + ' >', function() {
     var results = PerformanceHelper.getLoadTimes(client);
 
     results = results.filter(function(element) {
-      if (element.src.indexOf('app://' + manifestPath) !== 0) {
+      if (element.src.indexOf('app://' + app.appName) !== 0) {
         return false;
       }
-      if (entryPoint && element.src.indexOf(entryPoint) === -1) {
+      if (app.entryPoint && element.src.indexOf(app.entryPoint) === -1) {
         return false;
       }
       return true;
