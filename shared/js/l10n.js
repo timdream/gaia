@@ -9,7 +9,7 @@
  */
 
 (function(window) {
-  var gL10nData = {};
+  var gL10nData;
   var gLanguage = '';
   var gMacros = {};
   var gReadyState = 'loading';
@@ -30,9 +30,6 @@
    *  - either with a <link> node:
    *   <link rel="prefetch" type="application/l10n" href="{{locale}}.json" />
    *   (in which case, {{locale}} will be replaced by `navigator.language')
-   *  - or with an inline <script> node:
-   *   <script type="application/l10n" lang="fr"> ... </script>
-   *   (in which case, the script matching `navigator.language' will be parsed)
    *
    * This is where `gDefaultLocale' comes in: if a JSON dictionary for the
    * current `navigator.language' value can't be found, use the one matching the
@@ -110,16 +107,6 @@
     return document.querySelectorAll('link[type="application/l10n"]');
   }
 
-  function getL10nDictionary(lang) {
-    var getInlineDict = function(locale) {
-      var sel = 'script[type="application/l10n"][lang="' + locale + '"]';
-      return document.querySelector(sel);
-    };
-    // TODO: support multiple internal JSON dictionaries
-    var script = getInlineDict(lang) || getInlineDict(gDefaultLocale);
-    return script ? JSON.parse(script.innerHTML) : null;
-  }
-
   function getTranslatableChildren(element) {
     return element ? element.querySelectorAll('*[data-l10n-id]') : [];
   }
@@ -182,7 +169,7 @@
    * l10n resource parser:
    *  - reads (async XHR) the l10n resource matching `lang';
    *  - imports linked resources (synchronously) when specified;
-   *  - parses the text data (fills `gL10nData');
+   *  - parses the text data (and creates `gL10nData');
    *  - triggers success/failure callbacks when done.
    *
    * @param {string} href
@@ -198,7 +185,7 @@
    *    triggered when the an error has occured.
    *
    * @return {void}
-   *    fills gL10nData.
+   *    create gL10nData.
    */
 
   function parseResource(href, lang, successCallback, failureCallback) {
@@ -309,10 +296,22 @@
       if (xhr.overrideMimeType) {
         xhr.overrideMimeType('text/plain; charset=utf-8');
       }
+      // XXX implicitly decide the responseType with file name
+      if (url.endsWith('.data')) {
+        if (!asynchronous) {
+          throw '[l10n.js] Synchronous loading of blob data is not supported.';
+        }
+        xhr.responseType = 'arraybuffer';
+      } else if (url.endsWith('.json')) {
+        if (!asynchronous) {
+          throw '[l10n.js] Synchronous loading of JSON data is not supported.';
+        }
+        xhr.responseType = 'json';
+      }
       xhr.onreadystatechange = function() {
         if (xhr.readyState == 4) {
-          if (xhr.status == 200 || xhr.status === 0) {
-            onSuccess(xhr.responseText);
+          if (xhr.status == 200 || xhr.status === 0 || !xhr.response) {
+            onSuccess(xhr.response);
           } else {
             onFailure();
           }
@@ -332,9 +331,14 @@
 
     // load and parse l10n data (warning: global variables are used here)
     loadResource(href, function(response) {
-      if (/\.json$/.test(href)) {
-        gL10nData = JSON.parse(response); // TODO: support multiple JSON files
+      if (response && typeof response !== 'string') {
+        if (gL10nData) {
+          throw '[l10n.js] Attempt to overwrite JSON/Blob ' +
+                'data with another one.';
+        }
+        gL10nData = new L10nDataStore(response);
       } else { // *.ini or *.properties file
+        gL10nData = new L10nDataStore({});
         var data = parseProperties(response);
         for (var key in data) {
           var id, prop, nestedProp, index = key.lastIndexOf('.');
@@ -359,10 +363,7 @@
               prop = '_';
             }
           }
-          if (!gL10nData[id]) {
-            gL10nData[id] = {};
-          }
-          gL10nData[id][prop] = data[key];
+          gL10nData.put(id, prop, data[key]);
         }
       }
 
@@ -381,28 +382,10 @@
 
     var untranslatedElements = [];
 
-    // if there is an inline / pre-compiled dictionary,
-    // the current HTML document can be translated right now
-    var inlineDict = getL10nDictionary(lang);
-    if (inlineDict) {
-      gL10nData = inlineDict;
-      if (translationRequired) {
-        untranslatedElements = translateFragment();
-      }
-    }
-
     // translate the document if required and fire a `localized' event
     function finish() {
       if (translationRequired) {
-        if (!inlineDict) {
-          // no inline dictionary has been used: translate the whole document
-          untranslatedElements = translateFragment();
-        } else if (untranslatedElements.length) {
-          // the document should have been already translated but the inline
-          // dictionary didn't include all necessary l10n keys:
-          // try to translate all remaining elements now
-          untranslatedElements = translateElements(untranslatedElements);
-        }
+        untranslatedElements = translateFragment();
       }
       // tell the rest of the world we're done
       // -- note that `gReadyState' must be set before the `localized' event is
@@ -471,7 +454,7 @@
 
   // clear all l10n data
   function clear() {
-    gL10nData = {};
+    gL10nData = undefined;
     gLanguage = '';
     // TODO: clear all non predefined macros.
     // There's no such macro /yet/ but we're planning to have some...
@@ -898,7 +881,7 @@
       return str;
     }
 
-    var data = gL10nData[key];
+    var data = gL10nData.get(key);
     if (!data) {
       return str;
     }
@@ -935,7 +918,7 @@
 
   // fetch an l10n object, warn if not found, apply `args' if possible
   function getL10nData(key, args) {
-    var data = gL10nData[key];
+    var data = gL10nData.get(key);
     if (!data) {
       return null;
     }
@@ -974,7 +957,7 @@
   // return a sub-dictionary sufficient to translate a given fragment
   function getSubDictionary(fragment) {
     if (!fragment) { // by default, return a clone of the whole dictionary
-      return JSON.parse(JSON.stringify(gL10nData));
+      return gL10nData.getAll();
     }
 
     var dict = {};
@@ -984,15 +967,15 @@
       var match = getL10nArgs(str);
       for (var i = 0; i < match.length; i++) {
         var arg = match[i].name;
-        if (arg in gL10nData) {
-          dict[arg] = gL10nData[arg];
+        if (gL10nData.has(arg)) {
+          dict[arg] = gL10nData.get(arg);
         }
       }
     }
 
     for (var i = 0, l = elements.length; i < l; i++) {
       var id = getL10nAttributes(elements[i]).id;
-      var data = gL10nData[id];
+      var data = gL10nData.get(id);
       if (!id || !data) {
         continue;
       }
@@ -1005,9 +988,10 @@
         if (reIndex.test(str)) { // macro index
           for (var j = 0; j < kPluralForms.length; j++) {
             var key = id + '[' + kPluralForms[j] + ']';
-            if (key in gL10nData) {
-              dict[key] = gL10nData[key];
-              checkGlobalArguments(gL10nData[key]);
+            if (gL10nData.has(key)) {
+              var str = gL10nData.get(key);
+              dict[key] = str;
+              checkGlobalArguments(str);
             }
           }
         }
@@ -1031,8 +1015,8 @@
     var param;
     if (args && paramName in args) {
       param = args[paramName];
-    } else if (paramName in gL10nData) {
-      param = gL10nData[paramName];
+    } else if (gL10nData.has(paramName)) {
+      param = gL10nData.get(paramName);
     }
 
     // there's no macro parser yet: it has to be defined in gMacros
@@ -1050,8 +1034,8 @@
       var sub, arg = match[i].name;
       if (args && arg in args) {
         sub = args[arg];
-      } else if (arg in gL10nData) {
-        sub = gL10nData[arg]['_'];
+      } else if (gL10nData.has(arg)) {
+        sub = gL10nData.get(arg)['_'];
       } else {
         consoleLog('argument {{' + arg + '}} for #' + key + ' is undefined.');
         return str;
