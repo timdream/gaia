@@ -107,19 +107,5 @@
   // Listen to utilitytray show
   window.addEventListener('utilitytrayshow', _showWidget);
   window.addEventListener('utilitytrayhide', _hideWidget);
-
-  window.addEventListener('applicationready', function _onReady() {
-    asyncStorage.getItem('ftu.enabled', function _onValue(enabled) {
-      if (enabled !== false) {
-        window.addEventListener('ftudone', function ftudone(e) {
-          window.removeEventListener('ftudone', ftudone);
-          widgetFrame.setVisible(false);
-        });
-      } else {
-        widgetFrame.setVisible(false);
-      }
-    });
-  });
-
   window.addEventListener('resize', _adjustWidgetPosition);
 }());
