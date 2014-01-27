@@ -9,10 +9,8 @@ endif
 BUILD_DIR=../../build_stage/keyboard
 
 .PHONY: all clean
-all:
-
-
-copy-layouts:
+all: clean
+	@mkdir -p $(BUILD_DIR)
 	@$(XULRUNNERSDK) $(XPCSHELLSDK) \
 	-e "const GAIA_BUILD_DIR='$(GAIA_BUILD_DIR)'" \
 	-e "const APP_BUILD_DIR='$(GAIA_BUILD_DIR)../apps/keyboard/build/'" \

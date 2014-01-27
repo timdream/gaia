@@ -13,7 +13,6 @@ var paths = {
 };
 
 if (typeof APP_BUILD_DIR !== 'undefined') {
-  print(APP_BUILD_DIR);
   paths['app/'] = APP_BUILD_DIR;
 }
 
