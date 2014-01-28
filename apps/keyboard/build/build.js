@@ -90,9 +90,13 @@ KeyboardAppBuilder.prototype.copyStaticFiles = function() {
   }.bind(this));
 
   filenames.forEach(function(filename) {
+    var filenameArr = filename.split('/');
+
     var file = utils.getFile.apply(utils,
-      [this.appDir.path].concat(filename.split('/')));
-    file.copyTo(this.distDir, file.leafName);
+      [this.appDir.path].concat(filenameArr));
+    var distSubDir = utils.getFile.apply(utils,
+      [this.distDir.path].concat(filenameArr.slice(0, filenameArr.length - 1)));
+    file.copyTo(distSubDir, file.leafName);
   }.bind(this));
 };
 
