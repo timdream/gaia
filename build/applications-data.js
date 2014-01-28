@@ -1,7 +1,7 @@
 'use strict';
 
 var utils = require('./utils');
-var webappManifests = require('./webapp-manifests');
+var webappInfo = require('./webapp-info');
 var config;
 
 const PREFERRED_ICON_SIZE = 60;
@@ -291,7 +291,13 @@ function customizeHomescreen(options) {
 }
 
 function execute(options) {
-  webapps = webappManifests.execute(options);
+  // We need some information here to fill application-data.
+  // Noted that we are getting information of apps _before_ applications
+  // build themselves and put their files in the build_stage, but that's
+  // already enough for our use case here.
+  // (Plus, this breaks cyclic dependency between this file and app build
+  // script)
+  webapps = webappInfo.execute(options);
 
   var distDir = options.GAIA_DISTRIBUTION_DIR;
 
