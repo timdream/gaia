@@ -226,6 +226,7 @@ function makeWebappsObject(appdirs, domain, scheme, port) {
           webapp.build = getJSON(buildMetaData);
 
           if (webapp.build.dir) {
+            // Re-assign `buildDirectoryFile` to build_stage
             let buildDirectoryFile = webapp.sourceDirectoryFile.clone();
             webapp.build.dir.split('/').forEach(function(segment) {
               if (segment == '..')
@@ -233,8 +234,12 @@ function makeWebappsObject(appdirs, domain, scheme, port) {
               else
                 buildDirectoryFile.append(segment);
             });
-
             webapp.buildDirectoryFile = buildDirectoryFile;
+
+            // Re-assign `manifestFile` to build_stage
+            let manifestFile = buildDirectoryFile.clone();
+            manifestFile.append('manifest.webapp');
+            webapp.manifestFile = manifestFile;
           }
         }
 
