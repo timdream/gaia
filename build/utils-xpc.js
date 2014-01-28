@@ -241,6 +241,9 @@ function makeWebappsObject(appdirs, domain, scheme, port) {
             });
 
             webapp.buildDirectoryFile = buildDirectoryFile;
+            let manifestFile = buildDirectoryFile.clone();
+            manifestFile.append('manifest.webapp');
+            webapp.manifest = manifestFile;
           }
         }
 
