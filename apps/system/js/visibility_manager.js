@@ -106,9 +106,12 @@
     },
 
     debug: function vm_debug() {
+      // XXX: Should not be getting system instance from window.
+      var system = window.system;
+
       if (DEBUG) {
         console.log('[VisibilityManager]' +
-          '[' + System.currentTime() + ']' +
+          '[' + system.currentTime() + ']' +
           Array.slice(arguments).concat());
       }
     }

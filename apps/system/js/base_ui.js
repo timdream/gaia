@@ -95,9 +95,12 @@
   };
 
   BaseUI.prototype.debug = function bu_debug(msg) {
+    // XXX: Should not be getting system instance from window.
+    var system = window.system;
+
     if (DEBUG && ('DEBUG' in this.constructor && this.constructor.DEBUG)) {
       console.log('[' + this.CLASS_NAME + '][' + this.customID() + ']' +
-        '[' + System.currentTime() + ']' +
+        '[' + system.currentTime() + ']' +
         Array.slice(arguments).concat());
     }
   };

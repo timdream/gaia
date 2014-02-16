@@ -193,7 +193,10 @@
       if (lockScreen && lockScreen.locked) {
         this.element.setAttribute('aria-hidden', 'true');
       }
-      if (System.slowTransition) {
+      // XXX: Should not be getting system instance from window.
+      var system = window.system;
+
+      if (system.slowTransition) {
         this.element.classList.add('slow-transition');
       } else {
         this.element.classList.remove('slow-transition');
@@ -470,9 +473,12 @@
     },
 
     debug: function awm_debug() {
+      // XXX: Should not be getting system instance from window.
+      var system = window.system;
+
       if (DEBUG) {
         console.log('[AppWindowManager]' +
-          '[' + System.currentTime() + ']' +
+          '[' + system.currentTime() + ']' +
           Array.slice(arguments).concat());
       }
     },

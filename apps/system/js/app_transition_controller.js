@@ -123,10 +123,13 @@
 
   AppTransitionController.prototype._do_closing =
     function atc_do_closing() {
+      // XXX: Should not be getting system instance from window.
+      var system = window.system;
+
       this._closingTimeout = window.setTimeout(function() {
         this.app.broadcast('closingtimeout');
       }.bind(this),
-      System.slowTransition ? this.SLOW_TRANSITION_TIMEOUT :
+      system.slowTransition ? this.SLOW_TRANSITION_TIMEOUT :
                               this.TRANSITION_TIMEOUT);
       this.app.element.classList.add('transition-closing');
       this.app.element.classList.add(this.getAnimationName('close'));
@@ -148,10 +151,13 @@
 
   AppTransitionController.prototype._do_opening =
     function atc_do_opening() {
+      // XXX: Should not be getting system instance from window.
+      var system = window.system;
+
       this._openingTimeout = window.setTimeout(function() {
         this.app.broadcast('openingtimeout');
       }.bind(this),
-      System.slowTransition ? this.SLOW_TRANSITION_TIMEOUT :
+      system.slowTransition ? this.SLOW_TRANSITION_TIMEOUT :
                               this.TRANSITION_TIMEOUT);
       this.app.element.classList.add('transition-opening');
       this.app.element.classList.add(this.getAnimationName('open'));

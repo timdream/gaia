@@ -123,9 +123,12 @@
     },
 
     debug: function lm_debug() {
+      // XXX: Should not be getting system instance from window.
+      var system = window.system;
+
       if (DEBUG) {
         console.log('[LayoutManager]' +
-          '[' + System.currentTime() + ']' +
+          '[' + system.currentTime() + ']' +
           Array.slice(arguments).concat());
       }
     }

@@ -190,10 +190,13 @@ var SimLock = {
   },
 
   onClose: function sl_onClose(reason) {
+    // XXX: Should not be getting system instance from window.
+    var system = window.system;
+
     // Display the app only when PIN code is valid and when we click
     // on `X` button
     if (this._lastOrigin && (reason == 'success' || reason == 'skip'))
-      System.publish('displayapp', { origin: this._lastOrigin });
+      system.publish('displayapp', { origin: this._lastOrigin });
     delete this._lastOrigin;
   }
 };

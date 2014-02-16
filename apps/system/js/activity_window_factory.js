@@ -41,8 +41,11 @@
 
     debug: function awm_debug() {
       if (DEBUG) {
+        // XXX: Should not be getting system instance from window.
+        var system = window.system;
+
         console.log('[ActivityWindowFactory]' +
-          '[' + System.currentTime() + ']' +
+          '[' + system.currentTime() + ']' +
           Array.slice(arguments).concat());
       }
     },

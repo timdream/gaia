@@ -134,7 +134,10 @@
             // got emitted slower than `will-unlock`
             if (!this.ready) {
               this.ready = true;
-              System.publish('simslotready');
+              // XXX: Should not be getting system instance from window.
+              var system = window.system;
+
+              system.publish('simslotready');
             }
           }
           break;

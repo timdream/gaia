@@ -651,19 +651,25 @@
   AppWindow.prototype.CLASS_NAME = 'AppWindow';
 
   AppWindow.prototype.debug = function aw_debug(msg) {
+    // XXX: Should not be getting system instance from window.
+    var system = window.system;
+
     if (DEBUG || this._DEBUG) {
       console.log('[Dump: ' + this.CLASS_NAME + ']' +
         '[' + (this.name || this.origin) + ']' +
-        '[' + self.System.currentTime() + ']' +
+        '[' + system.currentTime() + ']' +
         Array.slice(arguments).concat());
     }
   };
 
   // Force debug output.
   AppWindow.prototype.forceDebug = function aw_debug(msg) {
+    // XXX: Should not be getting system instance from window.
+    var system = window.system;
+
     console.log('[Dump:' + this.CLASS_NAME + ']' +
       '[' + (this.name || this.origin) + ']' +
-      '[' + self.System.currentTime() + ']' +
+      '[' + system.currentTime() + ']' +
       Array.slice(arguments).concat());
   };
 
