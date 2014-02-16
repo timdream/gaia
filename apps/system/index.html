@@ -79,7 +79,6 @@
 
     <script defer src="js/screen_manager.js"></script>
     <script defer src="js/activities.js"></script>
-    <script defer src="js/bootstrap.js"></script>
     <script defer src="js/screenshot.js"></script>
     <script defer src="js/async_semaphore.js"></script>
     <script defer src="js/sound_manager.js"></script>
@@ -358,7 +357,11 @@
 
     <!-- Firefox Accounts-->
     <script defer src="js/fxa_manager.js"></script>
-    
+
+    <!-- Bootstrap: start the world -->
+    <!-- This script should be the last one of all deferred script. -->
+    <script defer src="js/bootstrap.js"></script>
+
     <style>
       /* initlogos style is here to prevent flashing */
 

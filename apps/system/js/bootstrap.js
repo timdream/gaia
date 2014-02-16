@@ -1,7 +1,19 @@
-/* -*- Mode: js; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- /
-/* vim: set shiftwidth=2 tabstop=2 autoindent cindent expandtab: */
-
 'use strict';
+
+/**
+ * Bootstrap starts the System module, and eventually the "world" of System App
+ * should be start by System module. See
+ * https://wiki.mozilla.org/Gaia/System/Refactoring_Plan
+ * for detail.
+ *
+ * This script should be the last one of all deferred script.
+ */
+window.system = new System();
+window.system.start();
+
+// XXX below: To be cleaned up.
+// ===================================================================
+//
 
 window.addEventListener('load', function startup() {
 
@@ -57,12 +69,6 @@ window.addEventListener('load', function startup() {
   Shortcuts.init();
   ScreenManager.turnScreenOn();
   Places.init();
-  window.ttlView = new TTLView();
-
-  // We need to be sure to get the focus in order to wake up the screen
-  // if the phone goes to sleep before any user interaction.
-  // Apparently it works because no other window has the focus at this point.
-  window.focus();
 
   // With all important event handlers in place, we can now notify
   // Gecko that we're ready for certain system services to send us

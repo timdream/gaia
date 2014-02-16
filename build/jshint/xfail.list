@@ -1026,7 +1026,6 @@ apps/system/js/stack_manager.js
 apps/system/js/statusbar.js
 apps/system/js/storage.js
 apps/system/js/storage_watcher.js
-apps/system/js/system.js
 apps/system/js/system_banner.js
 apps/system/js/system_dialog.js
 apps/system/js/telephony_settings.js
