@@ -31,14 +31,17 @@
         window.addEventListener('webapps-launch', this);
         window.addEventListener('webapps-close', this);
         window.addEventListener('open-app', this);
+
+        this._sendReadyEvent();
       } else {
-        var self = this;
         window.addEventListener('applicationready', function appReady(e) {
           window.removeEventListener('applicationready', appReady);
           window.addEventListener('webapps-launch', self);
           window.addEventListener('webapps-close', self);
           window.addEventListener('open-app', self);
-        });
+
+          this._sendReadyEvent();
+        }.bind(this));
       }
     },
 
@@ -105,6 +108,13 @@
         HomescreenLauncher.getHomescreen().ensure();
       }
       this.publish('launchapp', config);
+    },
+
+    _sendReadyEvent: function awf_sendReadyEvent() {
+      var evt = new CustomEvent('mozContentEvent',
+          { bubbles: true, cancelable: false,
+            detail: { type: 'system-message-listener-ready' } });
+      window.dispatchEvent(evt);
     },
 
     publish: function awf_publish(event, detail) {

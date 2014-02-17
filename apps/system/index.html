@@ -70,9 +70,9 @@
     <link rel="resource" type="image/png" href="shared/resources/branding/Browser_60.png"/>
     <link rel="resource" type="image/png" href="shared/resources/branding/Browser_90.png"/>
     <link rel="resource" type="image/png" href="shared/resources/branding/Browser_120.png"/>
-    <!-- applications.js must not be deferred
-         in order to catch webapps-registry-ready mozChromeEvent -->
-    <script src="js/applications.js"></script>
+
+    <script defer src="js/applications.js"></script>
+
     <!-- Not deferring the following to show startup logo/animation as soon as possible. -->
     <script src="js/logo_loader.js"></script>
     <script src="js/init_logo_handler.js"></script>
