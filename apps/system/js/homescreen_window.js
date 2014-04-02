@@ -36,6 +36,7 @@
   HomescreenWindow.prototype.render = function hw_render() {
     // reset transition state.
     this._transitionState = 'closed';
+    this._selfVisibilityState = 'background';
     this.publish('willrender');
     console.log('[BEFORE]this.containerElement.insertAdjacentHTML(), ' +
       'this.containerElement.innerHTML: \n' +
@@ -132,8 +133,7 @@
 
     // If we're displayed, restart immediately.
     this.debug(this._visibilityState);
-    if (this._visibilityState == 'foreground' ||
-        this.element.classList.contains('active')) {
+    if (this._selfVisibilityState == 'foreground') {
       this.kill();
 
       // XXX workaround bug 810431.
