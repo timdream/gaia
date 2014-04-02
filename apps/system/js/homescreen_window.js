@@ -37,7 +37,13 @@
     // reset transition state.
     this._transitionState = 'closed';
     this.publish('willrender');
+    console.log('[BEFORE]this.containerElement.insertAdjacentHTML(), ' +
+      'this.containerElement.innerHTML: \n' +
+      this.containerElement.innerHTML);
     this.containerElement.insertAdjacentHTML('beforeend', this.view());
+    console.log('[AFTER]this.containerElement.insertAdjacentHTML(), ' +
+      'this.containerElement.innerHTML: \n' +
+      this.containerElement.innerHTML);
     this.browser = new BrowserFrame(this.browser_config);
     this.element = document.getElementById('homescreen');
 
@@ -48,7 +54,11 @@
     this.iframe.dataset.frameType = 'window';
     this.iframe.dataset.frameOrigin = 'homescreen';
 
+    console.log('[BEFORE]appendChild(), this.element: ' +
+      this.element.innerHTML);
     this.element.appendChild(this.browser.element);
+    console.log('[AFTER]appendChild(), this.element: ' +
+      this.element.innerHTML);
 
     /* XXX: We dynamically insert nodes here because
        appWindow.frame.firstChild is used as appWindow.iframe */
@@ -140,7 +150,13 @@
   };
 
   HomescreenWindow.prototype.kill = function hw_kill() {
+    console.log('[BEFORE]this.containerElement.removeChild(this.element):\n');
+    console.log('this.element: ' + this.element.innerHTML);
+    console.log('this.containerElement: ' + this.containerElement.innerHTML);
     this.containerElement.removeChild(this.element);
+    console.log('[AFTER]this.containerElement.removeChild(this.element):\n');
+    console.log('this.element: ' + this.element.innerHTML);
+    console.log('this.containerElement: ' + this.containerElement.innerHTML);
     this.element = this.frame = this.iframe = null;
     this.browser = null;
     this.publish('terminated');
