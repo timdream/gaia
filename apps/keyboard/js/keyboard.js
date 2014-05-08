@@ -877,8 +877,21 @@ function setLayoutPage(newpage) {
 function updateTargetWindowHeight(hide) {
   perfTimer.printTime('updateTargetWindowHeight');
   // height of the current active IME + 1px for the borderTop
-  var imeHeight = cachedIMEDimensions.height = IMERender.getHeight() + 1;
-  var imeWidth = cachedIMEDimensions.width = IMERender.getWidth();
+  var imeHeight = IMERender.getHeight() + 1;
+  var imeWidth = IMERender.getWidth();
+
+  if (cachedIMEDimensions.height === imeHeight &&
+      cachedIMEDimensions.width === imeWidth) {
+    return;
+  }
+
+  perfTimer.printTime(cachedIMEDimensions.height + 'px');
+  perfTimer.printTime(cachedIMEDimensions.width + 'px');
+  perfTimer.printTime(imeHeight + 'px');
+  perfTimer.printTime(imeWidth + 'px');
+
+  cachedIMEDimensions.height = imeHeight;
+  cachedIMEDimensions.width = imeWidth;
   window.resizeTo(imeWidth, imeHeight);
 }
 
