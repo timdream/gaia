@@ -812,7 +812,7 @@ const IMERender = (function() {
   var candidatePanelCode = function() {
     var candidatePanel = document.createElement('div');
     candidatePanel.setAttribute('role', 'group');
-    candidatePanel.setAttribute('aria-label', _('wordSuggestions'));
+    candidatePanel.setAttribute('data-l10n-id', 'wordSuggestions');
     candidatePanel.classList.add('keyboard-candidate-panel');
     if (inputMethodName)
       candidatePanel.classList.add(inputMethodName);
@@ -821,7 +821,7 @@ const IMERender = (function() {
     dismissButton.classList.add('dismiss-suggestions-button');
     dismissButton.classList.add('hide');
     dismissButton.setAttribute('role', 'button');
-    dismissButton.setAttribute('aria-label', _('dismiss'));
+    dismissButton.setAttribute('data-l10n-id', 'dismiss');
     candidatePanel.appendChild(dismissButton);
 
     var suggestionContainer = document.createElement('div');
@@ -848,7 +848,7 @@ const IMERender = (function() {
   };
 
   var buildKey = function buildKey(label, className, width, dataset, altNote,
-                                   attributeList, ariaLabel) {
+                                   attributeList, labelInfo) {
 
     var altNoteNode;
     if (altNote) {
@@ -879,8 +879,9 @@ const IMERender = (function() {
       contentNode.setAttribute('role', 'key');
     }
 
-    // Set aria-label
-    contentNode.setAttribute('aria-label', ariaLabel);
+    // Set aria-label, or l10n id of the label.
+    contentNode.setAttribute('data-l10n-id', labelInfo.l10nId);
+    contentNode.setAttribute('aria-label', labelInfo.label);
 
     var vWrapperNode = document.createElement('span');
     vWrapperNode.className = 'visual-wrapper';

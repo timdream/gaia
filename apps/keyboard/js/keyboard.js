@@ -477,8 +477,13 @@ function setKeyboardName(name, callback) {
 }
 
 function getAriaLabel(key) {
-  var _ = navigator.mozL10n.get;
-  return _(key.ariaLabel || ariaLabelMap[key.value] || key.value);
+  var labelInfo = {
+    label: key.ariaLabel || ariaLabelMap[key.value] || key.value
+  };
+  if (key.ariaLabel || ariaLabelMap[key.value]) {
+    labelInfo.l10nId = (key.ariaLabel || ariaLabelMap[key.value]);
+  }
+  return labelInfo;
 }
 
 // Support function for render
