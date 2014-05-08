@@ -258,12 +258,16 @@ const ariaLabelMap = {
   '»': 'rightDoubleAngleQuoteKey'
 };
 
-// These values are initialized with user settings
-var suggestionsEnabled;
-var correctionsEnabled;
-var clickEnabled;
-var vibrationEnabled;
-var isSoundEnabled;
+// SettingsPromiseManager wraps Settings DB methods into promises.
+var settingsPromiseManager = new SettingsPromiseManager();
+
+// User settings (in Settings database) are tracked within these modules
+var soundFeedbackSettings;
+var vibrationFeedbackSettings;
+var imEngineSettings;
+
+// We keep this promise in the global scope for the time being.
+var imEngineSettingsInitPromise;
 
 // data URL for keyboard click sound
 const CLICK_SOUND = './resources/sounds/key.ogg';
@@ -288,62 +292,34 @@ var eventHandlers = {
 // For tracking "scrolling the full candidate panel".
 var touchStartCoordinate;
 
-// Before we can initialize the keyboard we need to know the current
-// value of all keyboard-related settings. These are the settings
-// we want to query, with the default values we'll use if the query fails
-var settingsQuery = {
-  'keyboard.wordsuggestion': true,
-  'keyboard.autocorrect': true,
-  'keyboard.vibration': false,
-  'keyboard.clicksound': false,
-  'audio.volume.notification': 7
-};
-
-// Now query the settings
-getSettings(settingsQuery, function gotSettings(values) {
-  perfTimer.printTime('gotSettings');
-  // Copy settings values to the corresponding global variables.
-  suggestionsEnabled = values['keyboard.wordsuggestion'];
-  correctionsEnabled = values['keyboard.autocorrect'];
-  vibrationEnabled = values['keyboard.vibration'];
-  clickEnabled = values['keyboard.clicksound'];
-  isSoundEnabled = !!values['audio.volume.notification'];
-
-  handleKeyboardSound();
-
-  // We've got all the settings, so initialize the rest
-  initKeyboard();
-});
+initKeyboard();
 
 function initKeyboard() {
   perfTimer.startTimer('initKeyboard');
   perfTimer.printTime('initKeyboard');
-  navigator.mozSettings.addObserver('keyboard.wordsuggestion', function(e) {
-    // The keyboard won't be displayed when this setting changes, so we
-    // don't need to tell the keyboard about the new value right away.
-    // We pass the value to the input method when the keyboard is displayed
-    suggestionsEnabled = e.settingValue;
+  // Getting initial settings values asynchronously,
+  // Plus monitor the value when it changes.
+  soundFeedbackSettings = new SoundFeedbackSettings();
+  soundFeedbackSettings.promiseManager = settingsPromiseManager;
+  soundFeedbackSettings.onsettingschange = handleKeyboardSound;
+  soundFeedbackSettings.initSettings().then(
+    handleKeyboardSound,
+    function rejected() {
+      console.warn('Failed to get initial sound settings.');
+    });
+
+  vibrationFeedbackSettings = new VibrationFeedbackSettings();
+  vibrationFeedbackSettings.promiseManager = settingsPromiseManager;
+  var vibrationInitPromise = vibrationFeedbackSettings.initSettings();
+  vibrationInitPromise.catch(function rejected() {
+    console.warn('Failed to get initial vibration settings.');
   });
 
-  navigator.mozSettings.addObserver('keyboard.autocorrect', function(e) {
-    // The keyboard won't be displayed when this setting changes, so we
-    // don't need to tell the keyboard about the new value right away.
-    // We pass the value to the input method when the keyboard is displayed
-    correctionsEnabled = e.settingValue;
-  });
-
-  navigator.mozSettings.addObserver('keyboard.vibration', function(e) {
-    vibrationEnabled = e.settingValue;
-  });
-
-  navigator.mozSettings.addObserver('audio.volume.notification', function(e) {
-    isSoundEnabled = !!e.settingValue;
-    handleKeyboardSound();
-  });
-
-  navigator.mozSettings.addObserver('keyboard.clicksound', function(e) {
-    clickEnabled = e.settingValue;
-    handleKeyboardSound();
+  imEngineSettings = new IMEngineSettings();
+  imEngineSettings.promiseManager = settingsPromiseManager;
+  imEngineSettingsInitPromise = imEngineSettings.initSettings();
+  imEngineSettingsInitPromise.catch(function rejected() {
+    console.error('Failed to get initial imEngine settings.');
   });
 
   // Initialize the rendering module
@@ -427,7 +403,8 @@ function initKeyboard() {
 }
 
 function handleKeyboardSound() {
-  if (clickEnabled && isSoundEnabled) {
+  if (soundFeedbackSettings.clickEnabled &&
+      !!soundFeedbackSettings.isSoundEnabled) {
     clicker = new Audio(CLICK_SOUND);
     specialClicker = new Audio(SPECIAL_SOUND);
   } else {
@@ -1680,27 +1657,31 @@ function showKeyboard() {
 
   // everything.me uses this setting to improve searches,
   // but they really shouldn't.
-  navigator.mozSettings.createLock().set({
+  settingsPromiseManager.set({
     'keyboard.current': keyboardName
   });
 
   function doShowKeyboard() {
     perfTimer.printTime('doShowKeyboard');
-    // Force to disable the auto correction for Greek SMS layout.
-    // This is because the suggestion result is still unicode and
-    // we would not convert the suggestion result to GSM 7-bit.
-    if (inputMethod.activate) {
-      inputMethod.activate(Keyboards[keyboardName].autoCorrectLanguage,
-        state, {
-          suggest: suggestionsEnabled && !isGreekSMS(),
-          correct: correctionsEnabled && !isGreekSMS()
-        });
-    }
+    // Now we need to wait for the initial IMEngine setting values.
+    // Hopefully we might already have the value at this point.
+    imEngineSettingsInitPromise.then(function() {
+      // Force to disable the auto correction for Greek SMS layout.
+      // This is because the suggestion result is still unicode and
+      // we would not convert the suggestion result to GSM 7-bit.
+      if (inputMethod.activate) {
+        inputMethod.activate(Keyboards[keyboardName].autoCorrectLanguage,
+          state, {
+            suggest: imEngineSettings.suggestionsEnabled && !isGreekSMS(),
+            correct: imEngineSettings.correctionsEnabled && !isGreekSMS()
+          });
+      }
 
-    // render the keyboard after activation, which will determine the state
-    // of uppercase/suggestion, etc.
-    renderKeyboard(keyboardName, function() {
-      IMERender.showIME();
+      // render the keyboard after activation, which will determine the state
+      // of uppercase/suggestion, etc.
+      renderKeyboard(keyboardName, function() {
+        IMERender.showIME();
+      });
     });
   }
 
@@ -1734,7 +1715,7 @@ function hideKeyboard() {
 
   // everything.me uses this setting to improve searches,
   // but they really shouldn't.
-  navigator.mozSettings.createLock().set({
+  settingsPromiseManager.set({
     'keyboard.current': undefined
   });
 }
@@ -1836,13 +1817,14 @@ function updateLayoutParams() {
 }
 
 function triggerFeedback(isSpecialKey) {
-  if (vibrationEnabled) {
+  if (vibrationFeedbackSettings.vibrationEnabled) {
     try {
       navigator.vibrate(50);
     } catch (e) {}
   }
 
-  if (clickEnabled && isSoundEnabled) {
+  if (soundFeedbackSettings.clickEnabled &&
+      !!soundFeedbackSettings.isSoundEnabled) {
     (isSpecialKey ? specialClicker : clicker).cloneNode(false).play();
   }
 }
@@ -1864,72 +1846,6 @@ function getWindowLeft(obj) {
     left += obj.offsetLeft;
   }
   return left;
-}
-
-//
-// getSettings: Query the value of multiple settings at once.
-//
-// settings is an object whose property names are the settings to query
-// and whose property values are the default values to use if no such
-// setting is found.  This function will create a setting lock and
-// request the value of each of the specified settings.  Once it receives
-// a response to all of the queries, it passes all the settings values to
-// the specified callback function.  The argument to the callback function
-// is an object just like the settings object, where the property name is
-// the setting name and the property value is the setting value (or the
-// default value if the setting was not found).
-//
-function getSettings(settings, callback) {
-  perfTimer.printTime('getSettings');
-  var results = {};
-  try {
-    var lock = navigator.mozSettings.createLock();
-  }
-  catch (e) {
-    // If settings is broken, just return the default values
-    console.warn('Exception in mozSettings.createLock():', e,
-                 '\nUsing default values');
-    for (var p in settings)
-      results[p] = settings[p];
-    callback(results);
-  }
-  var settingNames = Object.keys(settings);
-  var numSettings = settingNames.length;
-  var numResults = 0;
-
-  for (var i = 0; i < numSettings; i++) {
-    requestSetting(settingNames[i]);
-  }
-
-  function requestSetting(name) {
-    try {
-      var request = lock.get(name);
-    }
-    catch (e) {
-      console.warn('Exception querying setting', name, ':', e,
-                   '\nUsing default value');
-      recordResult(name, settings[name]);
-      return;
-    }
-    request.onsuccess = function() {
-      var value = request.result[name];
-      if (value === undefined)
-        value = settings[name]; // Use the default value
-      recordResult(name, value);
-    };
-    request.onerror = function(evt) {
-      console.warn('Error querying setting', name, ':', evt.error);
-      recordResult(name, settings[name]);
-    };
-  }
-
-  function recordResult(name, value) {
-    results[name] = value;
-    numResults++;
-    if (numResults === numSettings) {
-      callback(results);
-    }
-  }
 }
 
 // To determine if the candidate panel for word suggestion is needed
