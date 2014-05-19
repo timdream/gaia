@@ -110,6 +110,8 @@ const IMERender = (function() {
   };
 
   // Draw the keyboard and its components. Meat is here.
+  // The callback will return synchronizely if this does not involve resizeUI().
+  // XXX: change the non-deterministic behavior here.
   var draw = function kr_draw(layout, flags, callback) {
     flags = flags || {};
 
@@ -168,9 +170,7 @@ const IMERender = (function() {
     }
     else { // activeIME is already correct
       if (callback) {
-        // The callback might be blocking, so we want to process
-        // on next tick.
-        requestAnimationFrame(callback);
+        callback();
       }
     }
   };
@@ -697,8 +697,6 @@ const IMERender = (function() {
 
   // Recalculate dimensions for the current render
   var resizeUI = function(layout, callback) {
-    var RESIZE_UI_TIMEOUT = 0;
-
     // This function consists of two actual functions
     // 1. setKeyWidth (sets the correct width for every key)
     // 2. getVisualData (stores visual offsets in internal array)
@@ -735,7 +733,7 @@ const IMERender = (function() {
         });
       });
 
-      setTimeout(getVisualData, RESIZE_UI_TIMEOUT);
+      getVisualData();
     }
 
     function getVisualData() {

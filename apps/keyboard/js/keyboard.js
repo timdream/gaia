@@ -757,6 +757,14 @@ function renderKeyboard(keyboardName) {
     (isUpperCaseLocked || isUpperCase) :
     true;
 
+  // Tell the renderer what input method we're using. This will set a CSS
+  // classname that can be used to style the keyboards differently
+  IMERender.setInputMethodName(keyboard.imEngine || 'default');
+
+  // If needed, empty the candidate panel
+  if (inputMethod.empty)
+    inputMethod.empty();
+
   // And draw the layout
   IMERender.draw(currentLayout, {
     uppercase: needsUpperCase,
@@ -776,14 +784,6 @@ function renderKeyboard(keyboardName) {
     perfTimer.printTime(
       'BLOCKING IMERender.draw:callback', 'IMERender.draw:callback');
   });
-
-  // Tell the renderer what input method we're using. This will set a CSS
-  // classname that can be used to style the keyboards differently
-  IMERender.setInputMethodName(keyboard.imEngine || 'default');
-
-  // If needed, empty the candidate panel
-  if (inputMethod.empty)
-    inputMethod.empty();
 
   isKeyboardRendered = true;
 
