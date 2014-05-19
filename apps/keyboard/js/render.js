@@ -124,6 +124,17 @@ const IMERender = (function() {
       supportsSwitching
     ].join('-');
 
+    // If there is a placeholder empty keyboard, remove it from the DOM
+    var emptyKeyboard = document.getElementById('empty-keyboard');
+    if (emptyKeyboard) {
+      emptyKeyboard.parentNode.removeChild(emptyKeyboard);
+      emptyKeyboard = null;
+
+      if (activeIme === emptyKeyboard) {
+        activeIme = null;
+      }
+    }
+
     // lets see if we have this keyboard somewhere already...
     var container = document.getElementsByClassName(keyboardClass)[0];
     if (!container) {

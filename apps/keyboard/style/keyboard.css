@@ -48,6 +48,7 @@ button::-moz-focus-inner {
 .keyboard-row {
   text-align: center;
   font-size: 0;
+  height: 5.1rem;
 }
 .row1 {
   background-color: #5b6668;

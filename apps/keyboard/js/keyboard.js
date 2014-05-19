@@ -382,6 +382,10 @@ function initKeyboard() {
   inputContext = navigator.mozInputMethod.inputcontext;
   if (!document.mozHidden && inputContext) {
     inputContextGetTextPromise = inputContext.getText();
+    perfTimer.printTime('initKeyboard:showEmptyKeyboard');
+    IMERender.activeIme = document.getElementById('empty-keyboard');
+    IMERender.resizeUI();
+    updateTargetWindowHeight();
     perfTimer.printTime(
       'initKeyboard->setKeyboardName->showKeyboard', 'initKeyboard');
     // show Keyboard after the input method has been initialized
