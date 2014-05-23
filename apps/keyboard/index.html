@@ -12,7 +12,8 @@
   <script defer type="text/javascript" src="js/keyboard.js"></script>
 
   <!-- Shared code -->
-  <script defer src="shared/js/l10n.js"></script>
+  <!-- Let's lazily load l10n.js here, we don't want it to block -->
+  <!-- <script defer src="shared/js/l10n.js"></script> -->
 
   <!-- Localization -->
   <link rel="resource" type="application/l10n" href="locales/locales.ini">

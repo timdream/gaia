@@ -314,6 +314,20 @@ function initKeyboard() {
       'initKeyboard->setKeyboardName', 'initKeyboard');
     setKeyboardName(inputMethodName);
   }
+
+  // Force l10n.js to think we are not pre-translated, and it must transverse
+  // the DOM when it loads.
+  document.documentElement.lang = 'x-untranslated';
+
+  // Super lazy lazily load l10n.js
+  // XXX: once we have better start-up control, we should lazily load l10n.js
+  // when we we have the cold launch keyboard shown, or right away if we don't
+  // need to show any keyboard
+  setTimeout(function() {
+    var script = document.createElement('script');
+    script.src = 'shared/js/l10n.js';
+    document.body.appendChild(script);
+  }, 2000);
 }
 
 function handleKeyboardSound() {
