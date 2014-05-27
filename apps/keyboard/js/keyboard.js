@@ -167,7 +167,6 @@ var imEngineSettings;
 
 // We keep this promise in the global scope for the time being,
 // so they can be called as soon as we need it to.
-var imEngineSettingsInitPromise;
 var inputContextGetTextPromise;
 
 // data URL for keyboard click sound
@@ -227,7 +226,7 @@ function initKeyboard() {
 
   imEngineSettings = new IMEngineSettings();
   imEngineSettings.promiseManager = settingsPromiseManager;
-  imEngineSettingsInitPromise = imEngineSettings.initSettings();
+  var imEngineSettingsInitPromise = imEngineSettings.initSettings();
   imEngineSettingsInitPromise.catch(function rejected() {
     console.error('Fatal Error! Failed to get initial imEngine settings.');
   });
@@ -316,9 +315,9 @@ function initKeyboard() {
   }
 }
 
-function handleKeyboardSound() {
-  if (soundFeedbackSettings.clickEnabled &&
-      !!soundFeedbackSettings.isSoundEnabled) {
+function handleKeyboardSound(settings) {
+  if (settings.clickEnabled &&
+      !!settings.isSoundEnabled) {
     clicker = new Audio(CLICK_SOUND);
     specialClicker = new Audio(SPECIAL_SOUND);
   } else {
@@ -1618,7 +1617,7 @@ function switchIMEngine(layoutName, mustRender) {
 
   // dataPromise resolves to an array of data to be sent to imEngine.activate()
   var dataPromise = new Promise(function(resolve, reject) {
-    Promise.all([inputContextGetTextPromise, imEngineSettingsInitPromise])
+    Promise.all([inputContextGetTextPromise, imEngineSettings.initSettings()])
     .then(function(values) {
       perfTimer.printTime('switchIMEngine:dataPromise resolved');
       resolve([
@@ -1631,8 +1630,8 @@ function switchIMEngine(layoutName, mustRender) {
           value: values[0]
         },
         {
-          suggest: imEngineSettings.suggestionsEnabled && !isGreekSMS(),
-          correct: imEngineSettings.correctionsEnabled && !isGreekSMS()
+          suggest: values[1].suggestionsEnabled && !isGreekSMS(),
+          correct: values[1].correctionsEnabled && !isGreekSMS()
         }
       ]);
     }, reject);
@@ -1670,15 +1669,28 @@ function updateLayoutParams() {
 }
 
 function triggerFeedback(isSpecialKey) {
-  if (vibrationFeedbackSettings.vibrationEnabled) {
-    try {
-      navigator.vibrate(50);
-    } catch (e) {}
+  if (vibrationFeedbackSettings.initialized) {
+    var vibrationFeedbackSettingsValues =
+      vibrationFeedbackSettings.getSettingsSync();
+    if (vibrationFeedbackSettingsValues.vibrationEnabled) {
+      try {
+        navigator.vibrate(50);
+      } catch (e) {}
+    }
+  } else {
+    console.warn(
+      'Vibration feedback needed but settings is not available yet.');
   }
 
-  if (soundFeedbackSettings.clickEnabled &&
-      !!soundFeedbackSettings.isSoundEnabled) {
-    (isSpecialKey ? specialClicker : clicker).cloneNode(false).play();
+  if (soundFeedbackSettings.initialized) {
+    var soundFeedbackSettingsValues = soundFeedbackSettings.getSettingsSync();
+    if (soundFeedbackSettingsValues.clickEnabled &&
+        !!soundFeedbackSettingsValues.isSoundEnabled) {
+      (isSpecialKey ? specialClicker : clicker).cloneNode(false).play();
+    }
+  } else {
+    console.warn(
+      'Sound feedback needed but settings is not available yet.');
   }
 }
 
