@@ -365,7 +365,7 @@ function setKeyboardName(name, callback) {
     var loader = inputMethodManager.loader;
     var imEngineName = keyboard.imEngine;
     if (imEngineName && !loader.getInputMethod(imEngineName)) {
-      inputMethodManager.loader.loadInputMethod(imEngineName);
+      loader.getInputMethodAsync(imEngineName);
     }
     if (callback) {
       callback();

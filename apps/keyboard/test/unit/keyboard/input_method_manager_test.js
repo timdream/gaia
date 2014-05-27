@@ -192,17 +192,18 @@ suite('InputMethodLoader', function() {
       'init with a glue object with a correct app');
   });
 
-  test('loadInputMethod', function(done) {
+  test('getInputMethodAsync', function(done) {
     window.InputMethods = {};
 
     var loader = new InputMethodLoader({});
     loader.SOURCE_DIR = './fake-imes/';
     loader.start();
 
-    var p = loader.loadInputMethod('foo');
-    p.then(function() {
+    var p = loader.getInputMethodAsync('foo');
+    p.then(function(imEngine) {
       assert.isTrue(true, 'loaded');
       assert.isTrue(!!loader.getInputMethod('foo'), 'foo loaded');
+      assert.equal(imEngine, loader.getInputMethod('foo'));
 
       done();
     }, function() {
@@ -212,14 +213,48 @@ suite('InputMethodLoader', function() {
     });
   });
 
-  test('loadInputMethod (failed)', function(done) {
+  test('getInputMethodAsync (twice)', function(done) {
     window.InputMethods = {};
 
     var loader = new InputMethodLoader({});
     loader.SOURCE_DIR = './fake-imes/';
     loader.start();
 
-    var p = loader.loadInputMethod('bar');
+    var p = loader.getInputMethodAsync('foo');
+    p.then(function(imEngine) {
+      assert.isTrue(true, 'loaded');
+      assert.isTrue(!!loader.getInputMethod('foo'), 'foo loaded');
+      assert.equal(imEngine, loader.getInputMethod('foo'));
+
+      var p2 = loader.getInputMethodAsync('foo');
+      assert.equal(p2, p,
+        'Should return the same promise without creating a new one');
+
+      p.then(function(imEngine) {
+        assert.isTrue(true, 'loaded');
+        assert.equal(imEngine, loader.getInputMethod('foo'));
+
+        done();
+      }, function() {
+        assert.isTrue(false, 'should not reject');
+
+        done();
+      });
+    }, function() {
+      assert.isTrue(false, 'should not reject');
+
+      done();
+    });
+  });
+
+  test('getInputMethodAsync (failed)', function(done) {
+    window.InputMethods = {};
+
+    var loader = new InputMethodLoader({});
+    loader.SOURCE_DIR = './fake-imes/';
+    loader.start();
+
+    var p = loader.getInputMethodAsync('bar');
     p.then(function() {
       assert.isTrue(false, 'should not resolve');
 
@@ -231,15 +266,15 @@ suite('InputMethodLoader', function() {
     });
   });
 
-  test('loadInputMethod (twice)', function(done) {
+  test('getInputMethodAsync (twice)', function(done) {
     window.InputMethods = {};
 
     var loader = new InputMethodLoader({});
     loader.SOURCE_DIR = './fake-imes/';
     loader.start();
 
-    var p = loader.loadInputMethod('foo');
-    var p2 = loader.loadInputMethod('foo');
+    var p = loader.getInputMethodAsync('foo');
+    var p2 = loader.getInputMethodAsync('foo');
 
     assert.equal(p, p2, 'Return same promise instance for the same IMEngine.');
 
@@ -434,7 +469,6 @@ suite('InputMethodManager', function() {
     var manager = new InputMethodManager({});
     manager.start();
     manager.loader.SOURCE_DIR = './fake-imes/';
-    var loadInputMethodSpy = this.sinon.spy(manager.loader, 'loadInputMethod');
 
     var dataPromise = new Promise(function(resolve) {
       resolve(['foo', 'bar']);
@@ -475,9 +509,6 @@ suite('InputMethodManager', function() {
         assert.isTrue(activateStub.getCall(1).calledWith('foo', 'bar'));
         assert.equal(activateStub.getCall(1).thisValue,
           imEngine);
-
-        assert.equal(loadInputMethodSpy.callCount, 1,
-          'only load script once');
 
         done();
       }, function() {
