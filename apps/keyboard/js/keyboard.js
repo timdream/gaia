@@ -1616,26 +1616,30 @@ function switchIMEngine(layoutName, mustRender) {
   var imEngineName = layout.imEngine || 'default';
 
   // dataPromise resolves to an array of data to be sent to imEngine.activate()
-  var dataPromise = new Promise(function(resolve, reject) {
-    Promise.all([inputContextGetTextPromise, imEngineSettings.initSettings()])
-    .then(function(values) {
-      perfTimer.printTime('switchIMEngine:dataPromise resolved');
-      resolve([
-        layout.autoCorrectLanguage,
-        {
-          type: inputContext.inputType,
-          inputmode: inputContext.inputMode,
-          selectionStart: inputContext.selectionStart,
-          selectionEnd: inputContext.selectionEnd,
-          value: values[0]
-        },
-        {
-          suggest: values[1].suggestionsEnabled && !isGreekSMS(),
-          correct: values[1].correctionsEnabled && !isGreekSMS()
-        }
-      ]);
-    }, reject);
+  var dataPromise = Promise.all(
+    [inputContextGetTextPromise, imEngineSettings.initSettings()])
+  .then(function(values) {
+    perfTimer.printTime('switchIMEngine:dataPromise resolved');
+
+    // Resolve to this array
+    return [
+      layout.autoCorrectLanguage,
+      {
+        type: inputContext.inputType,
+        inputmode: inputContext.inputMode,
+        selectionStart: inputContext.selectionStart,
+        selectionEnd: inputContext.selectionEnd,
+        value: values[0]
+      },
+      {
+        suggest: values[1].suggestionsEnabled && !isGreekSMS(),
+        correct: values[1].correctionsEnabled && !isGreekSMS()
+      }
+    ];
+  }, function(error) {
+    return Promise.reject(error);
   });
+
   var p = inputMethodManager.switchCurrentIMEngine(imEngineName, dataPromise);
   p.then(function() {
     perfTimer.printTime('switchIMEngine:promise resolved');
