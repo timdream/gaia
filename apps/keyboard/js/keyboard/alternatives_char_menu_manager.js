@@ -58,6 +58,10 @@ AlternativesCharMenuManager.prototype.show = function(target, alternatives) {
 };
 
 AlternativesCharMenuManager.prototype.hide = function() {
+  if (!this.isShown) {
+    return;
+  }
+
   // XXX: Remove reference to IMERender in the global in the future.
   IMERender.hideAlternativesCharMenu();
   this.isShown = false;

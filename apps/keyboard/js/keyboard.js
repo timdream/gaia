@@ -600,15 +600,6 @@ function handleLongPress(key) {
   }
 
   alternativesCharMenuManager.show(key, alternatives);
-  alternativesCharMenuManager.isShown = true;
-}
-
-// Hide alternatives.
-function hideAlternatives() {
-  if (!alternativesCharMenuManager.isShown)
-    return;
-
-  alternativesCharMenuManager.hide();
 }
 
 // Test if an HTML node is a normal key
@@ -697,9 +688,9 @@ function movePress(press, id) {
 
   // Hide of alternatives menu if the touch moved out of it
   if (target.parentNode !== IMERender.menu &&
-      alternativesCharMenuManager.isShown &&
-      !alternativesCharMenuManager.isInMenuArea(press))
-    hideAlternatives();
+      !alternativesCharMenuManager.isInMenuArea(press)) {
+    alternativesCharMenuManager.hide();
+  }
 
   // Control showing alternatives menu
   setLongPressTimeout(press, id);
@@ -711,7 +702,7 @@ function endPress(press, id) {
   clearInterval(deleteInterval);
   clearTimeout(longPressTimeout);
 
-  hideAlternatives();
+  alternativesCharMenuManager.hide();
 
   var target = activeTargets.get(id);
   activeTargets.delete(id);
@@ -1174,7 +1165,7 @@ function clearTouchedKeys() {
     IMERender.unHighlightKey(el);
   });
 
-  hideAlternatives();
+  alternativesCharMenuManager.hide();
 
   // Reset all the pending actions here.
   clearTimeout(deleteTimeout);
