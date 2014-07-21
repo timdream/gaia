@@ -131,6 +131,33 @@ body[data-filter-by="connectivity"] #root > div [data-category="connectivity"] {
   color: #505859;
 }
 
+/* Opt-out of italic style in these locales. See bug 1023702 */
+.explanation:lang(ar),
+.explanation:lang(as),
+.explanation:lang(bn),
+.explanation:lang(fa),
+.explanation:lang(gu),
+.explanation:lang(he),
+.explanation:lang(hi),
+.explanation:lang(ja),
+.explanation:lang(km),
+.explanation:lang(kn),
+.explanation:lang(ko),
+.explanation:lang(mai),
+.explanation:lang(ml),
+.explanation:lang(mr),
+.explanation:lang(ne),
+.explanation:lang(or),
+.explanation:lang(pa),
+.explanation:lang(si),
+.explanation:lang(ta),
+.explanation:lang(te),
+.explanation:lang(th),
+.explanation:lang(ur),
+.explanation:lang(zh) {
+  font-style: normal;
+}
+
 .description {
   font-size: 1.7rem;
   line-height: 2.3rem;
@@ -416,6 +443,33 @@ section ul.operate-certificate {
 
 .apnSettings-custom {
   font-style: italic;
+}
+
+/* Opt-out of italic style in these locales. See bug 1023702 */
+.apnSettings-custom:lang(ar),
+.apnSettings-custom:lang(as),
+.apnSettings-custom:lang(bn),
+.apnSettings-custom:lang(fa),
+.apnSettings-custom:lang(gu),
+.apnSettings-custom:lang(he),
+.apnSettings-custom:lang(hi),
+.apnSettings-custom:lang(ja),
+.apnSettings-custom:lang(km),
+.apnSettings-custom:lang(kn),
+.apnSettings-custom:lang(ko),
+.apnSettings-custom:lang(mai),
+.apnSettings-custom:lang(ml),
+.apnSettings-custom:lang(mr),
+.apnSettings-custom:lang(ne),
+.apnSettings-custom:lang(or),
+.apnSettings-custom:lang(pa),
+.apnSettings-custom:lang(si),
+.apnSettings-custom:lang(ta),
+.apnSettings-custom:lang(te),
+.apnSettings-custom:lang(th),
+.apnSettings-custom:lang(ur),
+.apnSettings-custom:lang(zh) {
+  font-style: normal;
 }
 
 .apnSettings-advanced {
