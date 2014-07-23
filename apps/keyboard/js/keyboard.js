@@ -1,6 +1,6 @@
 'use strict';
 
-/* global app, IMERender, Promise */
+/* global app, IMERender */
 
 // |app| is considered created and started at this point.
 // It was intentionally exposed from bootstrap.js to allow lagency code access
@@ -15,10 +15,6 @@ const HIDE_KEYBOARD_TIMEOUT = 500;
 var hideKeyboardTimeout = 0;
 
 app.upperCaseStateManager.onstatechange = handleUpperCaseStateChange;
-
-// We keep this promise in the global scope for the time being,
-// so they can be called as soon as we need it to.
-var inputContextGetTextPromise;
 
 // A MutationObserver we use to spy on the renderer module
 var dimensionsObserver;
@@ -119,10 +115,11 @@ function deactivateInputMethod() {
 function updateCurrentLayout(name) {
   app.perfTimer.printTime('updateCurrentLayout');
 
-  // Update inputContextGetTextPromise now so API can getText() in
-  // parallel, since eventually switchIMEngine() is going to need this.
-  if (!document.mozHidden && app.inputContext) {
-    inputContextGetTextPromise = app.inputContext.getText();
+  // Make sure we are working in parallel,
+  // since eventually IMEngine will be switched.
+  // See showKeyboard()->switchIMEngine()
+  if (!document.mozHidden) {
+    app.inputMethodManager.updateInputContextData();
   }
 
   app.layoutManager.switchCurrentLayout(name).then(function() {
@@ -346,28 +343,7 @@ function switchIMEngine(mustRender) {
   var layout = app.layoutManager.currentModifiedLayout;
   var imEngineName = layout.imEngine || 'default';
 
-  // dataPromise resolves to an array of data to be sent to imEngine.activate()
-  var dataPromise = inputContextGetTextPromise.then(function(value) {
-    app.perfTimer.printTime('switchIMEngine:dataPromise resolved');
-    var inputContext = app.inputContext;
-
-    // Resolve to this object containing information of inputContext
-    return {
-      type: inputContext.inputType,
-      inputmode: inputContext.inputMode,
-      selectionStart: inputContext.selectionStart,
-      selectionEnd: inputContext.selectionEnd,
-      value: value,
-      inputContext: inputContext
-    };
-  }, function(error) {
-    return Promise.reject(error);
-  });
-
-  inputContextGetTextPromise = null;
-
-  var p = app.inputMethodManager
-    .switchCurrentIMEngine(imEngineName, dataPromise);
+  var p = app.inputMethodManager.switchCurrentIMEngine(imEngineName);
   p.then(function() {
     app.perfTimer.printTime('switchIMEngine:promise resolved');
     // Render keyboard again to get updated info from imEngine
