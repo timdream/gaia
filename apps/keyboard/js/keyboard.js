@@ -56,10 +56,6 @@ function initKeyboard() {
     app.perfTimer.printTime('hashchange');
     var layoutName = window.location.hash.substring(1);
 
-    if (app.inputContext && !inputContextGetTextPromise) {
-      inputContextGetTextPromise = app.inputContext.getText();
-    }
-
     app.layoutManager.loader.getLayoutAsync(layoutName);
     updateCurrentLayout(layoutName);
   }, false);
@@ -82,9 +78,6 @@ function initKeyboard() {
   window.navigator.mozInputMethod.oninputcontextchange = function() {
     app.perfTimer.printTime('inputcontextchange');
     app.inputContext = navigator.mozInputMethod.inputcontext;
-    if (app.inputContext && !inputContextGetTextPromise) {
-      inputContextGetTextPromise = app.inputContext.getText();
-    }
     if (document.mozHidden && !app.inputContext) {
       hideKeyboard();
 
@@ -107,11 +100,7 @@ function initKeyboard() {
     return;
   }
 
-  // fill inputContextGetTextPromise and app.inputContext
   app.inputContext = navigator.mozInputMethod.inputcontext;
-  if (app.inputContext) {
-    inputContextGetTextPromise = app.inputContext.getText();
-  }
 
   // Finally, if we are only loaded by keyboard manager when the user
   // have already focused, the keyboard should show right away.
@@ -129,6 +118,12 @@ function deactivateInputMethod() {
 
 function updateCurrentLayout(name) {
   app.perfTimer.printTime('updateCurrentLayout');
+
+  // Update inputContextGetTextPromise now so API can getText() in
+  // parallel, since eventually switchIMEngine() is going to need this.
+  if (!document.mozHidden && app.inputContext) {
+    inputContextGetTextPromise = app.inputContext.getText();
+  }
 
   app.layoutManager.switchCurrentLayout(name).then(function() {
     app.perfTimer.printTime('updateCurrentLayout:promise resolved');
