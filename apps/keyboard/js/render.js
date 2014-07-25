@@ -143,7 +143,6 @@ const IMERender = (function() {
       layout.layoutName,
       layout.alternativeLayoutName,
       ('' + flags.inputType).substr(0, 1),
-      ('' + flags.showCandidatePanel).substr(0, 1),
       ('' + flags.uppercase).substr(0, 1),
       supportsSwitching
     ].join('-');
@@ -185,6 +184,17 @@ const IMERender = (function() {
         // on next tick.
         requestAnimationFrame(callback);
       }
+    }
+
+    // We are reusing the same layout rendering for with candidate panel
+    // and without, and toggle the visibility when we need.
+    if (flags.showCandidatePanel) {
+      showCandidates([]);
+      container.classList.add('candidate-panel');
+      ime.classList.add('candidate-panel');
+    } else {
+      container.classList.remove('candidate-panel');
+      ime.classList.remove('candidate-panel');
     }
 
     // XXX We have to wait for layout to complete before
@@ -319,17 +329,9 @@ const IMERender = (function() {
 
     container.appendChild(content);
 
-    // Builds candidate panel
-    if (flags.showCandidatePanel) {
-      container.insertBefore(
-        candidatePanelToggleButtonCode(), container.firstChild);
-      container.insertBefore(candidatePanelCode(), container.firstChild);
-      showCandidates([]);
-
-      container.classList.add('candidate-panel');
-    } else {
-      container.classList.remove('candidate-panel');
-    }
+    container.insertBefore(
+      candidatePanelToggleButtonCode(), container.firstChild);
+    container.insertBefore(candidatePanelCode(), container.firstChild);
   };
 
   // Highlight the key according to the case.

@@ -392,6 +392,10 @@ bubble above the key when you tap and hold. */
   white-space: normal;
 }
 
+.keyboard-type-container:not(.candidate-panel) .keyboard-candidate-panel {
+  display: none;
+}
+
 #keyboard.full-candidate-panel .keyboard-candidate-panel {
   overflow-y: auto;
 
