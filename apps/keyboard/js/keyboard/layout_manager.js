@@ -1,6 +1,6 @@
 'use strict';
 
-/* global Promise, KeyboardEvent, LayoutLoader */
+/* global KeyboardEvent, LayoutLoader */
 
 /** @fileoverview These are special keyboard layouts.
  * Language-specific layouts are in individual js files in layouts/ .
@@ -38,6 +38,8 @@ LayoutManager.prototype.start = function() {
   this._switchStateId = 0;
 };
 
+LayoutManager.prototype.onlayoutswitched = null;
+
 // Special key codes on special buttons
 LayoutManager.prototype.KEYCODE_BASIC_LAYOUT = -1;
 LayoutManager.prototype.KEYCODE_ALTERNATE_LAYOUT = -2;
@@ -53,25 +55,20 @@ LayoutManager.prototype.LAYOUT_PAGE_SYMBOLS_II = 2;
  * desired layout. It also loads the layout from it's layout file with
  * LayoutLoader.
  *
- * This method returns a promise and it resolves when the layout is ready.
- * currentLayout/currentModifiedLayout will be updated to the desired condition
- * and currentLayoutPage and currentForcedModifiedLayoutName will be reset.
+ * When layout is finally switched, onlayoutswitched callback will be called.
  *
  */
 LayoutManager.prototype.switchCurrentLayout = function(layoutName) {
   var switchStateId = ++this._switchStateId;
 
   var loaderPromise = this.loader.getLayoutAsync(layoutName);
-
-  var p = loaderPromise.then(function(layout) {
+  loaderPromise.then(function(layout) {
     if (switchStateId !== this._switchStateId) {
       console.log('LayoutManager: ' +
         'Promise is resolved after another switchCurrentLayout() call. ' +
-        'Reject the promise instead.');
+        'Quietly discard this request.');
 
-      return Promise.reject(new Error(
-        'LayoutManager: switchCurrentLayout() is called again before ' +
-        'resolving.'));
+      return;
     }
 
     this.currentLayout = layout;
@@ -81,13 +78,10 @@ LayoutManager.prototype.switchCurrentLayout = function(layoutName) {
 
     this._updateModifiedLayout();
 
-    // resolve to undefined
-    return;
-  }.bind(this), function(error) {
-    return Promise.reject(error);
+    if (typeof this.onlayoutswitched === 'function') {
+      this.onlayoutswitched();
+    }
   }.bind(this));
-
-  return p;
 };
 
 /*

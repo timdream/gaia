@@ -20,6 +20,15 @@ function initKeyboard() {
   app.perfTimer.startTimer('initKeyboard');
   app.perfTimer.printTime('initKeyboard');
 
+  app.layoutManager.onlayoutswitched = function() {
+    app.perfTimer.printTime('layoutManager.onlayoutswitched');
+    // Now the that we have the layout ready,
+    // we should show the keyboard if we need it.
+    if (!document.hidden && app.inputContext) {
+      showKeyboard();
+    }
+  };
+
   window.addEventListener('hashchange', function handleHashchange() {
     app.perfTimer.printTime('hashchange');
 
@@ -87,18 +96,7 @@ function updateCurrentKeyboardState() {
   // since eventually IMEngine will be switched.
   // See showKeyboard()->switchIMEngine()
   app.inputMethodManager.updateInputContextData();
-
-  app.layoutManager.switchCurrentLayout(layoutName).then(function() {
-    app.perfTimer.printTime('updateCurrentKeyboardState:promise resolved');
-    // Now the that we have the layout ready,
-    // we should show the keyboard if we need it.
-    if (!document.hidden && app.inputContext) {
-      showKeyboard();
-    }
-  }, function(error) {
-    console.warn('Failed to switch layout for ' + layoutName + '.' +
-      ' It might possible because we were called more than once.');
-  });
+  app.layoutManager.switchCurrentLayout(layoutName);
 }
 
 function renderKeyboard() {
@@ -178,9 +176,13 @@ function switchIMEngine(mustRender) {
   var layout = app.layoutManager.currentModifiedLayout;
   var imEngineName = layout.imEngine || 'default';
 
-  var p = app.inputMethodManager.switchCurrentIMEngine(imEngineName);
-  p.then(function() {
+  app.inputMethodManager.switchCurrentIMEngine(imEngineName);
+  app.inputMethodManager.onimengineswitched = function() {
     app.perfTimer.printTime('switchIMEngine:promise resolved');
+    if (document.hidden || !app.inputContext) {
+      return;
+    }
+
     // Render keyboard again to get updated info from imEngine
     if (mustRender || imEngineName !== 'default') {
       renderKeyboard();
@@ -188,8 +190,5 @@ function switchIMEngine(mustRender) {
 
     // Load l10n library after IMEngine is loaded (if it's not loaded yet).
     app.l10nLoader.load();
-  }, function() {
-    console.warn('Failed to switch imEngine for ' + layout.layoutName + '.' +
-      ' It might possible because we were called more than once.');
-  });
+  };
 }
