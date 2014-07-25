@@ -29,6 +29,18 @@ function initKeyboard() {
     }
   };
 
+  app.inputMethodManager.onimengineswitched = function() {
+    app.perfTimer.printTime('inputMethodManager.onimengineswitched');
+    if (document.hidden || !app.inputContext) {
+      return;
+    }
+
+    renderKeyboard();
+
+    // Load l10n library after IMEngine is loaded (if it's not loaded yet).
+    app.l10nLoader.load();
+  };
+
   window.addEventListener('hashchange', function handleHashchange() {
     app.perfTimer.printTime('hashchange');
 
@@ -129,18 +141,7 @@ function showKeyboard() {
     'keyboard.current': app.layoutManager.currentLayoutName
   });
 
-  // If we are already visible,
-  // render the keyboard only after IMEngine is loaded.
-  if (isKeyboardRendered) {
-    switchIMEngine(true);
-
-    return;
-  }
-
-  // render the keyboard right away w/o waiting for IMEngine
-  // (it will be rendered again after imEngine is loaded)
-  renderKeyboard();
-  switchIMEngine(false);
+  switchIMEngine();
 }
 
 // Hide keyboard
@@ -170,25 +171,11 @@ function hideKeyboard() {
   app.targetHandlersManager.activeTargetsManager.clearAllTargets();
 }
 
-function switchIMEngine(mustRender) {
+function switchIMEngine() {
   app.perfTimer.printTime('switchIMEngine');
 
   var layout = app.layoutManager.currentModifiedLayout;
   var imEngineName = layout.imEngine || 'default';
 
   app.inputMethodManager.switchCurrentIMEngine(imEngineName);
-  app.inputMethodManager.onimengineswitched = function() {
-    app.perfTimer.printTime('switchIMEngine:promise resolved');
-    if (document.hidden || !app.inputContext) {
-      return;
-    }
-
-    // Render keyboard again to get updated info from imEngine
-    if (mustRender || imEngineName !== 'default') {
-      renderKeyboard();
-    }
-
-    // Load l10n library after IMEngine is loaded (if it's not loaded yet).
-    app.l10nLoader.load();
-  };
 }
