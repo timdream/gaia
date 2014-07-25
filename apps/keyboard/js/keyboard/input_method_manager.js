@@ -310,6 +310,8 @@ var InputMethodManager = function InputMethodManager(app) {
   this.app = app;
 };
 
+InputMethodManager.prototype.onimengineswitched = null;
+
 InputMethodManager.prototype.start = function() {
   this.loader = new InputMethodLoader(this.app);
   this.loader.start();
@@ -410,11 +412,9 @@ InputMethodManager.prototype.switchCurrentIMEngine = function(imEngineName) {
     if (switchStateId !== this._switchStateId) {
       console.log('InputMethodManager: ' +
         'Promise is resolved after another switchCurrentIMEngine() call. ' +
-        'Reject the promise instead.');
+        'Not firing onimengineswitched.');
 
-      return Promise.reject(new Error(
-        'InputMethodManager: switchCurrentIMEngine() is called again before ' +
-        'resolving.'));
+      return Promise.reject();
     }
 
     var imEngine = values[0];
@@ -431,10 +431,10 @@ InputMethodManager.prototype.switchCurrentIMEngine = function(imEngineName) {
       );
     }
     this.currentIMEngine = imEngine;
-    // resolve to undefined
-    return;
-  }.bind(this), function(error) {
-    return Promise.reject(error);
+
+    if (typeof this.onimengineswitched === 'function') {
+      this.onimengineswitched();
+    }
   }.bind(this));
 
   return p;

@@ -43,46 +43,42 @@ suite('LayoutManager', function() {
     manager.loader.SOURCE_DIR = './fake-layouts/';
 
     var p = manager.switchCurrentLayout('foo');
+    manager.onlayoutswitched = this.sinon.stub();
+
     p.then(function() {
       assert.isTrue(true, 'resolved');
+      assert.isTrue(manager.onlayoutswitched.calledOnce);
       var layout = manager.loader.getLayout('foo');
       assert.deepEqual(layout, expectedFooLayout, 'foo loaded');
       assert.equal(manager.currentLayoutName, 'foo');
       assert.equal(manager.currentLayoutPage, manager.LAYOUT_PAGE_DEFAULT);
       assert.equal(manager.currentForcedModifiedLayoutName, undefined);
       assert.equal(manager.currentLayout, layout, 'currentLayout is set');
-
-      done();
-    }, function() {
-      assert.isTrue(false, 'should not reject');
-
-      done();
-    });
+    }).then(done, done);
   });
 
   test('switchCurrentLayout (failed loader)', function(done) {
     window.Keyboards = {};
 
     var manager = new LayoutManager({});
+    manager.onlayoutswitched = this.sinon.stub();
     manager.start();
     manager.loader.SOURCE_DIR = './fake-layouts/';
 
     var p = manager.switchCurrentLayout('bar');
     p.then(function() {
       assert.isTrue(false, 'should not resolve');
-
-      done();
     }, function() {
       assert.isTrue(true, 'rejected');
-
-      done();
-    });
+      assert.isFalse(manager.onlayoutswitched.calledOnce);
+    }).then(done, done);
   });
 
   test('switchCurrentLayout (twice)', function(done) {
     window.Keyboards = {};
 
     var manager = new LayoutManager({});
+    manager.onlayoutswitched = this.sinon.stub();
     manager.start();
     manager.loader.SOURCE_DIR = './fake-layouts/';
 
@@ -90,58 +86,50 @@ suite('LayoutManager', function() {
     var p2 = manager.switchCurrentLayout('foo');
     p1.then(function() {
       assert.isTrue(false, 'should not resolve');
+
+      return p2;
     }, function() {
       assert.isTrue(true, 'rejected');
-    });
 
-    p2.then(function() {
+      return p2;
+    }).then(function() {
       assert.isTrue(true, 'resolved');
+      assert.isTrue(manager.onlayoutswitched.calledOnce);
       var layout = manager.loader.getLayout('foo');
       assert.deepEqual(layout, expectedFooLayout, 'foo loaded');
       assert.equal(manager.currentLayout, layout, 'currentLayout is set');
-
-      done();
-    }, function() {
-      assert.isTrue(false, 'should not reject');
-
-      done();
-    });
+    }).then(done, done);
   });
 
   test('switchCurrentLayout (reload after loaded)', function(done) {
     window.Keyboards = {};
 
     var manager = new LayoutManager({});
+    manager.onlayoutswitched = this.sinon.stub();
     manager.start();
     manager.loader.SOURCE_DIR = './fake-layouts/';
 
     var p = manager.switchCurrentLayout('foo');
     p.then(function() {
       assert.isTrue(true, 'resolved');
+      assert.isTrue(manager.onlayoutswitched.calledOnce);
       var layout = manager.loader.getLayout('foo');
       assert.deepEqual(layout, expectedFooLayout, 'foo loaded');
       assert.equal(manager.currentLayout, layout, 'currentLayout is set');
 
-      var p2 = manager.switchCurrentLayout('foo');
-
-      p2.then(function() {
-        assert.isTrue(true, 'resolved');
-        var layout = manager.loader.getLayout('foo');
-        assert.deepEqual(layout, expectedFooLayout, 'foo loaded');
-        assert.equal(manager.currentLayout, layout,
-          'currentLayout is set');
-
-        done();
-      }, function() {
-        assert.isTrue(false, 'should not reject');
-
-        done();
-      });
+      return manager.switchCurrentLayout('foo');
     }, function() {
       assert.isTrue(false, 'should not reject');
-
-      done();
-    });
+    }).then(function() {
+      assert.isTrue(true, 'resolved');
+      assert.isTrue(manager.onlayoutswitched.calledTwice);
+      var layout = manager.loader.getLayout('foo');
+      assert.deepEqual(layout, expectedFooLayout, 'foo loaded');
+      assert.equal(manager.currentLayout, layout,
+        'currentLayout is set');
+    }, function() {
+      assert.isTrue(false, 'should not reject');
+    }).then(done, done);
   });
 
   suite('currentModifiedLayout', function() {

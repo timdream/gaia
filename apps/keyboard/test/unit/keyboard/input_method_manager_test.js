@@ -417,6 +417,7 @@ suite('InputMethodManager', function() {
     };
 
     manager = new InputMethodManager(app);
+    manager.onimengineswitched = this.sinon.stub();
     manager.start();
     manager.loader.SOURCE_DIR = './fake-imes/';
 
@@ -437,6 +438,7 @@ suite('InputMethodManager', function() {
     var p = manager.switchCurrentIMEngine('foo');
     p.then(function() {
       assert.isTrue(true, 'resolved');
+      assert.isTrue(manager.onimengineswitched.calledOnce);
       var imEngine = manager.loader.getInputMethod('foo');
       assert.isTrue(!!imEngine, 'foo loaded');
       assert.equal(manager.currentIMEngine, imEngine, 'currentIMEngine is set');
@@ -455,13 +457,7 @@ suite('InputMethodManager', function() {
       }));
       assert.equal(activateStub.getCall(0).thisValue,
         imEngine);
-
-      done();
-    }, function() {
-      assert.isTrue(false, 'should not reject');
-
-      done();
-    });
+    }).then(done, done);
   });
 
   test('switchCurrentIMEngine (failed loader)', function(done) {
@@ -473,13 +469,10 @@ suite('InputMethodManager', function() {
     var p = manager.switchCurrentIMEngine('bar');
     p.then(function() {
       assert.isTrue(false, 'should not resolve');
-
-      done();
     }, function() {
       assert.isTrue(true, 'rejected');
-
-      done();
-    });
+      assert.isFalse(manager.onimengineswitched.calledOnce);
+    }).then(done, done);
   });
 
   test('switchCurrentIMEngine (failed getText())', function(done) {
@@ -491,6 +484,7 @@ suite('InputMethodManager', function() {
     var p = manager.switchCurrentIMEngine('foo');
     p.then(function() {
       assert.isTrue(true, 'resolved');
+      assert.isTrue(manager.onimengineswitched.calledOnce);
       var imEngine = manager.loader.getInputMethod('foo');
       assert.isTrue(!!imEngine, 'foo loaded');
       assert.equal(manager.currentIMEngine, imEngine, 'currentIMEngine is set');
@@ -507,14 +501,8 @@ suite('InputMethodManager', function() {
         suggest: true,
         correct: true
       }));
-      assert.equal(activateStub.getCall(0).thisValue,
-        imEngine);
-
-      done();
-    }, function() {
-      assert.isTrue(false, 'rejected');
-      done();
-    });
+      assert.equal(activateStub.getCall(0).thisValue, imEngine);
+    }).then(done, done);
   });
 
   test('switchCurrentIMEngine (twice)', function(done) {
@@ -531,22 +519,20 @@ suite('InputMethodManager', function() {
     var p2 = manager.switchCurrentIMEngine('foo');
     p1.then(function() {
       assert.isTrue(false, 'should not resolve');
+
+      return p2;
     }, function() {
       assert.isTrue(true, 'rejected');
-    });
-    p2.then(function() {
+
+      return p2;
+    }).then(function() {
       assert.isTrue(true, 'resolved');
+      assert.isTrue(manager.onimengineswitched.calledOnce);
       assert.isTrue(!!manager.loader.getInputMethod('foo'), 'foo loaded');
       assert.equal(manager.currentIMEngine,
         manager.loader.getInputMethod('foo'),
         'currentIMEngine is set');
-
-      done();
-    }, function() {
-      assert.isTrue(false, 'should not reject');
-
-      done();
-    });
+    }).then(done, done);
   });
 
   test('switchCurrentIMEngine (reload after loaded)', function(done) {
@@ -558,6 +544,7 @@ suite('InputMethodManager', function() {
     var p = manager.switchCurrentIMEngine('foo');
     p.then(function() {
       assert.isTrue(true, 'resolved');
+      assert.isTrue(manager.onimengineswitched.calledOnce);
       var imEngine = manager.loader.getInputMethod('foo');
       assert.isTrue(!!imEngine, 'foo loaded');
       assert.equal(manager.currentIMEngine, imEngine, 'currentIMEngine is set');
@@ -590,39 +577,30 @@ suite('InputMethodManager', function() {
         manager.loader.getInputMethod('default'),
         'currentIMEngine is set to default');
 
-      p2.then(function() {
-        assert.isTrue(true, 'resolved');
-        var imEngine = manager.loader.getInputMethod('foo');
-        assert.isTrue(!!imEngine, 'foo loaded');
-        assert.equal(manager.currentIMEngine, imEngine,
-          'currentIMEngine is set');
+      return p2;
+    }).then(function() {
+      assert.isTrue(true, 'resolved');
+      assert.isTrue(manager.onimengineswitched.calledTwice);
+      var imEngine = manager.loader.getInputMethod('foo');
+      assert.isTrue(!!imEngine, 'foo loaded');
+      assert.equal(manager.currentIMEngine, imEngine,
+        'currentIMEngine is set');
 
-        var activateStub = imEngine.activate;
-        assert.isTrue(activateStub.calledTwice);
-        assert.isTrue(activateStub.getCall(1).calledWithExactly('xx-XX', {
-          type: 'text',
-          inputmode: '',
-          selectionStart: 0,
-          selectionEnd: 0,
-          value: 'foobar',
-          inputContext: app.inputContext
-        }, {
-          suggest: true,
-          correct: true
-        }));
-        assert.equal(activateStub.getCall(1).thisValue,
-          imEngine);
-
-        done();
-      }, function() {
-        assert.isTrue(false, 'should not reject');
-
-        done();
-      });
-    }, function() {
-      assert.isTrue(false, 'should not reject');
-
-      done();
-    });
+      var activateStub = imEngine.activate;
+      assert.isTrue(activateStub.calledTwice);
+      assert.isTrue(activateStub.getCall(1).calledWithExactly('xx-XX', {
+        type: 'text',
+        inputmode: '',
+        selectionStart: 0,
+        selectionEnd: 0,
+        value: 'foobar',
+        inputContext: app.inputContext
+      }, {
+        suggest: true,
+        correct: true
+      }));
+      assert.equal(activateStub.getCall(1).thisValue,
+        imEngine);
+    }).then(done, done);
   });
 });
