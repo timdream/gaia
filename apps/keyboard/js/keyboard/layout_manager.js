@@ -184,10 +184,13 @@ LayoutManager.prototype._updateModifiedLayout = function() {
     layout.layoutName = this.currentForcedModifiedLayoutName ||
       this.currentLayoutName;
     layout.alternativeLayoutName = alternativeLayoutName;
-    // inherit the same imEngine name if it's not set so render will apply the
-    // same style.
-    if (this.currentLayout.imEngine && !layout.imEngine) {
+    // inherit these properties from currentLayout if
+    // we are not the default page, so render will apply the same style.
+    if (this.currentLayoutPage !== this.LAYOUT_PAGE_DEFAULT ||
+        this.currentForcedModifiedLayoutName) {
       layout.imEngine = this.currentLayout.imEngine;
+      layout.autoCorrectLanguage = this.currentLayout.autoCorrectLanguage;
+      layout.needsCandidatePanel = this.currentLayout.needsCandidatePanel;
     }
 
     return;
@@ -377,10 +380,13 @@ LayoutManager.prototype._updateModifiedLayout = function() {
   layout.layoutName = this.currentForcedModifiedLayoutName ||
     this.currentLayoutName;
   layout.alternativeLayoutName = alternativeLayoutName;
-  // inherit the same imEngine name if it's not set so render will apply the
-  // same style.
-  if (this.currentLayout.imEngine && !layout.imEngine) {
+  // inherit these properties from currentLayout if
+  // we are not the default page, so render will apply the same style.
+  if (this.currentLayoutPage !== this.LAYOUT_PAGE_DEFAULT ||
+      this.currentForcedModifiedLayoutName) {
     layout.imEngine = this.currentLayout.imEngine;
+    layout.autoCorrectLanguage = this.currentLayout.autoCorrectLanguage;
+    layout.needsCandidatePanel = this.currentLayout.needsCandidatePanel;
   }
 };
 

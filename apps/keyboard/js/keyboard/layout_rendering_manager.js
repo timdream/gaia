@@ -50,13 +50,18 @@ LayoutRenderingManager.prototype.updateLayoutRendering = function() {
   this.app.perfTimer.printTime('layoutRenderingManager.updateLayoutRendering');
   this.app.perfTimer.startTimer('updateLayoutRendering');
 
-  var currentLayout = this.app.layoutManager.currentLayout;
   var currentModifiedLayout = this.app.layoutManager.currentModifiedLayout;
   var currentIMEngine = this.app.inputMethodManager.currentIMEngine;
 
-  // Determine if the candidate panel for word suggestion is needed
+  // Determine if the candidate panel for word suggestion is needed.
+  // We want to show the panel for modified/sub-layouts like
+  // symbol or alternative layouts, but not the other modified layouts selected
+  // because of inputmodes; LayoutManager help us on that by only copying the
+  // properties of currentLayout to currentModifiedLayout if it's being
+  // considered as the default page.
   var needsCandidatePanel = !!(
-    (currentLayout.autoCorrectLanguage || currentLayout.needsCandidatePanel) &&
+    (currentModifiedLayout.autoCorrectLanguage ||
+     currentModifiedLayout.needsCandidatePanel) &&
     ((typeof currentIMEngine.displaysCandidates !== 'function') ||
       currentIMEngine.displaysCandidates()));
 
