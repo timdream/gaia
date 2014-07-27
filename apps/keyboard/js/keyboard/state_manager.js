@@ -139,7 +139,7 @@ StateManager.prototype._switchCurrentIMEngine = function() {
 
   this.app.perfTimer.startTimer('_switchCurrentIMEngine');
 
-  var layout = this.app.layoutManager.currentModifiedLayout;
+  var layout = this.app.layoutManager.currentLayout;
   var imEngineName = layout.imEngine || 'default';
 
   this.app.upperCaseStateManager.reset();

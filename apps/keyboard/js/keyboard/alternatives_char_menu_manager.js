@@ -66,7 +66,7 @@ AlternativesCharMenuManager.prototype._getAlternativesForTarget =
 function _getAlternativesForTarget(target) {
   // Handle key alternatives
   var alternatives;
-  var altMap = this.app.layoutManager.currentModifiedLayout.alt;
+  var altMap = this.app.layoutManager.currentLayout.alt;
 
   if (this.app.upperCaseStateManager.isUpperCaseLocked) {
     alternatives = (altMap[target.dataset.uppercaseValue].upperCaseLocked) ?

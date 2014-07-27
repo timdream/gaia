@@ -419,7 +419,7 @@ InputMethodManager.prototype.switchCurrentIMEngine = function(imEngineName) {
       var dataValues = values[1];
       var settingsValues = values[2];
       imEngine.activate(
-        this.app.layoutManager.currentModifiedLayout.autoCorrectLanguage,
+        this.app.layoutManager.currentLayout.autoCorrectLanguage,
         dataValues,
         {
           suggest: settingsValues.suggestionsEnabled,

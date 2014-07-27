@@ -34,7 +34,7 @@ LayoutRenderingManager.prototype.handleEvent = function() {
     return;
   }
 
-  IMERender.resizeUI(this.app.layoutManager.currentModifiedLayout);
+  IMERender.resizeUI(this.app.layoutManager.currentLayout);
   this._updateHeight();
 
   // TODO: need to check how to handle orientation change case to
@@ -50,28 +50,28 @@ LayoutRenderingManager.prototype.updateLayoutRendering = function() {
   this.app.perfTimer.printTime('layoutRenderingManager.updateLayoutRendering');
   this.app.perfTimer.startTimer('updateLayoutRendering');
 
-  var currentModifiedLayout = this.app.layoutManager.currentModifiedLayout;
+  var currentLayout = this.app.layoutManager.currentLayout;
   var currentIMEngine = this.app.inputMethodManager.currentIMEngine;
 
   // Determine if the candidate panel for word suggestion is needed.
   // We want to show the panel for modified/sub-layouts like
   // symbol or alternative layouts, but not the other modified layouts selected
   // because of inputmodes; LayoutManager help us on that by only copying the
-  // properties of currentLayout to currentModifiedLayout if it's being
+  // properties of currentLayoutBase to currentLayout if it's being
   // considered as the default page.
   var needsCandidatePanel = !!(
-    (currentModifiedLayout.autoCorrectLanguage ||
-     currentModifiedLayout.needsCandidatePanel) &&
+    (currentLayout.autoCorrectLanguage ||
+     currentLayout.needsCandidatePanel) &&
     ((typeof currentIMEngine.displaysCandidates !== 'function') ||
       currentIMEngine.displaysCandidates()));
 
   // Rule of thumb: always render uppercase, unless secondLayout has been
   // specified (for e.g. arabic, then depending on shift key)
-  var needsUpperCase = currentModifiedLayout.secondLayout ?
+  var needsUpperCase = currentLayout.secondLayout ?
       this.app.upperCaseStateManager.isUpperCase : true;
 
   var p = new Promise(function(resolve) {
-    IMERender.draw(currentModifiedLayout, {
+    IMERender.draw(currentLayout, {
       uppercase: needsUpperCase,
       inputType: this.app.getBasicInputType(),
       showCandidatePanel: needsCandidatePanel
@@ -81,7 +81,7 @@ LayoutRenderingManager.prototype.updateLayoutRendering = function() {
   // Tell the renderer what input method we're using. This will set a CSS
   // classname that can be used to style the keyboards differently
   IMERender.setInputMethodName(
-    this.app.layoutManager.currentModifiedLayout.imEngine || 'default');
+    this.app.layoutManager.currentLayout.imEngine || 'default');
 
   this.app.perfTimer.printTime(
     'BLOCKING layoutRenderingManager.updateLayoutRendering',

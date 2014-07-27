@@ -198,7 +198,7 @@ KeyboardApp.prototype.getNumberOfCandidatesPerRow = function() {
 
 KeyboardApp.prototype.handleUpperCaseStateChange = function() {
   // When we have secondLayout, we need to force re-render on uppercase switch
-  if (this.layoutManager.currentModifiedLayout.secondLayout) {
+  if (this.layoutManager.currentLayout.secondLayout) {
     this.layoutRenderingManager.updateLayoutRendering();
 
     return;

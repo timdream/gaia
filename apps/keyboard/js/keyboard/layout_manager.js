@@ -18,18 +18,18 @@ var LayoutManager = function(app) {
   this.app = app;
 
   // Current Layout is the layout loaded.
-  // Other modules most likely need currentModifiedLayout instead of this one.
-  this.currentLayout = null;
+  // Other modules most likely need currentLayout instead of this one.
+  this._currentLayoutBase = null;
   this.currentLayoutName = undefined;
 
   // IME sometimes want to force switch to a specific layout,
   // we record that information here.
-  this.currentForcedModifiedLayoutName = undefined;
+  this._currentForcedLayoutName = undefined;
 
-  // currentModifiedLayout is the layout definition needed according to
+  // currentLayout is the layout definition needed according to
   // the current input mode and the layout page.
   // It's always an object with "modifications" of it's prototype parent.
-  this.currentModifiedLayout = null;
+  this.currentLayout = null;
   this.currentLayoutPage = this.LAYOUT_PAGE_DEFAULT;
 };
 
@@ -73,12 +73,12 @@ LayoutManager.prototype.switchCurrentLayout = function(layoutName) {
       return Promise.reject();
     }
 
-    this.currentLayout = layout;
+    this._currentLayoutBase = layout;
     this.currentLayoutName = layoutName;
     this.currentLayoutPage = this.LAYOUT_PAGE_DEFAULT;
-    this.currentForcedModifiedLayoutName = undefined;
+    this._currentForcedLayoutName = undefined;
 
-    this._updateModifiedLayout();
+    this._updateCurrentLayout();
   }.bind(this));
 
   return p;
@@ -86,8 +86,8 @@ LayoutManager.prototype.switchCurrentLayout = function(layoutName) {
 
 /*
  * Sometime IME may want to force render a specific layout.
- * Instead of overwrite currentLayout, we keep that information in
- * currentForcedModifiedLayoutName and update the currentModifiedLayout.
+ * Instead of overwrite currentLayoutBase, we keep that information in
+ * _currentForcedLayoutName and update the currentLayout.
  *
  * Please consider specifying an layout specific alternative/symbol layout page
  * when possible, instead of leveraging this feature.
@@ -98,17 +98,17 @@ LayoutManager.prototype.updateForcedModifiedLayout = function(layoutName) {
     throw new Error('LayoutManager: update to a non-exist forced layout ' +
       layoutName);
   }
-  this.currentForcedModifiedLayoutName = layoutName;
-  this._updateModifiedLayout();
+  this._currentForcedLayoutName = layoutName;
+  this._updateCurrentLayout();
 };
 
 /*
  * Layout page refer to alternative/symbol layout of the current layout.
- * It will be the default alternative/symbol layout if the currentLayout
+ * It will be the default alternative/symbol layout if the currentLayoutBase
  * does not overwrite them.
  *
  * This function keep the information in currentLayoutPage and
- * update the specific layout to currentModifiedLayout.
+ * update the specific layout to currentLayout.
  *
  */
 LayoutManager.prototype.updateLayoutPage = function(page) {
@@ -119,7 +119,7 @@ LayoutManager.prototype.updateLayoutPage = function(page) {
       this.currentLayoutPage = page;
       // Reset currentForcedModifiedLayoutName, for the case to go back to
       // default or symbol page from self-defined layout page.
-      this.currentForcedModifiedLayoutName = null;
+      this._currentForcedLayoutName = null;
       this._updateModifiedLayout();
 
       break;
@@ -130,19 +130,20 @@ LayoutManager.prototype.updateLayoutPage = function(page) {
 };
 
 /*
- * This function takes the currentLayout, makes and empty layout with prototype
- * points to the currentLayout, and then modifies it to add meta keys for
- * switching languages and switching to numbers and symbols.
+ * This function takes the currentLayoutBase, makes and empty layout with
+ * prototype points to the currentLayoutBase or other base layout,
+ * and then modifies it to add meta keys for switching languages and switching
+ * to numbers and symbols.
  * It may also add keys (like a "/" and '@') that are specific to input
  * of basic input type.
  *
- * The result is saved to currentModifiedLayout.
+ * The result is saved to currentLayout.
  */
-LayoutManager.prototype._updateModifiedLayout = function() {
-  // If there isn't an inputContext or there is no currentLayout,
+LayoutManager.prototype._updateCurrentLayout = function() {
+  // If there isn't an inputContext or there is no _currentLayoutBase,
   // clean up modified layout.
-  if (!this.app.inputContext || !this.currentLayout) {
-    this.currentModifiedLayout = null;
+  if (!this.app.inputContext || !this._currentLayoutBase) {
+    this.currentLayout = null;
     return;
   }
 
@@ -157,13 +158,13 @@ LayoutManager.prototype._updateModifiedLayout = function() {
     this._getAlternativeLayoutName(basicInputType, inputMode);
 
   var layout;
-  if (this.currentForcedModifiedLayoutName) {
-    layout = this.loader.getLayout(this.currentForcedModifiedLayoutName);
+  if (this._currentForcedLayoutName) {
+    layout = this.loader.getLayout(this._currentForcedLayoutName);
   } else if (alternativeLayoutName) {
-    layout = this.currentLayout[alternativeLayoutName] ||
+    layout = this._currentLayoutBase[alternativeLayoutName] ||
       this.loader.getLayout(alternativeLayoutName);
   } else {
-    layout = this.currentLayout;
+    layout = this._currentLayoutBase;
   }
 
   // Create an empty object with prototype point to the original one
@@ -178,16 +179,16 @@ LayoutManager.prototype._updateModifiedLayout = function() {
 
   if (!spaceKeyFindResult.keyFound) {
     console.warn('LayoutManager:' +
-      'No space key found. No special keys will be added.');
-    this.currentModifiedLayout = layout;
+      ' No space key found. No special keys will be added.');
+    this.currentLayout = layout;
     // renderer need these information to cache the DOM tree.
-    layout.layoutName = this.currentForcedModifiedLayoutName ||
+    layout.layoutName = this._currentForcedLayoutName ||
       this.currentLayoutName;
     layout.alternativeLayoutName = alternativeLayoutName;
-    // inherit these properties from currentLayout if
+    // inherit these properties from currentLayoutBase if
     // we are not the default page, so render will apply the same style.
     if (this.currentLayoutPage !== this.LAYOUT_PAGE_DEFAULT ||
-        this.currentForcedModifiedLayoutName) {
+        this._currentForcedLayoutName) {
       layout.imEngine = this.currentLayout.imEngine;
       layout.autoCorrectLanguage = this.currentLayout.autoCorrectLanguage;
       layout.needsCandidatePanel = this.currentLayout.needsCandidatePanel;
@@ -227,7 +228,7 @@ LayoutManager.prototype._updateModifiedLayout = function() {
     } else {
       pageSwitchingKeyObject = {
         keyCode: this.KEYCODE_BASIC_LAYOUT,
-        value: this.currentLayout.basicLayoutKey || 'ABC',
+        value: this._currentLayoutBase.basicLayoutKey || 'ABC',
         ratio: 2,
         ariaLabel: 'basicLayoutKey'
       };
@@ -248,8 +249,8 @@ LayoutManager.prototype._updateModifiedLayout = function() {
     };
 
     // Replace the label with short label if there is one
-    if (this.currentLayout.shortLabel) {
-      imeSwitchKey.value = this.currentLayout.shortLabel;
+    if (this._currentLayoutBase.shortLabel) {
+      imeSwitchKey.value = this._currentLayoutBase.shortLabel;
       imeSwitchKey.className += ' alternate-indicator';
     }
 
@@ -374,16 +375,16 @@ LayoutManager.prototype._updateModifiedLayout = function() {
     }
   }
 
-  this.currentModifiedLayout = layout;
+  this.currentLayout = layout;
 
   // renderer need these information to cache the DOM tree.
-  layout.layoutName = this.currentForcedModifiedLayoutName ||
+  layout.layoutName = this._currentForcedLayoutName ||
     this.currentLayoutName;
   layout.alternativeLayoutName = alternativeLayoutName;
-  // inherit these properties from currentLayout if
+  // inherit these properties from _currentLayoutBase if
   // we are not the default page, so render will apply the same style.
   if (this.currentLayoutPage !== this.LAYOUT_PAGE_DEFAULT ||
-      this.currentForcedModifiedLayoutName) {
+      this._currentForcedLayoutName) {
     layout.imEngine = this.currentLayout.imEngine;
     layout.autoCorrectLanguage = this.currentLayout.autoCorrectLanguage;
     layout.needsCandidatePanel = this.currentLayout.needsCandidatePanel;

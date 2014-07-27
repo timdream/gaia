@@ -50,7 +50,7 @@ DefaultTargetHandler.prototype.commit = function() {
    * This hack should be removed and the state/input queue should be
    * maintained out of latin.js.
    */
-  if (this.app.layoutManager.currentModifiedLayout.imEngine === 'latin') {
+  if (this.app.layoutManager.currentLayout.imEngine === 'latin') {
     engine.click(keyCode, upperCaseKeyCode);
   } else {
     engine.click(
