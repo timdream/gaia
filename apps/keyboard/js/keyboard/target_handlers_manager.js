@@ -64,8 +64,8 @@ TargetHandlersManager.prototype.stop = function() {
 // not start or end the handler/active target, so it was not mentioned in the
 // above list.
 // "newTargetActivate" is similar to "longpress",  it is an optional step too,
-// so it was not mentioned in the above list. When newTargetActivate is called,
-// isUpperCase will be set to true, and hold the icon's background.
+// so it was not mentioned in the above list. newTargetActivate is called on
+// the current target(s)when there is a new target is about to be activated.
 //
 // Please note that since we are using target (an abstract key object associated
 // with one DOM element) as the identifier of handlers, we do not assign new
