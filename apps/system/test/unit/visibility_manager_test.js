@@ -104,7 +104,7 @@ suite('system/VisibilityManager', function() {
       window.System.locked = true;
       var stubPublish = this.sinon.stub(visibilityManager, 'publish');
       visibilityManager.handleEvent({
-        type: 'attention-inactive'
+        type: 'attentionwindowmanager-deactivated'
       });
 
       assert.isTrue(stubPublish.calledWith('showlockscreenwindow'));

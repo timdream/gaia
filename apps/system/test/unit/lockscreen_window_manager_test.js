@@ -1,3 +1,5 @@
+/* global System, lockScreenWindowManager */
+
 (function() {
 'use strict';
 
@@ -9,7 +11,7 @@ requireApp('system/test/unit/mock_lockscreen_window.js');
 requireApp('system/js/lockscreen_window_manager.js');
 
 var mocksForLockScreenWindowManager = new window.MocksHelper([
-  'LockScreen', 'LockScreenWindow'
+  'LockScreen', 'LockScreenWindow', 'System'
 ]).init();
 
 suite('system/LockScreenWindowManager', function() {
@@ -74,6 +76,54 @@ suite('system/LockScreenWindowManager', function() {
     window.navigator.mozSettings = originalMozSettings;
     window.MockNavigatorSettings.mTeardown();
     stubById.restore();
+  });
+
+  suite('Hierarchy functions', function() {
+    test('Should register hierarchy on start', function() {
+      this.sinon.stub(System, 'request');
+      window.lockScreenWindowManager.start();
+      assert.isTrue(System.request.calledWith('registerHierarchy'));
+    });
+
+    test('Should activate when openApp is called', function() {
+      window.lockScreenWindowManager.states.enabled = true;
+      var app = new window.MockLockScreenWindow();
+      window.lockScreenWindowManager.states.instance = app;
+      this.sinon.stub(app, 'isActive').returns(false);
+      this.sinon.stub(lockScreenWindowManager, 'publish');
+      window.lockScreenWindowManager.openApp();
+      assert.isTrue(lockScreenWindowManager.publish.calledWith(
+        lockScreenWindowManager.EVENT_PREFIX + '-activated'));
+    });
+
+    test('Should deactivate when closeApp is called', function() {
+      window.lockScreenWindowManager.states.enabled = true;
+      var app = new window.MockLockScreenWindow();
+      window.lockScreenWindowManager.states.instance = app;
+      this.sinon.stub(app, 'isActive').returns(true);
+      this.sinon.stub(lockScreenWindowManager, 'publish');
+      window.lockScreenWindowManager.closeApp();
+      assert.isTrue(lockScreenWindowManager.publish.calledWith(
+        lockScreenWindowManager.EVENT_PREFIX + '-deactivated'));
+    });
+
+    test('Should be active if the instance is active', function() {
+      var app = new window.MockLockScreenWindow();
+      window.lockScreenWindowManager.states.instance = app;
+      this.sinon.stub(app, 'isActive').returns(true);
+      assert.isTrue(window.lockScreenWindowManager.isActive());
+    });
+
+    test('Should be inactive if the instance is inactive', function() {
+      var app = new window.MockLockScreenWindow();
+      window.lockScreenWindowManager.states.instance = app;
+      this.sinon.stub(app, 'isActive').returns(false);
+      assert.isFalse(window.lockScreenWindowManager.isActive());
+    });
+
+    test('Should be inactive if there is no instance', function() {
+      assert.isFalse(window.lockScreenWindowManager.isActive());
+    });
   });
 
   suite('Handle events', function() {

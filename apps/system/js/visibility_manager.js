@@ -22,7 +22,7 @@
       'cardviewclosed',
       'lockscreen-appopened',
       'lockscreen-request-unlock',
-      'attention-inactive',
+      'attentionwindowmanager-deactivated',
       'attentionopened',
       'mozChromeEvent',
       'appclosing',
@@ -92,7 +92,7 @@
         }
         this._normalAudioChannelActive = false;
         break;
-      case 'attention-inactive':
+      case 'attentionwindowmanager-deactivated':
         if (window.System.locked) {
           this.publish('showlockscreenwindow');
           return;

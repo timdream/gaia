@@ -9,10 +9,12 @@
     TRACE: false,
     CLASS_NAME: 'AttentionWindowManager',
     _openedInstances: null,
+    EVENT_PREFIX: 'attentionwindowmanager',
 
     publish: function vm_publish(eventName, detail) {
       this.debug('publishing: ', eventName);
-      var evt = new CustomEvent(eventName, { detail: detail });
+      var evt = new CustomEvent(this.EVENT_PREFIX + eventName,
+        { detail: detail });
       window.dispatchEvent(evt);
     },
 
@@ -27,8 +29,16 @@
       }
     },
 
+    isActive: function() {
+      return this.hasActiveWindow();
+    },
+
     hasActiveWindow: function attwm_hasActiveWindow() {
       return (this._openedInstances.size !== 0);
+    },
+
+    getActiveWindow: function() {
+      return this.getTopMostWindow();
     },
 
     getTopMostWindow: function attwm_hasActiveWindow() {
@@ -105,6 +115,7 @@
         case 'attentionopened':
           this._openedInstances.set(attention, attention);
           this.updateAttentionIndicator();
+          this.publish('-activated');
           break;
 
         case 'attentionrequestclose':
@@ -149,7 +160,7 @@
           }
           attention.demote();
           if (this._openedInstances.size === 0) {
-            this.publish('attention-inactive');
+            this.publish('-deactivated');
           }
           this.updateAttentionIndicator();
           break;

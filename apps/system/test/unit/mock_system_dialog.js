@@ -12,6 +12,8 @@
     this.element = dialogFake;
   };
 
+  MockSystemDialog.prototype._setVisibleForScreenReader = function() {};
+
   MockSystemDialog.prototype.SUB_COMPONENTS = {};
 
   MockSystemDialog.prototype.show = function msd_show(reason) {
