@@ -117,6 +117,7 @@ suite('system/UtilityTray', function() {
     window.softwareButtonManager = originalSoftwareButtonManager;
   });
 
+
   suite('show', function() {
     setup(function() {
       UtilityTray.show();

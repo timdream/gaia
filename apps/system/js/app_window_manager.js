@@ -17,11 +17,37 @@
   var AppWindowManager = function() {};
   AppWindowManager.prototype = {
     DEBUG: false,
-    CLASS_NAME: 'AppWindowManager',
+    name: 'AppWindowManager',
+    EVENT_PREFIX: 'appwindowmanager',
     continuousTransition: false,
 
     element: document.getElementById('windows'),
     screen: document.getElementById('screen'),
+
+    isActive: function() {
+      // XXX: taskManager will become submodule of AWM in the future.
+      return !window.taskManager.isActive() &&
+              this._activeApp &&
+              this._activeApp.isActive();
+    },
+
+    setHierarchy: function(active) {
+      if (!this._activeApp) {
+        return;
+      }
+      if (active) {
+        this.focus();
+      }
+      this._activeApp.setVisibleForScreenReader(active);
+    },
+
+    focus: function() {
+      if (!this._activeApp) {
+        return;
+      }
+      this.debug('focusing ' + this._activeApp.name);
+      this._activeApp.focus();
+    },
 
     /**
      * Test the app is already running.
@@ -34,6 +60,15 @@
       } else {
         return false;
       }
+    },
+
+    /**
+     * HierarchyManager will use this function to
+     * get the active window instance.
+     * @return {AppWindow|null} The active app window instance
+     */
+    getActiveWindow: function() {
+      return this.getActiveApp();
     },
 
     /**
@@ -351,6 +386,7 @@
           this._settingsObserveHandler[name].callback
         );
       }
+      System.request('registerHierarchy', this);
     },
 
     /**
@@ -400,6 +436,7 @@
       }
 
       this._settingsObserveHandler = null;
+      System.request('unregisterHierarchy', this);
     },
 
     handleEvent: function awm_handleEvent(evt) {
@@ -705,7 +742,7 @@
 
     debug: function awm_debug() {
       if (this.DEBUG) {
-        console.log('[' + this.CLASS_NAME + ']' +
+        console.log('[' + this.name + ']' +
           '[' + System.currentTime() + ']' +
           Array.slice(arguments).concat());
       }

@@ -388,6 +388,48 @@ suite('system/TaskManager >', function() {
     this.sinon.clock.tick(500); // 100ms exit + 400ms safety
   });
 
+  suite('Hierarchy functions', function() {
+    setup(function() {
+      this.sinon.stub(taskManager, '_fetchElements');
+      this.sinon.stub(taskManager, '_registerEvents');
+      this.sinon.stub(taskManager, '_unregisterEvents');
+      taskManager.stack = [];
+      taskManager.unfilteredStack = [];
+    });
+
+    teardown(function() {
+      taskManager.stop();
+    });
+
+    test('start should register hierarchy', function() {
+      this.sinon.stub(MockSystem, 'request');
+      taskManager.start();
+      assert.isTrue(MockSystem.request.calledWith('registerHierarchy'));
+    });
+
+    test('stop should unregister hierarchy', function() {
+      taskManager.start();
+      this.sinon.stub(MockSystem, 'request');
+      taskManager.stop();
+      assert.isTrue(MockSystem.request.calledWith('unregisterHierarchy'));
+    });
+
+    test('setActive to true should publish -activated', function() {
+      this.sinon.stub(taskManager, 'publish');
+      taskManager.setActive(true);
+      assert.isTrue(taskManager.publish.calledWith(
+        taskManager.EVENT_PREFIX + '-activated'));
+    });
+
+    test('setActive to false should publish -deactivated', function() {
+      taskManager.setActive(true);
+      this.sinon.stub(taskManager, 'publish');
+      taskManager.setActive(false);
+      assert.isTrue(taskManager.publish.calledWith(
+        taskManager.EVENT_PREFIX + '-deactivated'));
+    });
+  });
+
   suite('sanity check > ', function() {
     test('instantiable TaskManager', function(){
       assert.isTrue(taskManager instanceof window.TaskManager,
