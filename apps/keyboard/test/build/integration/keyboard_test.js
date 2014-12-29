@@ -69,10 +69,10 @@ suite('Keyboard tests', function() {
       var dictJSON = JSON.parse(fs.readFileSync(
             appDirPath +
             '/test/build/integration/resources/' +
-            'default-make-dictionaries.json'));
+            'default-make-layouts.json'));
 
       helper.checkFileContentInZip(
-        zipPath, 'js/settings/dictionaries.json', dictJSON, true);
+        zipPath, 'js/settings/layouts.json', dictJSON, true);
 
       done();
     });
@@ -172,10 +172,10 @@ suite('Keyboard tests', function() {
       var dictJSON = JSON.parse(fs.readFileSync(
             appDirPath +
             '/test/build/integration/resources/' +
-            'all-layout-make-dictionaries.json'));
+            'all-layout-make-layouts.json'));
 
       helper.checkFileContentInZip(
-        zipPath, 'js/settings/dictionaries.json', dictJSON, true);
+        zipPath, 'js/settings/layouts.json', dictJSON, true);
 
       done();
     });
@@ -216,10 +216,10 @@ suite('Keyboard tests', function() {
       var dictJSON = JSON.parse(fs.readFileSync(
             appDirPath +
             '/test/build/integration/resources/' +
-            'no-preload-dict-required-make-dictionaries.json'));
+            'no-preload-dict-required-make-layouts.json'));
 
       helper.checkFileContentInZip(
-        zipPath, 'js/settings/dictionaries.json', dictJSON, true);
+        zipPath, 'js/settings/layouts.json', dictJSON, true);
 
       done();
     });
@@ -288,10 +288,10 @@ suite('Keyboard tests', function() {
       var dictJSON = JSON.parse(fs.readFileSync(
             appDirPath +
             '/test/build/integration/resources/' +
-            'default-make-en-dict-dictionaries.json'));
+            'default-make-en-dict-layouts.json'));
 
       helper.checkFileContentInZip(
-        zipPath, 'js/settings/dictionaries.json', dictJSON, true);
+        zipPath, 'js/settings/layouts.json', dictJSON, true);
 
       done();
     });

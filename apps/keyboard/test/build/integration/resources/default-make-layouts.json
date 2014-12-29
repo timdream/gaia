@@ -1,0 +1,86 @@
+[
+  {
+    "id": "de",
+    "name": "Deutsch",
+    "imEngineId": "latin",
+    "preloadDictionary": true,
+    "dictId": "de",
+    "dictFilePath": "dictionaries/de.dict",
+    "dictFileSize": 2344627
+  },
+  {
+    "id": "en",
+    "name": "English",
+    "imEngineId": "latin",
+    "preloadDictionary": true,
+    "dictId": "en_us",
+    "dictFilePath": "dictionaries/en_us.dict",
+    "dictFileSize": 1451390
+  },
+  {
+    "id": "en-Dvorak",
+    "name": "Dvorak",
+    "imEngineId": "latin",
+    "preloadDictionary": true,
+    "dictId": "en_us",
+    "dictFilePath": "dictionaries/en_us.dict",
+    "dictFileSize": 1451390
+  },
+  {
+    "id": "es",
+    "name": "Español",
+    "imEngineId": "latin",
+    "preloadDictionary": true,
+    "dictId": "es",
+    "dictFilePath": "dictionaries/es.dict",
+    "dictFileSize": 1564842
+  },
+  {
+    "id": "fr",
+    "name": "Français",
+    "imEngineId": "latin",
+    "preloadDictionary": true,
+    "dictId": "fr",
+    "dictFilePath": "dictionaries/fr.dict",
+    "dictFileSize": 1874745
+  },
+  {
+    "id": "fr-CA",
+    "name": "Français (Canadien)",
+    "imEngineId": "latin",
+    "preloadDictionary": true,
+    "dictId": "fr",
+    "dictFilePath": "dictionaries/fr.dict",
+    "dictFileSize": 1874745
+  },
+  {
+    "id": "ko",
+    "name": "한국어",
+    "imEngineId": "jshangul",
+    "preloadDictionary": true
+  },
+  {
+    "id": "pl",
+    "name": "Polski",
+    "imEngineId": "latin",
+    "preloadDictionary": true,
+    "dictId": "pl",
+    "dictFilePath": "dictionaries/pl.dict",
+    "dictFileSize": 1644422
+  },
+  {
+    "id": "pt-BR",
+    "name": "Português (do Brasil)",
+    "imEngineId": "latin",
+    "preloadDictionary": true,
+    "dictId": "pt_br",
+    "dictFilePath": "dictionaries/pt_br.dict",
+    "dictFileSize": 1524964
+  },
+  {
+    "id": "zh-Hans-Pinyin",
+    "name": "拼音",
+    "imEngineId": "jspinyin",
+    "preloadDictionary": true
+  }
+]

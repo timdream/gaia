@@ -22,7 +22,6 @@ KeyboardLayoutDetail.prototype.imEngineId = undefined;
 KeyboardLayoutDetail.prototype.imEngineDir = null;
 KeyboardLayoutDetail.prototype.preloadDictRequired = undefined;
 KeyboardLayoutDetail.prototype.dictId = undefined;
-KeyboardLayoutDetail.prototype.dictLabel = undefined;
 KeyboardLayoutDetail.prototype.dictFile = null;
 KeyboardLayoutDetail.prototype.dictFilePath = null;
 
@@ -77,18 +76,6 @@ KeyboardLayoutDetail.prototype.load = function(appDir) {
       this.dictId = win.Keyboards[id].autoCorrectLanguage;
       if (this.dictId) {
         this.dictFilePath = 'dictionaries/' + this.dictId + '.dict';
-
-        var dictMetadata = JSON.parse(utils.getFileContent(
-          utils.getFile(appDir.path, 'js', 'imes', 'latin',
-            'dictionaries', 'dict_metadata.json')));
-
-        if (!dictMetadata[this.dictId] || !dictMetadata[this.dictId].label) {
-          throw new Error('KeyboardLayoutDetail: ' +
-            'Keyboard layout ' + id + '.js' +
-            ' specified a dictionary ' + this.dictId + ' without label ' +
-            'for latin engine.');
-        }
-        this.dictLabel = dictMetadata[this.dictId].label;
         this.dictFile = utils.getFile(appDir.path, 'js', 'imes', 'latin',
                                       'dictionaries', this.dictId + '.dict');
 
@@ -153,6 +140,17 @@ function(layoutIds, preloadDictLayoutIds) {
 
     this.layoutDetails.push(detail);
   }, this);
+
+  this.layoutDetails.sort(function(a, b) {
+    if (a.id > b.id) {
+      return 1;
+    } else if (a.id < b.id) {
+      return -1;
+    }
+
+    throw new Error('KeyboardLayoutConfigurator: ' +
+      'Found two identical layout id: ' + a.id);
+  });
 };
 
 KeyboardLayoutConfigurator.prototype._expandLayoutIdSet = function(layoutIds) {
@@ -278,6 +276,32 @@ KeyboardLayoutConfigurator.prototype._copyDicts = function(distDir) {
         break;
     }
   }, this);
+};
+
+KeyboardLayoutConfigurator.prototype.getLayoutsJSON = function() {
+  var layouts = [];
+
+  this.layoutDetails.forEach(function(layoutDetail) {
+    var layout = {
+      id: layoutDetail.id,
+      name: layoutDetail.label,
+      imEngineId: layoutDetail.imEngineId
+    };
+
+    if (layoutDetail.dictFile) {
+      layout.preloadDictionary = layoutDetail.options.preloadDictionary;
+
+      layout.dictId = layoutDetail.dictId;
+      layout.dictFilePath = layoutDetail.dictFilePath;
+      layout.dictFileSize = layoutDetail.dictFile.fileSize;
+    } else {
+      layout.preloadDictionary = true;
+    }
+
+    layouts.push(layout);
+  });
+
+  return layouts;
 };
 
 KeyboardLayoutConfigurator.prototype.addInputsToManifest = function(manifest) {

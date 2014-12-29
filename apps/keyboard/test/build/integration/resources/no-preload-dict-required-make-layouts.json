@@ -1,0 +1,499 @@
+[
+  {
+    "id": "ar",
+    "name": "العربية",
+    "preloadDictionary": true
+  },
+  {
+    "id": "bg-BDS",
+    "name": "Български (БДС)",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "bg",
+    "dictFilePath": "dictionaries/bg.dict",
+    "dictFileSize": 2166414
+  },
+  {
+    "id": "bg-Pho-Ban",
+    "name": "Български (БАН)",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "bg",
+    "dictFilePath": "dictionaries/bg.dict",
+    "dictFileSize": 2166414
+  },
+  {
+    "id": "bg-Pho-Trad",
+    "name": "Български (Фонетична)",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "bg",
+    "dictFilePath": "dictionaries/bg.dict",
+    "dictFileSize": 2166414
+  },
+  {
+    "id": "bn-Avro",
+    "name": "বাংলা - অভ্র",
+    "imEngineId": "jsavrophonetic",
+    "preloadDictionary": true
+  },
+  {
+    "id": "bn-Probhat",
+    "name": "বাংলা - প্রভাত",
+    "preloadDictionary": true
+  },
+  {
+    "id": "bs",
+    "name": "Bosanski",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "bs",
+    "dictFilePath": "dictionaries/bs.dict",
+    "dictFileSize": 910184
+  },
+  {
+    "id": "ca",
+    "name": "Català",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "ca",
+    "dictFilePath": "dictionaries/ca.dict",
+    "dictFileSize": 1312458
+  },
+  {
+    "id": "cs",
+    "name": "Česká",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "cs",
+    "dictFilePath": "dictionaries/cs.dict",
+    "dictFileSize": 1406998
+  },
+  {
+    "id": "cs-qwerty",
+    "name": "Česká (QWERTY)",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "cs",
+    "dictFilePath": "dictionaries/cs.dict",
+    "dictFileSize": 1406998
+  },
+  {
+    "id": "da",
+    "name": "Dansk",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "da",
+    "dictFilePath": "dictionaries/da.dict",
+    "dictFileSize": 1882264
+  },
+  {
+    "id": "de",
+    "name": "Deutsch",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "de",
+    "dictFilePath": "dictionaries/de.dict",
+    "dictFileSize": 2344627
+  },
+  {
+    "id": "dz-BT",
+    "name": "རྫོང་ཁ",
+    "preloadDictionary": true
+  },
+  {
+    "id": "el",
+    "name": "Ελληνικό",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "el",
+    "dictFilePath": "dictionaries/el.dict",
+    "dictFileSize": 2306822
+  },
+  {
+    "id": "en",
+    "name": "English",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "en_us",
+    "dictFilePath": "dictionaries/en_us.dict",
+    "dictFileSize": 1451390
+  },
+  {
+    "id": "en-Colemak",
+    "name": "Colemak",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "en_us",
+    "dictFilePath": "dictionaries/en_us.dict",
+    "dictFileSize": 1451390
+  },
+  {
+    "id": "en-Dvorak",
+    "name": "Dvorak",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "en_us",
+    "dictFilePath": "dictionaries/en_us.dict",
+    "dictFileSize": 1451390
+  },
+  {
+    "id": "en-GB",
+    "name": "English (UK)",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "en_gb",
+    "dictFilePath": "dictionaries/en_gb.dict",
+    "dictFileSize": 1428906
+  },
+  {
+    "id": "en-Neo",
+    "name": "Neo",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "en_us",
+    "dictFilePath": "dictionaries/en_us.dict",
+    "dictFileSize": 1451390
+  },
+  {
+    "id": "eo",
+    "name": "Esperanto",
+    "imEngineId": "latin",
+    "preloadDictionary": true
+  },
+  {
+    "id": "es",
+    "name": "Español",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "es",
+    "dictFilePath": "dictionaries/es.dict",
+    "dictFileSize": 1564842
+  },
+  {
+    "id": "es-Americas",
+    "name": "Español (Latinoamérica)",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "es",
+    "dictFilePath": "dictionaries/es.dict",
+    "dictFileSize": 1564842
+  },
+  {
+    "id": "eu",
+    "name": "Euskara",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "eu",
+    "dictFilePath": "dictionaries/eu.dict",
+    "dictFileSize": 1266198
+  },
+  {
+    "id": "ff",
+    "name": "Pulaar-Fulfulde",
+    "imEngineId": "latin",
+    "preloadDictionary": true
+  },
+  {
+    "id": "fr",
+    "name": "Français",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "fr",
+    "dictFilePath": "dictionaries/fr.dict",
+    "dictFileSize": 1874745
+  },
+  {
+    "id": "fr-CA",
+    "name": "Français (Canadien)",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "fr",
+    "dictFilePath": "dictionaries/fr.dict",
+    "dictFileSize": 1874745
+  },
+  {
+    "id": "fr-CH",
+    "name": "Français (Suisse)",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "fr",
+    "dictFilePath": "dictionaries/fr.dict",
+    "dictFileSize": 1874745
+  },
+  {
+    "id": "fr-Dvorak-bepo",
+    "name": "Bépo",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "fr",
+    "dictFilePath": "dictionaries/fr.dict",
+    "dictFileSize": 1874745
+  },
+  {
+    "id": "ga",
+    "name": "Gaeilge",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "ga",
+    "dictFilePath": "dictionaries/ga.dict",
+    "dictFileSize": 1141418
+  },
+  {
+    "id": "gd",
+    "name": "Gàidhlig",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "gd",
+    "dictFilePath": "dictionaries/gd.dict",
+    "dictFileSize": 406536
+  },
+  {
+    "id": "gl",
+    "name": "Galego",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "gl",
+    "dictFilePath": "dictionaries/gl.dict",
+    "dictFileSize": 1665314
+  },
+  {
+    "id": "gv",
+    "name": "Gaelg",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "gv",
+    "dictFilePath": "dictionaries/gv.dict",
+    "dictFileSize": 394452
+  },
+  {
+    "id": "he",
+    "name": "עִבְרִית",
+    "preloadDictionary": true
+  },
+  {
+    "id": "hi",
+    "name": "हिन्दी",
+    "imEngineId": "india",
+    "preloadDictionary": true
+  },
+  {
+    "id": "hr",
+    "name": "Hrvatski",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "hr",
+    "dictFilePath": "dictionaries/hr.dict",
+    "dictFileSize": 1661622
+  },
+  {
+    "id": "hu",
+    "name": "Magyar",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "hu",
+    "dictFilePath": "dictionaries/hu.dict",
+    "dictFileSize": 4164126
+  },
+  {
+    "id": "it",
+    "name": "Italiano",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "it",
+    "dictFilePath": "dictionaries/it.dict",
+    "dictFileSize": 1610545
+  },
+  {
+    "id": "ko",
+    "name": "한국어",
+    "imEngineId": "jshangul",
+    "preloadDictionary": true
+  },
+  {
+    "id": "lt",
+    "name": "Lietuvių",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "lt",
+    "dictFilePath": "dictionaries/lt.dict",
+    "dictFileSize": 1726838
+  },
+  {
+    "id": "lv",
+    "name": "Latviešu",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "lv",
+    "dictFilePath": "dictionaries/lv.dict",
+    "dictFileSize": 1799224
+  },
+  {
+    "id": "mk",
+    "name": "Македонски",
+    "imEngineId": "latin",
+    "preloadDictionary": true
+  },
+  {
+    "id": "my",
+    "name": "မြန်မာ",
+    "imEngineId": "latin",
+    "preloadDictionary": true
+  },
+  {
+    "id": "nb",
+    "name": "Norsk",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "nb",
+    "dictFilePath": "dictionaries/nb.dict",
+    "dictFileSize": 1720106
+  },
+  {
+    "id": "nl",
+    "name": "Nederlands",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "nl",
+    "dictFilePath": "dictionaries/nl.dict",
+    "dictFileSize": 2006828
+  },
+  {
+    "id": "pl",
+    "name": "Polski",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "pl",
+    "dictFilePath": "dictionaries/pl.dict",
+    "dictFileSize": 1644422
+  },
+  {
+    "id": "pt-BR",
+    "name": "Português (do Brasil)",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "pt_br",
+    "dictFilePath": "dictionaries/pt_br.dict",
+    "dictFileSize": 1524964
+  },
+  {
+    "id": "pt-PT",
+    "name": "Português (Europeu)",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "pt_pt",
+    "dictFilePath": "dictionaries/pt_pt.dict",
+    "dictFileSize": 2007936
+  },
+  {
+    "id": "ro",
+    "name": "Română",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "ro",
+    "dictFilePath": "dictionaries/ro.dict",
+    "dictFileSize": 984838
+  },
+  {
+    "id": "ru",
+    "name": "Pусский",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "ru",
+    "dictFilePath": "dictionaries/ru.dict",
+    "dictFileSize": 2287339
+  },
+  {
+    "id": "sk",
+    "name": "Slovenčina",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "sk",
+    "dictFilePath": "dictionaries/sk.dict",
+    "dictFileSize": 1628123
+  },
+  {
+    "id": "sq",
+    "name": "Shqip",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "sq",
+    "dictFilePath": "dictionaries/sq.dict",
+    "dictFileSize": 807268
+  },
+  {
+    "id": "sr-Cyrl",
+    "name": "Српски",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "sr-Cyrl",
+    "dictFilePath": "dictionaries/sr-Cyrl.dict",
+    "dictFileSize": 1861002
+  },
+  {
+    "id": "sr-Latn",
+    "name": "Srpski",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "sr-Latn",
+    "dictFilePath": "dictionaries/sr-Latn.dict",
+    "dictFileSize": 1515705
+  },
+  {
+    "id": "sv",
+    "name": "Svenska",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "sv",
+    "dictFilePath": "dictionaries/sv.dict",
+    "dictFileSize": 1974113
+  },
+  {
+    "id": "ta",
+    "name": "தமிழ்",
+    "imEngineId": "india",
+    "preloadDictionary": true
+  },
+  {
+    "id": "te",
+    "name": "తెలుగు",
+    "imEngineId": "india",
+    "preloadDictionary": true
+  },
+  {
+    "id": "tr-F",
+    "name": "Türkçe F",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "tr",
+    "dictFilePath": "dictionaries/tr.dict",
+    "dictFileSize": 1588766
+  },
+  {
+    "id": "tr-Q",
+    "name": "Türkçe Q",
+    "imEngineId": "latin",
+    "preloadDictionary": false,
+    "dictId": "tr",
+    "dictFilePath": "dictionaries/tr.dict",
+    "dictFileSize": 1588766
+  },
+  {
+    "id": "vi-Qwerty",
+    "name": "Tiếng Việt (QWERTY)",
+    "imEngineId": "vietnamese",
+    "preloadDictionary": true
+  },
+  {
+    "id": "vi-Telex",
+    "name": "Tiếng Việt (Telex)",
+    "imEngineId": "jstelex",
+    "preloadDictionary": true
+  },
+  {
+    "id": "vi-Typewriter",
+    "name": "Tiếng Việt",
+    "imEngineId": "vietnamese",
+    "preloadDictionary": true
+  }
+]
