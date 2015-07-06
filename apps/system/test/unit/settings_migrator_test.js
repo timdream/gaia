@@ -28,14 +28,14 @@ suite('system/settings_migrator', function() {
     setup(function(done) {
       MockNavigatorSettings.mSetup();
       window.settingsMigrator = new SettingsMigrator();
-      this.sinon.stub(window.settingsMigrator, 'keyMigration');
+      this.sinon.stub(window.settingsMigrator, 'doKeyMigration');
       window.settingsMigrator.start();
       clock.tick(50);
       done();
     });
 
-    test('keyMigration called', function() {
-      assert.ok(window.settingsMigrator.keyMigration.called);
+    test('doKeyMigration called', function() {
+      assert.ok(window.settingsMigrator.doKeyMigration.called);
     });
   });
 

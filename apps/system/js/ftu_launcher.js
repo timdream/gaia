@@ -227,7 +227,6 @@
     finish: function() {
       this.loadWhenIdle(['NewsletterManager']);
       this.writeSetting({'gaia.system.checkForUpdates': true});
-      // XXX: remove after bug 1109451 is fixed
       LazyLoader.load(['js/migrators/settings_migrator.js']).then(function() {
         var settingsMigrator = new SettingsMigrator();
         settingsMigrator.start();
