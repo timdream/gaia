@@ -189,7 +189,7 @@ InputMethodGlue.prototype.endComposition = function(text) {
   }.bind(this));
 };
 
-InputMethodGlue.prototype.sendKey = function(keyCode, isRepeat) {
+InputMethodGlue.prototype.sendKey = function(code, isRepeat) {
   this.app.console.trace();
   if (!this.app.inputContext) {
     console.warn('InputMethodGlue: call sendKey() when ' +
@@ -199,24 +199,45 @@ InputMethodGlue.prototype.sendKey = function(keyCode, isRepeat) {
 
   var promise;
 
-  this.app.console.info('inputContext.sendKey(), code:' + keyCode);
-  switch (keyCode) {
-    case KeyEvent.DOM_VK_BACK_SPACE:
-      promise = this.app.inputContext.sendKey(keyCode, 0, 0, isRepeat);
-      break;
+  // If |code| is an object, we'll pass it directly to InputMethod IME.
+  // otherwise, we need to convert the code into an keyboardEventDict object.
+  if (typeof code === 'object') {
+    this.app.console.info('inputContext.sendKey(), object: ', code);
+    promise = this.app.inputContext.sendKey(code);
+  } else {
+    this.app.console.info(
+      '[deprecated arguments] inputContext.sendKey(), code:', code,
+      'isRepeat', isRepeat);
+    switch (code) {
+      case KeyEvent.DOM_VK_BACK_SPACE:
+        promise = this.app.inputContext.sendKey({
+          key: 'Backspace',
+          code: 'Backspace',
+          repeat: isRepeat
+        });
+        break;
 
-    case KeyEvent.DOM_VK_RETURN:
-      promise = this.app.inputContext.sendKey(keyCode, 0, 0);
-      break;
+      case KeyEvent.DOM_VK_RETURN:
+        promise = this.app.inputContext.sendKey({
+          key: 'Enter',
+          code: 'Enter'
+        });
+        break;
 
-    default:
-      promise = this.app.inputContext.sendKey(0, keyCode, 0);
-      break;
+      default:
+        // Assume this is a printable key.
+        // Input Method IME will set a keyCode for us if applicable, however
+        // the |code| value will remain unset.
+        promise = this.app.inputContext.sendKey({
+          key: String.charCodeAt(code)
+        });
+        break;
+    }
   }
 
   return promise.catch(function(e) {
     console.warn('InputMethodGlue: sendKey() rejected with error', e);
-    this.app.console.log(keyCode, isRepeat);
+    this.app.console.log(code, isRepeat);
 
     return Promise.reject(e);
   }.bind(this));
