@@ -140,11 +140,6 @@ suite('IMESwitcher', function() {
         })
       );
 
-      assert.equal(
-        imeSwitcher._notificationTip.dataset.l10nId,
-        'ime-switching-tip'
-      );
-
       assert.isTrue(
         imeSwitcher._notificationContainer.classList.add.calledWith('activated')
       );

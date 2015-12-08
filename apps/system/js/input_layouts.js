@@ -80,23 +80,16 @@
     function il_transformLayout(layout) {
     var transformedLayout = {
       id: layout.layoutId,
+      name: layout.inputManifest.name,
+      nameL10nId: layout.inputManifest.nameL10nId,
       origin: layout.app.origin,
       manifestURL: layout.app.manifestURL,
       path: layout.inputManifest.launch_path
     };
 
     // define properties for names that resolve at display time
-    // to the correct language via the ManifestHelper or mozL10n.get()
+    // to the correct language via the ManifestHelper.
     Object.defineProperties(transformedLayout, {
-      name: {
-        get: function() {
-          if (layout.inputManifest.nameL10nId) {
-            return navigator.mozL10n.get(layout.inputManifest.nameL10nId);
-          }
-          return layout.inputManifest.name;
-        },
-        enumerable: true
-      },
       appName: {
         get: function() {
           return layout.manifest.name;

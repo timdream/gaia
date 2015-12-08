@@ -280,7 +280,7 @@ window.KeyboardManager = {
     // These labels are already localized in InputLayouts.
     var current = this.inputLayouts.layouts[showedGroup][showedIndex];
 
-    this.imeSwitcher.show(current.appName, current.name);
+    this.imeSwitcher.show(current.appName, current.name, current.nameL10nId);
   },
 
   /* A small helper function for maintaining timeouts */
@@ -338,7 +338,8 @@ window.KeyboardManager = {
       var items = this.inputLayouts.layouts[showedGroup].map(
         function(layout, index) {
           return {
-            layoutName: layout.name,
+            name: layout.name,
+            nameL10nId: layout.nameL10nId,
             appName: layout.appName,
             value: index,
             selected: (index === activeLayoutIdx)
